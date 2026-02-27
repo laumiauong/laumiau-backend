@@ -11,10 +11,10 @@ public class Animal {
     private int idade;
     private String sexo;
     private boolean adotado;
-    private String vacinado;
+    private boolean vacinado;
     private String porte;
 
-    public Animal(String nome, String especie, String raca, int idade, String sexo, boolean adotado, String vacinado, String porte) {
+    public Animal(String nome, String especie, String raca, int idade, String sexo, boolean vacinado, String porte) {
         this.id = contadorId++;
         this.nome = nome;
         this.especie = especie;
@@ -74,12 +74,8 @@ public class Animal {
         return adotado;
     }
 
-    public String getVacinado(){
+    public boolean isVacinado(){
         return vacinado;
-    }
-
-    public void setVacinado(String vacinado){
-        this.vacinado = vacinado;
     }
 
     public String getPorte(){
@@ -94,6 +90,10 @@ public class Animal {
         this.adotado = true;
     }
 
+    public void vacinar(){
+        this.vacinado = true;
+    }
+
     public void exibirDados(){
         System.out.println("ID: "+ id);
         System.out.println("Nome: "+ nome);
@@ -102,7 +102,7 @@ public class Animal {
         System.out.println("Idade: "+ idade);
         System.out.println("Sexo: "+ sexo);
         System.out.println("Adotado: "+ (adotado ? "Sim" : "Não"));
-        System.out.println("Vacinado: "+ vacinado);
+        System.out.println("Vacinado: "+ (vacinado ? "Sim" : "Não"));
         System.out.println("Porte: "+ porte);
     }
 
