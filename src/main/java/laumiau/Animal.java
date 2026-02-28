@@ -19,7 +19,7 @@ public class Animal {
         this.nome = nome;
         this.especie = especie;
         this.raca = raca;
-        this.idade = idade;
+        setIdade(idade);
         this.sexo = sexo;
         this.adotado = false;
         this.vacinado = vacinado;
@@ -34,12 +34,24 @@ public class Animal {
         return nome;
     }
 
+    public void setNome(String nome){
+        this.nome = nome;
+    }
+
     public String getEspecie(){
         return especie;
     }
 
+    public void setEspecie(String especie){
+        this.especie = especie;
+    }
+
     public String getRaca(){
         return raca;
+    }
+
+    public void setRaca(String raca){
+        this.raca = raca;
     }
 
     public int getIdade(){
@@ -83,16 +95,18 @@ public class Animal {
         this.vacinado = true;
     }
 
-    public void exibirDados(){
-        System.out.println("ID: "+ id);
-        System.out.println("Nome: "+ nome);
-        System.out.println("Espécie: "+ especie);
-        System.out.println("Raça: "+ raca);
-        System.out.println("Idade: "+ idade);
-        System.out.println("Sexo: "+ sexo);
-        System.out.println("Adotado: "+ (adotado ? "Sim" : "Não"));
-        System.out.println("Vacinado: "+ (vacinado ? "Sim" : "Não"));
-        System.out.println("Porte: "+ porte);
+    @Override
+    public String toString(){
+       return "ID: "+ id +
+       "\nNome: " + nome +
+       "\nEspécie: " + especie +
+       "\nRaça: " + raca +
+       "\nIdade: " + idade +
+       "\nSexo: " + sexo +
+       "\nAdotado: " + (adotado ? "Sim" : "Não") +
+       "\nVacinado: " + (vacinado ? "Sim" : "Não") +
+       "\nPorte: " + porte +
+       "\n---------------------------------";
     }
 
 }
