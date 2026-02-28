@@ -9,12 +9,12 @@ public class Animal {
     private String especie;
     private String raca;
     private int idade;
-    private String sexo;
+    private Sexo sexo;
     private boolean adotado;
     private boolean vacinado;
-    private String porte;
+    private Porte porte;
 
-    public Animal(String nome, String especie, String raca, int idade, String sexo, boolean vacinado, String porte) {
+    public Animal(String nome, String especie, String raca, int idade, Sexo sexo, boolean vacinado, Porte porte) {
         this.id = contadorId++;
         this.nome = nome;
         this.especie = especie;
@@ -26,51 +26,39 @@ public class Animal {
         this.porte = porte;
     }
 
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getEspecie() {
-        return especie;
-    }
-
-    public void setEspecie(String especie) {
-        this.especie = especie;
-    }
-
-    public String getRaca() {
-        return raca;
-    }
-
-    public void setRaca(String raca) {
-        this.raca = raca;
-    }
-
-    public int getIdade() {
-        return idade;
-    }
-
-    public void setIdade(int idade) {
-        this.idade = idade;
-    }
-
-    public String getSexo() {
-        return sexo;
-    }
-
-    public void setSexo(String sexo) {
-        this.sexo = sexo;
-    }
-
-    public long getId() {
+    public long getId(){
         return id;
     }
 
-    public boolean isAdotado() {
+    public String getNome(){
+        return nome;
+    }
+
+    public String getEspecie(){
+        return especie;
+    }
+
+    public String getRaca(){
+        return raca;
+    }
+
+    public int getIdade(){
+        return idade;
+    }
+
+    public void setIdade(int idade){
+        if(idade >= 0){
+            this.idade = idade;
+        } else{
+            System.out.println("Idade inválida!");
+        }
+    }
+
+    public Sexo getSexo(){
+        return sexo;
+    }
+
+    public boolean isAdotado(){
         return adotado;
     }
 
@@ -78,16 +66,17 @@ public class Animal {
         return vacinado;
     }
 
-    public String getPorte(){
+    public Porte getPorte(){
         return porte;
     }
 
-    public void setPorte(String porte){
-        this.porte = porte;
-    }
-
     public void adotar() {
-        this.adotado = true;
+        if(!adotado){
+            this.adotado = true;
+            System.out.println("Animal adotado!");
+        } else {
+            System.out.println("Esse animal já foi adotado!");
+        }
     }
 
     public void vacinar(){
