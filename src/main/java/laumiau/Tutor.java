@@ -1,14 +1,11 @@
 package laumiau;
 
-
 public class Tutor extends Usuario {
-
 
     private String telefone;
 
-
-    public Tutor(Long id, String nome, String email, String senha, String telefone) {
-        super(id, nome, email, senha, TipoUsuario.CLIENTE);
+    public Tutor(String senha, String email, String nome, Long id, String telefone) {
+        super(senha, email, nome, id);
         this.telefone = telefone;
     }
 
@@ -18,6 +15,14 @@ public class Tutor extends Usuario {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    @Override
+    public void exibirPermissoes() {
+        System.out.println(" Permissões do TUTOR: ");
+        System.out.println("- Visualizar animais disponíveis");
+        System.out.println("- Preencher formulário de interesse");
+        System.out.println("- Acompanhar status da adoção");
     }
 
     @Override
