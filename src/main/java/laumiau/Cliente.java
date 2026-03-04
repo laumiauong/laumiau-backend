@@ -1,9 +1,11 @@
 package laumiau;
 
-public class Cliente extends Usuario{
-    public Cliente(String senha, String email, String nome, Long id) {
-        super(senha, email, nome, id);
+public class Cliente extends Usuario
+{
+    public Cliente(Long id, String nome, String email, String senha) {
+        super(id, nome, email, senha);
     }
+
     @Override
     public void exibirPermissoes() {
         System.out.println(" Permissões do CLIENTE: ");
@@ -15,4 +17,4 @@ public class Cliente extends Usuario{
         System.out.println("- Acessar página sobre ong");
     }
 }
-}
+
