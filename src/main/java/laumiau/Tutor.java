@@ -1,8 +1,12 @@
 package laumiau;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Tutor extends Usuario {
 
     private String telefone;
+    private List<Animal> petsAdotados = new ArrayList<>();
 
     public Tutor(String senha, String email, String nome, Long id, String telefone) {
         super(senha, email, nome, id);
@@ -15,6 +19,14 @@ public class Tutor extends Usuario {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    public void adicionarPet(Animal animal) {
+        this.petsAdotados.add(animal);
+    }
+
+    public List<Animal> getPetsAdotados() {
+        return petsAdotados;
     }
 
     @Override
