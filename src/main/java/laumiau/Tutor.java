@@ -8,8 +8,8 @@ public class Tutor extends Usuario {
     private String telefone;
     private List<Animal> petsAdotados = new ArrayList<>();
 
-    public Tutor(String senha, String email, String nome, Long id, String telefone) {
-        super(senha, email, nome, id);
+    public Tutor(Long id, String nome, String email, String senha, String telefone) {
+        super(id, nome, email, senha);
         this.telefone = telefone;
     }
 
