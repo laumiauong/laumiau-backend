@@ -29,6 +29,10 @@ public class Tutor extends Usuario {
         return petsAdotados;
     }
 
+    public Adocoes preencherFormulario(long idAdocao, Animal animal, boolean termoAssinado) {
+        return new Adocoes(idAdocao, animal, this.getNome(), this.getTelefone(), termoAssinado);
+    }
+
     @Override
     public void exibirPermissoes() {
         System.out.println(" Permissões do TUTOR: ");
