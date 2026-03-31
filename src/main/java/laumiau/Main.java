@@ -5,11 +5,28 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
+import laumiau.model.*;
+import org.flywaydb.core.Flyway;
+
+
 public class Main {
 
     private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
+        Flyway flyway = Flyway.configure()
+                .dataSource(
+                        "jdbc:postgresql://localhost:5432/postgres",
+                        "postgres",
+                        "2811"
+                )
+                .locations("classpath:db/migration")
+                .baselineOnMigrate(true)
+                .load();
+
+        flyway.migrate();
+        System.out.println("Banco de dados atualizado com sucesso!");
+
         List<Animal> animais = new ArrayList<>();
         List<Adocoes> adocoes = new ArrayList<>();
         long proximoIdAdocao = 1;
