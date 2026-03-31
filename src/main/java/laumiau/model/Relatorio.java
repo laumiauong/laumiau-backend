@@ -1,4 +1,4 @@
-package laumiau;
+package laumiau.model;
 
 import java.util.HashMap;
 import java.util.List;

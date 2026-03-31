@@ -1,4 +1,4 @@
-package laumiau;
+package laumiau.model;
 
 import java.time.LocalDate;
 
@@ -35,7 +35,7 @@ public class Adocoes {
     }
 
     public String getTelefoneAdotante() {
-        return telefoneAdotante;
+        return this.telefoneAdotante;
     }
 
     public LocalDate getDataAdocao() {

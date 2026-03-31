@@ -1,4 +1,4 @@
-package laumiau;
+package laumiau.model;
 
 public enum StatusAdocao {
     ADOTADO,

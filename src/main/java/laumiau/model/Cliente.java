@@ -1,4 +1,4 @@
-package laumiau;
+package laumiau.model;
 
 public class Cliente extends Usuario
 {
