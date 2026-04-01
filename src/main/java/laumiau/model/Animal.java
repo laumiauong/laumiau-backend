@@ -2,12 +2,12 @@ package laumiau.model;
 
 import jakarta.persistence.*;
 
-@Entity                    // diz que essa classe é uma tabela no banco
-@Table(name = "animal")    // nome da tabela no banco
+@Entity
+@Table(name = "animal")
 public class Animal {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // o banco gera o ID automaticamente
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -22,13 +22,13 @@ public class Animal {
     @Column(name = "idade_meses", nullable = false)
     private int idade;
 
-    @Enumerated(EnumType.STRING) // salva "MACHO" ou "FEMEA" no banco, não número
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Sexo sexo;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private StatusAnimal status = StatusAnimal.disponivel;
+    private StatusAnimal status = StatusAnimal.DISPONIVEL;
 
     @Column(nullable = false)
     private boolean vacinado = false;
@@ -36,22 +36,20 @@ public class Animal {
     @Enumerated(EnumType.STRING)
     private Porte porte;
 
-    // JPA exige um construtor vazio
+    // JPA exige construtor vazio
     public Animal() {}
 
-    // seu construtor original mantido
     public Animal(String nome, String especie, String raca, int idade, Sexo sexo, boolean vacinado, Porte porte) {
         this.nome = nome;
         this.especie = especie;
         this.raca = raca;
         setIdade(idade);
         this.sexo = sexo;
-        this.status = StatusAnimal.disponivel;
+        this.status = StatusAnimal.DISPONIVEL;
         this.vacinado = vacinado;
         this.porte = porte;
     }
 
-    // getters e setters — igual ao seu, só o id muda de long para Long
     public Long getId() { return id; }
 
     public String getNome() { return nome; }
@@ -82,11 +80,13 @@ public class Animal {
 
     public Porte getPorte() { return porte; }
 
-    // adotar agora atualiza o status em vez de um boolean separado
-    public boolean isAdotado() { return status == StatusAnimal.adotado; }
+    public boolean isAdotado() {
+        return status == StatusAnimal.ADOTADO;
+    }
+
     public void adotar() {
-        if (status != StatusAnimal.adotado) {
-            this.status = StatusAnimal.adotado;
+        if (status != StatusAnimal.ADOTADO) {
+            this.status = StatusAnimal.ADOTADO;
             System.out.println("Animal adotado!");
         } else {
             System.out.println("Esse animal já foi adotado!");

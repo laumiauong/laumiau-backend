@@ -1,36 +1,37 @@
 package laumiau.model;
 
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "tutor")
 public class Tutor extends Usuario {
 
+    @Column(unique = true, nullable = false)
     private String telefone;
+
+    @OneToMany                                    // um tutor pode ter muitos animais adotados
+    @JoinColumn(name = "cliente_id")
     private List<Animal> petsAdotados = new ArrayList<>();
+
+    // JPA exige construtor vazio
+    public Tutor() {}
 
     public Tutor(Long id, String nome, String email, String senha, String telefone) {
         super(id, nome, email, senha);
         this.telefone = telefone;
     }
 
-    public String getTelefone() {
-        return telefone;
-    }
+    public String getTelefone() { return telefone; }
+    public void setTelefone(String telefone) { this.telefone = telefone; }
 
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
+    public void adicionarPet(Animal animal) { this.petsAdotados.add(animal); }
+    public List<Animal> getPetsAdotados() { return petsAdotados; }
 
-    public void adicionarPet(Animal animal) {
-        this.petsAdotados.add(animal);
-    }
-
-    public List<Animal> getPetsAdotados() {
-        return petsAdotados;
-    }
-
-    public Adocoes preencherFormulario(long idAdocao, Animal animal, boolean termoAssinado) {
-        return new Adocoes(idAdocao, animal, this.getNome(), this.getTelefone(), termoAssinado);
+    public Adocoes preencherFormulario(Animal animal, boolean termoAssinado) {
+        Cliente cliente = new Cliente(this.getId(), this.getNome(), this.getEmail(), null);
+        return new Adocoes(animal, cliente, termoAssinado);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package laumiau.model;
 
 public enum StatusAnimal {
-    disponivel,
-    adotado
+    DISPONIVEL,
+    ADOTADO
 }

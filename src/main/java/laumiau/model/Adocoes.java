@@ -1,66 +1,57 @@
 package laumiau.model;
 
+import jakarta.persistence.*;
 import java.time.LocalDate;
 
+@Entity
+@Table(name = "adocoes")
 public class Adocoes {
 
-    private long idAdocao;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idAdocao;
+
+    @ManyToOne                          // muitas adoções podem ter um animal
+    @JoinColumn(name = "animal_id", nullable = false)
     private Animal animal;
-    private String nomeAdotante;
-    private String telefoneAdotante;
+
+    @ManyToOne                          // muitas adoções podem ter um cliente
+    @JoinColumn(name = "cliente_id", nullable = false)
+    private Cliente cliente;
+
+    @Column(name = "data_adocao", nullable = false)
     private LocalDate dataAdocao;
+
+    @Column(name = "termo_assinado", nullable = false)
     private boolean termoAssinado;
 
-    public Adocoes(long idAdocao, Animal animal, String nomeAdotante,
-                   String telefoneAdotante, boolean termoAssinado) {
+    public Adocoes() {}
 
-        this.idAdocao = idAdocao;
+    public Adocoes(Animal animal, Cliente cliente, boolean termoAssinado) {
         this.animal = animal;
-        this.nomeAdotante = nomeAdotante;
-        this.telefoneAdotante = telefoneAdotante;
+        this.cliente = cliente;
         this.dataAdocao = LocalDate.now();
         this.termoAssinado = termoAssinado;
     }
 
-    public long getIdAdocao() {
-        return idAdocao;
-    }
+    public Long getIdAdocao() { return idAdocao; }
 
-    public Animal getAnimal() {
-        return animal;
-    }
+    public Animal getAnimal() { return animal; }
+    public void setAnimal(Animal animal) { this.animal = animal; }
 
-    public String getNomeAdotante() {
-        return nomeAdotante;
-    }
+    public Cliente getCliente() { return cliente; }
+    public void setCliente(Cliente cliente) { this.cliente = cliente; }
 
-    public String getTelefoneAdotante() {
-        return this.telefoneAdotante;
-    }
+    public LocalDate getDataAdocao() { return dataAdocao; }
 
-    public LocalDate getDataAdocao() {
-        return dataAdocao;
-    }
-
-    public boolean isTermoAssinado() {
-        return termoAssinado;
-    }
-
-    public void setTelefoneAdotante(String telefoneAdotante) {
-        this.telefoneAdotante = telefoneAdotante;
-    }
-
-    public void setTermoAssinado(boolean termoAssinado) {
-        this.termoAssinado = termoAssinado;
-    }
+    public boolean isTermoAssinado() { return termoAssinado; }
+    public void setTermoAssinado(boolean termoAssinado) { this.termoAssinado = termoAssinado; }
 
     public String gerarResumo() {
         return "\nRegistro de Adoção" +
                 "\nID Adoção: " + idAdocao +
                 "\nAnimal: " + animal.getNome() +
-                "\nEspécie: " + animal.getClass().getSimpleName() +
-                "\nAdotante: " + nomeAdotante +
-                "\nTelefone: " + telefoneAdotante +
+                "\nAdotante: " + cliente.getNome() +
                 "\nData: " + dataAdocao +
                 "\nTermo Assinado: " + (termoAssinado ? "Sim" : "Não");
     }

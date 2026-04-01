@@ -1,6 +1,12 @@
 package laumiau.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "admin")
 public class Admin extends Usuario {
+
+    public Admin() {}
 
     public Admin(Long id, String nome, String email, String senha) {
         super(id, nome, email, senha);
