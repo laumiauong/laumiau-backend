@@ -5,15 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d3652bbd-39c9-4ec6-b6a4-217d986ca188" name="Changes" comment="Código arrumado v2">
-      <change afterPath="$PROJECT_DIR$/src/main/java/laumiau/service/RelatorioService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Admin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Admin.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Adocoes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Adocoes.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Animal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Animal.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Cliente.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Cliente.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/StatusAnimal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/StatusAnimal.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Tutor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Tutor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Usuario.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Usuario.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,18 +22,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "maystins"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;maystins&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/laumiauong/laumiau-backend.git",
-    "accountId": "472abda3-6ab6-4b0e-8617-85dabe62d65f"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/laumiauong/laumiau-backend.git&quot;,
+    &quot;accountId&quot;: &quot;472abda3-6ab6-4b0e-8617-85dabe62d65f&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 4
