@@ -1,4 +1,5 @@
 package laumiau.model;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -19,6 +20,12 @@ public abstract class Usuario {
     @Column(nullable = false)
     private String senha;
 
+    // --- RELACIONAMENTO 1:1 (Adicionado para Mensal II) ---
+    // O CascadeType.ALL garante que ao salvar o usuário, o endereço também seja salvo.
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "endereco_id", referencedColumnName = "id")
+    private Endereco endereco;
+
     // JPA exige construtor vazio
     public Usuario() {}
 
@@ -29,6 +36,7 @@ public abstract class Usuario {
         this.senha = senha;
     }
 
+    // Getters e Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -37,6 +45,10 @@ public abstract class Usuario {
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+
+    // Getter e Setter do Endereço
+    public Endereco getEndereco() { return endereco; }
+    public void setEndereco(Endereco endereco) { this.endereco = endereco; }
 
     public boolean autenticar(String senhaDigitada) {
         return this.senha.equals(senhaDigitada);
@@ -49,6 +61,7 @@ public abstract class Usuario {
         return "ID: " + id +
                 " | Nome: " + nome +
                 " | Email: " + email +
-                " | Tipo: " + this.getClass().getSimpleName();
+                " | Tipo: " + this.getClass().getSimpleName() +
+                (endereco != null ? " | Cidade: " + endereco.getCidade() : "");
     }
 }
