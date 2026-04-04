@@ -3,7 +3,6 @@ package laumiau.service;
 import laumiau.model.Admin;
 import laumiau.model.Cliente;
 import laumiau.model.Usuario;
-
 import java.util.ArrayList;
 import java.util.List;
 
