@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "admin")
+@PrimaryKeyJoinColumn(name = "usuario_id")
 public class Admin extends Usuario {
 
     public Admin() {}

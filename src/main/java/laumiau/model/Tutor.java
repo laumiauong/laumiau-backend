@@ -6,6 +6,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "tutor")
+@PrimaryKeyJoinColumn(name = "usuario_id")
 public class Tutor extends Usuario {
 
     @Column(unique = true, nullable = false)

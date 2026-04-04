@@ -233,7 +233,6 @@ public class Main {
     private static void registrarAdocao() {
         System.out.println("\n--- Registrar Adoção ---");
         try {
-            // mostra animais disponíveis
             List<Animal> disponiveis = animalService.listarTodos()
                     .stream()
                     .filter(a -> !a.isAdotado())
@@ -246,6 +245,15 @@ public class Main {
 
             System.out.println("Animais disponíveis:");
             for (Animal a : disponiveis) System.out.println(a);
+
+            // mostra clientes disponíveis
+            System.out.println("\nClientes cadastrados:");
+            List<Cliente> clientes = clienteService.listarTodos();
+            if (clientes.isEmpty()) {
+                System.out.println("Nenhum cliente cadastrado.");
+                return;
+            }
+            for (Cliente c : clientes) System.out.println(c);
 
             Long animalId = lerLong("ID do animal: ");
             Long clienteId = lerLong("ID do cliente: ");

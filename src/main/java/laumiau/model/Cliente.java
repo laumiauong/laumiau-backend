@@ -4,13 +4,14 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "cliente")
+@PrimaryKeyJoinColumn(name = "usuario_id")
 public class Cliente extends Usuario {
 
-    // JPA exige construtor vazio
     public Cliente() {}
 
     public Cliente(Long id, String nome, String email, String senha) {
         super(id, nome, email, senha);
+        this.setTipo(TipoUsuario.cliente);
     }
 
     @Override

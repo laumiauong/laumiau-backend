@@ -1,11 +1,10 @@
 CREATE TABLE IF NOT EXISTS cliente (
-    id BIGSERIAL      PRIMARY KEY,
-    usuario_id BIGINT UNIQUE NOT NULL REFERENCES usuarios(id) ON DELETE RESTRICT
+                                       usuario_id BIGINT PRIMARY KEY REFERENCES usuarios(id) ON DELETE RESTRICT
     );
 
 CREATE TABLE IF NOT EXISTS animal (
-    id          BIGSERIAL PRIMARY KEY,
-    nome        VARCHAR(100)  NOT NULL,
+                                      id          BIGSERIAL PRIMARY KEY,
+                                      nome        VARCHAR(100)  NOT NULL,
     especie     VARCHAR(100)  NOT NULL,
     raca        VARCHAR(100)  NOT NULL,
     idade_meses INTEGER       NOT NULL CHECK (idade_meses >= 0),
@@ -16,9 +15,9 @@ CREATE TABLE IF NOT EXISTS animal (
     );
 
 CREATE TABLE IF NOT EXISTS adocoes (
-    id             BIGSERIAL PRIMARY KEY,
-    animal_id      BIGINT UNIQUE NOT NULL REFERENCES animal(id) ON DELETE RESTRICT,
-    cliente_id     BIGINT        NOT NULL REFERENCES cliente(id) ON DELETE RESTRICT,
+                                       id             BIGSERIAL PRIMARY KEY,
+                                       animal_id      BIGINT UNIQUE NOT NULL REFERENCES animal(id) ON DELETE RESTRICT,
+    cliente_id     BIGINT        NOT NULL REFERENCES cliente(usuario_id) ON DELETE RESTRICT,
     data_adocao    DATE          NOT NULL DEFAULT CURRENT_DATE,
     termo_assinado BOOLEAN       NOT NULL DEFAULT FALSE
     );
