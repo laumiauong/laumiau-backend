@@ -7,11 +7,19 @@ import jakarta.persistence.*;
 @PrimaryKeyJoinColumn(name = "usuario_id")
 public class Admin extends Usuario {
 
+    @OneToOne
+    @JoinColumn(name = "usuario_id", insertable = false, updatable = false)
+    private Usuario usuario;
+
     public Admin() {}
 
     public Admin(Long id, String nome, String email, String senha) {
         super(id, nome, email, senha);
+        this.setTipo(TipoUsuario.admin);
     }
+
+    public Usuario getUsuario() { return usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
 
     @Override
     public void exibirPermissoes() {
