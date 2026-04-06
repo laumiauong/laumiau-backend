@@ -28,26 +28,52 @@ public class Adocoes {
     public Adocoes() {}
 
     public Adocoes(Animal animal, Cliente cliente, boolean termoAssinado) {
-        this.animal = animal;
-        this.cliente = cliente;
-        this.dataAdocao = LocalDate.now();
-        this.termoAssinado = termoAssinado;
+            if(animal == null){
+                throw new IllegalArgumentException("Animal não pode ser nulo!");
+            }
+
+            if(cliente == null){
+                throw new IllegalArgumentException("Cliente não pode ser nulo!");
+            }
+
+            if(!termoAssinado){
+                throw new IllegalStateException("Adoção só pode ocorrer com termo assinado!");
+            }
+            if(animal.isAdotado()){
+                throw new IllegalStateException("Animal já está adotado!");
+            }
+
+            this.animal = animal;
+            this.cliente = cliente;
+            this.dataAdocao = LocalDate.now();
+            this.termoAssinado = true;
+            this.animal.adotar();
     }
 
     public Long getIdAdocao() { return idAdocao; }
-
     public Animal getAnimal() { return animal; }
-    public void setAnimal(Animal animal) { this.animal = animal; }
-
     public Cliente getCliente() { return cliente; }
-    public void setCliente(Cliente cliente) { this.cliente = cliente; }
-
+    public void setCliente(Cliente cliente) {
+        if(cliente == null){
+            throw new IllegalArgumentException("Cliente inválido!");
+        }
+        this.cliente = cliente;
+    }
     public LocalDate getDataAdocao() { return dataAdocao; }
 
     public boolean isTermoAssinado() { return termoAssinado; }
-    public void setTermoAssinado(boolean termoAssinado) { this.termoAssinado = termoAssinado; }
-
+    public void setTermoAssinado(boolean termoAssinado) {
+        if(!termoAssinado){
+            throw new IllegalStateException("Não é permitido remover o termo assinado!");
+        }
+        this.termoAssinado = true;
+    }
     public String gerarResumo() {
+
+        if(animal == null || cliente == null){
+            throw new IllegalStateException("Dados da adoção incompletos!");
+        }
+
         return "\nRegistro de Adoção" +
                 "\nID Adoção: " + idAdocao +
                 "\nAnimal: " + animal.getNome() +
