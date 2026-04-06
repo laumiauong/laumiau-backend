@@ -5,19 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d3652bbd-39c9-4ec6-b6a4-217d986ca188" name="Changes" comment="Código arrumado v2">
-      <change afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/TipoUsuario.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V3__criar_triggers.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Admin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Admin.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Adocoes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Adocoes.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Animal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Animal.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Cliente.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Cliente.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Tutor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Tutor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Usuario.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Usuario.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/service/AdocoesService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/service/AdocoesService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/db/migration/V2__criar_tabelas_faltantes.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V2__criar_tabelas_faltantes.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

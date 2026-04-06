@@ -40,11 +40,11 @@ public class Animal {
     public Animal() {}
 
     public Animal(String nome, String especie, String raca, int idade, Sexo sexo, boolean vacinado, Porte porte) {
-        this.nome = nome;
-        this.especie = especie;
-        this.raca = raca;
+        setNome(nome);
+        setEspecie(especie);
+        setRaca(raca);
         setIdade(idade);
-        this.sexo = sexo;
+        setSexo(sexo);
         this.status = StatusAnimal.DISPONIVEL;
         this.vacinado = vacinado;
         this.porte = porte;
@@ -53,27 +53,49 @@ public class Animal {
     public Long getId() { return id; }
 
     public String getNome() { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
-
+    public void setNome(String nome) {
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome é obrigatório.");
+        }
+        this.nome = nome;
+    }
     public String getEspecie() { return especie; }
-    public void setEspecie(String especie) { this.especie = especie; }
+    public void setEspecie(String especie) {
+        if(especie == null || especie.trim().isEmpty()){
+            throw new IllegalArgumentException("Espécie é obrigatória.");
+        }
+        this.especie = especie; }
 
     public String getRaca() { return raca; }
-    public void setRaca(String raca) { this.raca = raca; }
+    public void setRaca(String raca) {
+        if(raca == null || raca.trim().isEmpty()){
+          throw new IllegalArgumentException("Raça é obrigatória.");
+          }
+            this.raca = raca;
+        }
 
     public int getIdade() { return idade; }
     public void setIdade(int idade) {
         if (idade >= 0) {
             this.idade = idade;
         } else {
-            throw new RuntimeException("Idade inválida! A idade não pode ser negativa.");
+            throw new IllegalArgumentException("Idade não pode ser negativa.");
         }
     }
-
+    public void setSexo(Sexo sexo) {
+        if (sexo == null) {
+            throw new IllegalArgumentException("Sexo é obrigatório.");
+        }
+        this.sexo = sexo;
+    }
     public Sexo getSexo() { return sexo; }
 
     public StatusAnimal getStatus() { return status; }
-    public void setStatus(StatusAnimal status) { this.status = status; }
+    public void setStatus(StatusAnimal status) {
+        if(status == null){
+            throw new IllegalArgumentException("Status não pode ser nulo.");
+        }
+        this.status = status; }
 
     public boolean isVacinado() { return vacinado; }
     public void vacinar() { this.vacinado = true; }
@@ -85,12 +107,10 @@ public class Animal {
     }
 
     public void adotar() {
-        if (status != StatusAnimal.ADOTADO) {
+        if (status == StatusAnimal.ADOTADO) {
+            throw new IllegalStateException("Esse animal já foi adotado.");
+            }
             this.status = StatusAnimal.ADOTADO;
-            System.out.println("Animal adotado!");
-        } else {
-            System.out.println("Esse animal já foi adotado!");
-        }
     }
 
     @Override
