@@ -5,19 +5,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d3652bbd-39c9-4ec6-b6a4-217d986ca188" name="Changes" comment="Código arrumado v2">
-      <change afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/TipoUsuario.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V3__criar_triggers.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Projeto_LauMiau_Final/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Projeto_LauMiau_Final/.idea/compiler.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Projeto_LauMiau_Final/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Projeto_LauMiau_Final/.idea/jarRepositories.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Projeto_LauMiau_Final/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Projeto_LauMiau_Final/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Projeto_LauMiau_Final/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Projeto_LauMiau_Final/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Projeto_LauMiau_Final/src/main/java/laumiau/Animal.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Projeto_LauMiau_Final/src/main/java/laumiau/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Projeto_LauMiau_Final/src/main/java/laumiau/Relatorio.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Admin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Admin.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Adocoes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Adocoes.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Animal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Animal.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Cliente.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Cliente.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Tutor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Tutor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Usuario.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Usuario.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/service/AdocoesService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/service/AdocoesService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/db/migration/V2__criar_tabelas_faltantes.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V2__criar_tabelas_faltantes.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/persistence.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/persistence.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/db/migration/V1__criar_tabelas.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/db/migration/V2__criar_tabelas_faltantes.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V1__criar_tabelas_faltantes.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/db/migration/V3__criar_triggers.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V2__criar_triggers.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,12 +47,12 @@
     &quot;assignee&quot;: &quot;maystins&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/laumiauong/laumiau-backend.git&quot;,
-    &quot;accountId&quot;: &quot;472abda3-6ab6-4b0e-8617-85dabe62d65f&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/laumiauong/laumiau-backend.git",
+    "accountId": "1d3c4cb6-6031-4052-b413-2b94d3ca7294"
   }
-}</component>
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 4
@@ -59,27 +65,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;develop&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Main.executor": "Run",
+    "Maven.LauMiauBack [clean].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;postgresql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
     ]
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="laumiau.Main" />
