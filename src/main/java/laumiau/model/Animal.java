@@ -66,7 +66,7 @@ public class Animal {
         if (idade >= 0) {
             this.idade = idade;
         } else {
-            System.out.println("Idade inválida!");
+            throw new RuntimeException("Idade inválida! A idade não pode ser negativa.");
         }
     }
 

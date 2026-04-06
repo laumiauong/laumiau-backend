@@ -9,6 +9,7 @@ public class Adocoes {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long idAdocao;
 
     @ManyToOne                          // muitas adoções podem ter um animal

@@ -20,14 +20,12 @@ public abstract class Usuario {
     @Column(nullable = false)
     private String senha;
 
-    // --- RELACIONAMENTO 1:1 (Adicionado para Mensal II) ---
-    // O CascadeType.ALL garante que ao salvar o usuário, o endereço também seja salvo.
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "endereco_id", referencedColumnName = "id")
-    private Endereco endereco;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TipoUsuario tipo;
 
-    // JPA exige construtor vazio
-    public Usuario() {}
+    public Usuario() {
+    }
 
     public Usuario(Long id, String nome, String email, String senha) {
         this.id = id;
@@ -36,19 +34,37 @@ public abstract class Usuario {
         this.senha = senha;
     }
 
-    // Getters e Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getNome() { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public String getNome() {
+        return nome;
+    }
 
-    // Getter e Setter do Endereço
-    public Endereco getEndereco() { return endereco; }
-    public void setEndereco(Endereco endereco) { this.endereco = endereco; }
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public TipoUsuario getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(TipoUsuario tipo) {
+        this.tipo = tipo;
+    }
 
     public boolean autenticar(String senhaDigitada) {
         return this.senha.equals(senhaDigitada);
@@ -61,7 +77,6 @@ public abstract class Usuario {
         return "ID: " + id +
                 " | Nome: " + nome +
                 " | Email: " + email +
-                " | Tipo: " + this.getClass().getSimpleName() +
-                (endereco != null ? " | Cidade: " + endereco.getCidade() : "");
+                " | Tipo: " + this.getClass().getSimpleName();
     }
 }
