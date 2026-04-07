@@ -303,8 +303,21 @@ public class Main {
             String nome = lerTexto("Nome: ");
             String email = lerTexto("Email: ");
             String senha = lerTexto("Senha: ");
-            Cliente cliente = new Cliente(null, nome, email, senha);
+
+            System.out.println("\n--- Endereço ---");
+            String logradouro = lerTexto("Logradouro: ");
+            String cidade = lerTexto("Cidade: ");
+            String estado = lerTexto("Estado: ");
+            String cep = lerTexto("CEP: ");
+
+            Endereco endereco = new Endereco(logradouro, cidade, estado, cep);
+
+            Cliente cliente = new Cliente(null, nome, email, senha, endereco);
+
             clienteService.cadastrar(cliente);
+
+            System.out.println("Cliente cadastrado com sucesso!");
+
         } catch (Exception e) {
             System.out.println("Erro: " + e.getMessage());
         }

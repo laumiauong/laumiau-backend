@@ -9,7 +9,7 @@ public class Cliente extends Usuario {
 
     public Cliente() {}
 
-    public Cliente(Long id, String nome, String email, String senha) {
+    public Cliente(Long id, String nome, String email, String senha, Endereco endereco) {
         super(id, nome, email, senha);
         this.setTipo(TipoUsuario.cliente);
     }
