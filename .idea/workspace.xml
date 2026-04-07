@@ -5,11 +5,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d3652bbd-39c9-4ec6-b6a4-217d986ca188" name="Changes" comment="Código arrumado v2">
+      <change afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Vacina.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/laumiau/repository/JoinRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/laumiau/repository/VacinaRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/laumiau/service/VacinaService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V4__criar_tabelas_vacina.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Cliente.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Cliente.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Usuario.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Usuario.java" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Admin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Admin.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Animal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Animal.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/persistence.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/persistence.xml" afterDir="false" />
+>>>>>>> 6fb713c306f900629f2fd45e7259441a39f5d32c
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,8 +32,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="Enum" />
+        <option value="Class" />
       </list>
     </option>
   </component>

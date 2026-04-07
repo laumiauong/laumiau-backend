@@ -1,6 +1,8 @@
 package laumiau.model;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "animal")
@@ -35,6 +37,9 @@ public class Animal {
 
     @Enumerated(EnumType.STRING)
     private Porte porte;
+
+    @OneToMany
+    private List<Vacina> vacinas = new ArrayList<>();
 
     // JPA exige construtor vazio
     public Animal() {}
@@ -73,6 +78,9 @@ public class Animal {
           }
             this.raca = raca;
         }
+
+    public List<Vacina> getVacinas() { return vacinas; }
+    public void adicionarVacina(Vacina vacina) { this.vacinas.add(vacina); }
 
     public int getIdade() { return idade; }
     public void setIdade(int idade) {

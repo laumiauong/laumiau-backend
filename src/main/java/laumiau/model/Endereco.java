@@ -1,9 +1,10 @@
+
 package laumiau.model;
 
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "enderecos")
+@Table(name = "endereco") // Ajustado para o singular
 public class Endereco {
 
     @Id
@@ -22,10 +23,10 @@ public class Endereco {
     @Column(nullable = false)
     private String cep;
 
-
-    @OneToOne(mappedBy = "endereco")
+    // AJUSTE AQUI: O Endereco agora é o "dono" da ligação física no banco
+    @OneToOne
+    @JoinColumn(name = "usuario_id") // Nome da coluna que liga as duas tabelas
     private Usuario usuario;
-
 
     public Endereco() {}
 
@@ -36,8 +37,9 @@ public class Endereco {
         this.cep = cep;
     }
 
-
+    // Getters e Setters
     public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public String getLogradouro() { return logradouro; }
     public void setLogradouro(String logradouro) { this.logradouro = logradouro; }

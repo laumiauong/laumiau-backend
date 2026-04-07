@@ -1,9 +1,10 @@
 package laumiau.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "usuarios")
+@Table(name = "usuario") // Ajustado para o singular, igual ao Banco de Dados
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Usuario {
 
@@ -24,6 +25,7 @@ public abstract class Usuario {
     @Column(nullable = false)
     private TipoUsuario tipo;
 
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "endereco_id")
     private Endereco endereco;
@@ -39,7 +41,11 @@ public abstract class Usuario {
         this.endereco = endereco;
     }
 
+<<<<<<< HEAD
 
+=======
+    // Getters e Setters
+>>>>>>> 6fb713c306f900629f2fd45e7259441a39f5d32c
     public Long getId() {
         return id;
     }
@@ -64,6 +70,14 @@ public abstract class Usuario {
         this.email = email;
     }
 
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
     public TipoUsuario getTipo() {
         return tipo;
     }
@@ -72,9 +86,19 @@ public abstract class Usuario {
         this.tipo = tipo;
     }
 
+<<<<<<< HEAD
     public Endereco getEndereco() { return endereco;}
 
     public void setEndereco(Endereco endereco) {this.endereco = endereco;}
+=======
+    public Endereco getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(Endereco endereco) {
+        this.endereco = endereco;
+    }
+>>>>>>> 6fb713c306f900629f2fd45e7259441a39f5d32c
 
     public boolean autenticar(String senhaDigitada) {
         return this.senha.equals(senhaDigitada);

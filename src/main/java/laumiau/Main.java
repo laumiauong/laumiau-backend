@@ -1,5 +1,4 @@
 package laumiau;
-
 import jakarta.persistence.EntityManager;
 import laumiau.infra.JPAUtil;
 import laumiau.model.*;
@@ -12,7 +11,11 @@ import laumiau.repository.AnimalRepository;
 import laumiau.repository.ClienteRepository;
 import laumiau.repository.AdocoesRepository;
 import laumiau.repository.UsuarioRepository;
-
+import laumiau.repository.JoinRepository;
+import laumiau.repository.VacinaRepository;
+import laumiau.service.VacinaService;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
@@ -20,10 +23,13 @@ import java.util.Scanner;
 public class Main {
 
     private static final Scanner scanner = new Scanner(System.in);
+    private static EntityManager em;
     private static AnimalService animalService;
     private static ClienteService clienteService;
     private static AdocoesService adocoesService;
     private static RelatorioService relatorioService;
+    private static VacinaService vacinaService;
+
 
     public static void main(String[] args) {
 
@@ -35,19 +41,20 @@ public class Main {
         flyway.migrate();
         System.out.println("Banco de dados atualizado com sucesso!");
         // jpa
-        EntityManager em = JPAUtil.getEntityManager();
+        em = JPAUtil.getEntityManager();
         // repositorios
         AnimalRepository animalRepository = new AnimalRepository(em);
         ClienteRepository clienteRepository = new ClienteRepository(em);
         AdocoesRepository adocoesRepository = new AdocoesRepository(em);
         UsuarioRepository usuarioRepository = new UsuarioRepository(em);
+        VacinaRepository vacinaRepository = new VacinaRepository(em);
         // services
+        vacinaService = new VacinaService(vacinaRepository, animalRepository);
         animalService = new AnimalService(animalRepository);
         clienteService = new ClienteService(clienteRepository, usuarioRepository);
         adocoesService = new AdocoesService(adocoesRepository, animalRepository, clienteRepository);
         relatorioService = new RelatorioService(em);
 
-        // inicia menu
         boolean executando = true;
         while (executando) {
             exibirMenuPrincipal();
@@ -63,6 +70,10 @@ public class Main {
                 case 7: listarAdocoes(); break;
                 case 8: cadastrarCliente(); break;
                 case 9: relatorioService.gerarRelatorio(); break;
+                case 10: exibirJoins(); break;
+                case 11: registrarVacina(); break;
+                case 12: listarVacinas(); break;
+                case 13: vacinasPorAnimal(); break;
                 case 0:
                     executando = false;
                     em.close();
@@ -86,6 +97,10 @@ public class Main {
         System.out.println("7. Listar adoções");
         System.out.println("8. Cadastrar cliente");
         System.out.println("9. Relatório de negócio");
+        System.out.println("10. Consultas JOIN");
+        System.out.println("11. Registrar vacina");
+        System.out.println("12. Listar vacinas");
+        System.out.println("13. Vacinas por animal");
         System.out.println("0. Sair");
         System.out.println("==============================================");
     }
@@ -303,6 +318,94 @@ public class Main {
 
             System.out.println("Cliente cadastrado com sucesso!");
 
+        } catch (Exception e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+    }
+
+    private static void exibirJoins() {
+        System.out.println("\n--- Consultas JOIN ---");
+        System.out.println("1. INNER JOIN - Adoções com animal e cliente");
+        System.out.println("2. LEFT JOIN  - Todos os animais com adoções");
+        System.out.println("3. RIGHT JOIN - Todas as adoções com animais");
+        System.out.println("4. FULL JOIN  - Todos os animais e adoções");
+
+        int opcao = lerInt("Escolha: ");
+        JoinRepository joinRepo = new JoinRepository(em);
+
+        try {
+            switch (opcao) {
+                case 1:
+                    System.out.println("\n--- INNER JOIN ---");
+                    joinRepo.imprimirResultados(
+                            joinRepo.innerJoinAdocoes(),
+                            new String[]{"ID Adoção", "Animal", "Espécie", "Cliente", "Data", "Termo"}
+                    );
+                    break;
+                case 2:
+                    System.out.println("\n--- LEFT JOIN ---");
+                    joinRepo.imprimirResultados(
+                            joinRepo.leftJoinAnimais(),
+                            new String[]{"ID Animal", "Nome", "Espécie", "Status", "ID Adoção", "Data"}
+                    );
+                    break;
+                case 3:
+                    System.out.println("\n--- RIGHT JOIN ---");
+                    joinRepo.imprimirResultados(
+                            joinRepo.rightJoinAdocoes(),
+                            new String[]{"ID Animal", "Nome", "ID Adoção", "Data"}
+                    );
+                    break;
+                case 4:
+                    System.out.println("\n--- FULL JOIN ---");
+                    joinRepo.imprimirResultados(
+                            joinRepo.fullJoinAnimaisAdocoes(),
+                            new String[]{"ID Animal", "Nome", "ID Adoção", "Data"}
+                    );
+                    break;
+                default:
+                    System.out.println("Opção inválida.");
+            }
+        } catch (Exception e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+    }
+
+    private static void registrarVacina() {
+        System.out.println("\n--- Registrar Vacina ---");
+        try {
+            Long animalId = lerLong("ID do animal: ");
+            String nome = lerTexto("Nome da vacina: ");
+            LocalDate dataAplicacao = LocalDate.now();
+            String proximaTexto = lerTextoOpcional("Próxima dose (dd-MM-yyyy, Enter para pular): ");
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            LocalDate proximaDose = proximaTexto.isEmpty() ? null : LocalDate.parse(proximaTexto, formatter);
+
+            vacinaService.registrar(animalId, nome, dataAplicacao, proximaDose);
+        } catch (Exception e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+    }
+
+    private static void listarVacinas() {
+        System.out.println("\n--- Lista de Vacinas ---");
+        try {
+            var vacinas = vacinaService.listarTodos();
+            if (vacinas.isEmpty()) System.out.println("Nenhuma vacina registrada.");
+            else vacinas.forEach(System.out::println);
+        } catch (Exception e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+    }
+
+    private static void vacinasPorAnimal() {
+        System.out.println("\n--- Vacinas por Animal ---");
+        try {
+            Long animalId = lerLong("ID do animal: ");
+            var vacinas = vacinaService.listarPorAnimal(animalId);
+            if (vacinas.isEmpty()) System.out.println("Nenhuma vacina encontrada para este animal.");
+            else vacinas.forEach(System.out::println);
         } catch (Exception e) {
             System.out.println("Erro: " + e.getMessage());
         }
