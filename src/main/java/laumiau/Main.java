@@ -55,7 +55,6 @@ public class Main {
         adocoesService = new AdocoesService(adocoesRepository, animalRepository, clienteRepository);
         relatorioService = new RelatorioService(em);
 
-        // inicia menu
         boolean executando = true;
         while (executando) {
             exibirMenuPrincipal();

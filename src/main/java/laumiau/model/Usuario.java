@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "usuarios")
+@Table(name = "usuario") // Ajustado para o singular, igual ao Banco de Dados
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Usuario {
 
@@ -25,6 +25,10 @@ public abstract class Usuario {
     @Column(nullable = false)
     private TipoUsuario tipo;
 
+    // ESTE É O CAMPO QUE ESTAVA FALTANDO E CAUSANDO O ERRO:
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
+    private Endereco endereco;
+
     public Usuario() {
     }
 
@@ -35,6 +39,7 @@ public abstract class Usuario {
         this.senha = senha;
     }
 
+    // Getters e Setters
     public Long getId() {
         return id;
     }
@@ -73,6 +78,14 @@ public abstract class Usuario {
 
     public void setTipo(TipoUsuario tipo) {
         this.tipo = tipo;
+    }
+
+    public Endereco getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(Endereco endereco) {
+        this.endereco = endereco;
     }
 
     public boolean autenticar(String senhaDigitada) {
