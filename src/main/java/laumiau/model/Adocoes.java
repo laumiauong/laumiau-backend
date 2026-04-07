@@ -67,7 +67,7 @@ public class Adocoes {
         if(!termoAssinado){
             throw new IllegalStateException("Não é permitido remover o termo assinado!");
         }
-        this.termoAssinado = true;
+        this.termoAssinado = termoAssinado;
     }
     public String gerarResumo() {
 

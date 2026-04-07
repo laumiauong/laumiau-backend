@@ -86,10 +86,6 @@ public abstract class Usuario {
     }
 
 
-    public Endereco getEndereco() { return endereco;}
-
-    public void setEndereco(Endereco endereco) {this.endereco = endereco;}
-
     public Endereco getEndereco() {
         return endereco;
     }

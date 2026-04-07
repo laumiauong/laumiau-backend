@@ -23,9 +23,7 @@ public class Endereco {
     @Column(nullable = false)
     private String cep;
 
-    // AJUSTE AQUI: O Endereco agora é o "dono" da ligação física no banco
-    @OneToOne
-    @JoinColumn(name = "usuario_id") // Nome da coluna que liga as duas tabelas
+    @OneToOne(mappedBy = "endereco")
     private Usuario usuario;
 
     public Endereco() {}
