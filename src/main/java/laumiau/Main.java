@@ -34,7 +34,7 @@ public class Main {
     public static void main(String[] args) {
 
         Flyway flyway = Flyway.configure()
-                .dataSource("jdbc:postgresql://localhost:5432/postgres", "postgres", "2811")
+                .dataSource("jdbc:postgresql://localhost:5432/postgres", "postgres", "123")
                 .locations("classpath:db/migration")
                 .baselineOnMigrate(true)
                 .load();
@@ -312,7 +312,7 @@ public class Main {
 
             Endereco endereco = new Endereco(logradouro, cidade, estado, cep);
 
-            Cliente cliente = new Cliente(null, nome, email, senha, endereco);
+            Cliente cliente = new Cliente(null, nome, email, senha);
 
             clienteService.cadastrar(cliente);
 
