@@ -74,6 +74,7 @@ public class Main {
                 case 11: registrarVacina(); break;
                 case 12: listarVacinas(); break;
                 case 13: vacinasPorAnimal(); break;
+                case 14: listarClientes(); break;
                 case 0:
                     executando = false;
                     em.close();
@@ -101,6 +102,7 @@ public class Main {
         System.out.println("11. Registrar vacina");
         System.out.println("12. Listar vacinas");
         System.out.println("13. Vacinas por animal");
+        System.out.println("14. Listar clientes");
         System.out.println("0. Sair");
         System.out.println("==============================================");
     }
@@ -313,7 +315,7 @@ public class Main {
             Endereco endereco = new Endereco(logradouro, cidade, estado, cep);
 
             Cliente cliente = new Cliente(null, nome, email, senha);
-
+            cliente.setEndereco(endereco);
             clienteService.cadastrar(cliente);
 
             System.out.println("Cliente cadastrado com sucesso!");
@@ -409,6 +411,32 @@ public class Main {
         } catch (Exception e) {
             System.out.println("Erro: " + e.getMessage());
         }
+    }
+
+    private static void listarClientes() {
+        System.out.println("\n--- LISTA DE CLIENTES ---");
+
+        try {
+            List<Cliente> clientes = clienteService.listarTodos();
+
+            if (clientes.isEmpty()) {
+                System.out.println("Nenhum cliente cadastrado.");
+            } else {
+                System.out.println("ID | NOME | EMAIL");
+                System.out.println("-----------------------");
+
+                for (Cliente cliente : clientes) {
+                    System.out.println(
+                            cliente.getId() + " | " +
+                                    cliente.getNome() + " | " +
+                                    cliente.getEmail()
+                    );
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+        System.out.println("-----------------------\n");
     }
 
     // métodos auxiliares
