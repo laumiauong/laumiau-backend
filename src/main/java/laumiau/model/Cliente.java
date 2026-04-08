@@ -7,10 +7,14 @@ import jakarta.persistence.*;
 @PrimaryKeyJoinColumn(name = "usuario_id")
 public class Cliente extends Usuario {
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "endereco_id") // cria a FK na tabela cliente
+    private Endereco endereco;
+
     public Cliente() {}
 
-    public Cliente(Long id, String nome, String email, String senha, Endereco endereco) {
-        super(id, nome, email, senha, endereco);
+    public Cliente(Long id, String nome, String email, String senha) {
+        super(id, nome, email, senha);
         this.setTipo(TipoUsuario.cliente);
     }
 
