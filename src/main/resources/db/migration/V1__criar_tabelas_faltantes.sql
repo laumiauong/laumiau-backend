@@ -1,4 +1,3 @@
--- 1. Criar a tabela pai primeiro
 CREATE TABLE IF NOT EXISTS usuario (
                                        id BIGSERIAL PRIMARY KEY,
                                        nome VARCHAR(100) NOT NULL,
@@ -6,7 +5,6 @@ CREATE TABLE IF NOT EXISTS usuario (
                                        senha VARCHAR(100) NOT NULL
 );
 
--- 2. Agora as tabelas que dependem do usuario
 CREATE TABLE IF NOT EXISTS cliente (
                                        usuario_id BIGINT PRIMARY KEY REFERENCES usuario(id) ON DELETE RESTRICT
 );

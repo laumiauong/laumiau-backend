@@ -38,10 +38,12 @@ public class Animal {
     @Enumerated(EnumType.STRING)
     private Porte porte;
 
-    @OneToMany
+    @OneToMany(mappedBy = "animal")
     private List<Vacina> vacinas = new ArrayList<>();
 
-    // JPA exige construtor vazio
+    @ManyToMany(mappedBy = "animaisInteresse")
+    private List<Tutor> tutoresInteressados = new ArrayList<>();
+
     public Animal() {}
 
     public Animal(String nome, String especie, String raca, int idade, Sexo sexo, boolean vacinado, Porte porte) {
@@ -70,6 +72,7 @@ public class Animal {
             throw new IllegalArgumentException("Espécie é obrigatória.");
         }
         this.especie = especie; }
+
 
     public String getRaca() { return raca; }
     public void setRaca(String raca) {

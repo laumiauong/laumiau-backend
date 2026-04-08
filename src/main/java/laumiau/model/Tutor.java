@@ -12,23 +12,27 @@ public class Tutor extends Usuario {
     @Column(unique = true, nullable = false)
     private String telefone;
 
-    @OneToMany                                    // um tutor pode ter muitos animais adotados
-    @JoinColumn(name = "cliente_id")
-    private List<Animal> petsAdotados = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(
+            name = "tutor_animal",
+            joinColumns = @JoinColumn(name = "tutor_id"),
+            inverseJoinColumns = @JoinColumn(name = "animal_id")
+    )
+    private List<Animal> animaisInteresse = new ArrayList<>();
 
-    // JPA exige construtor vazio
     public Tutor() {}
 
     public Tutor(Long id, String nome, String email, String senha, String telefone) {
         super(id, nome, email, senha);
         this.telefone = telefone;
+        this.setTipo(TipoUsuario.tutor);
     }
 
     public String getTelefone() { return telefone; }
     public void setTelefone(String telefone) { this.telefone = telefone; }
 
-    public void adicionarPet(Animal animal) { this.petsAdotados.add(animal); }
-    public List<Animal> getPetsAdotados() { return petsAdotados; }
+    public List<Animal> getAnimaisInteresse() { return animaisInteresse; }
+    public void adicionarInteresse(Animal animal) { this.animaisInteresse.add(animal); }
 
     public Adocoes preencherFormulario(Animal animal, boolean termoAssinado) {
         Cliente cliente = new Cliente(this.getId(), this.getNome(), this.getEmail(), null);

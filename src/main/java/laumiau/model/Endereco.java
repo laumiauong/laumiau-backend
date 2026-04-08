@@ -4,7 +4,7 @@ package laumiau.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "endereco") // Ajustado para o singular
+@Table(name = "endereco")
 public class Endereco {
 
     @Id
@@ -23,9 +23,8 @@ public class Endereco {
     @Column(nullable = false)
     private String cep;
 
-    // AJUSTE AQUI: O Endereco agora é o "dono" da ligação física no banco
     @OneToOne
-    @JoinColumn(name = "usuario_id") // Nome da coluna que liga as duas tabelas
+    @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
     public Endereco() {}
