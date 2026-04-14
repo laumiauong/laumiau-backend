@@ -5,10 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5f80c2d0-0380-4745-b251-254a12458a7d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Usuario.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Usuario.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/service/AdocoesService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/service/AdocoesService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -74,6 +74,7 @@ public class Main {
                 case 11: registrarVacina(); break;
                 case 12: listarVacinas(); break;
                 case 13: vacinasPorAnimal(); break;
+                case 14: listarClientes();break;
                 case 0:
                     executando = false;
                     em.close();
@@ -101,6 +102,7 @@ public class Main {
         System.out.println("11. Registrar vacina");
         System.out.println("12. Listar vacinas");
         System.out.println("13. Vacinas por animal");
+        System.out.println("14. Listar clientes");
         System.out.println("0. Sair");
         System.out.println("==============================================");
     }
@@ -275,6 +277,20 @@ public class Main {
             boolean termo = lerBoolean("Termo assinado? (s/n): ");
 
             adocoesService.registrarAdocao(animalId, clienteId, termo);
+        } catch (Exception e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+    }
+
+    private static void listarClientes() {
+        System.out.println("\n--- Lista de Clientes ---");
+        try {
+            List<Cliente> clientes = clienteService.listarTodos();
+            if (clientes.isEmpty()) {
+                System.out.println("Nenhum cliente cadastrado.");
+                return;
+            }
+            for (Cliente c : clientes) System.out.println(c);
         } catch (Exception e) {
             System.out.println("Erro: " + e.getMessage());
         }
