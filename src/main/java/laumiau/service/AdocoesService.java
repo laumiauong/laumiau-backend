@@ -35,13 +35,9 @@ public class AdocoesService {
             throw new RuntimeException("Cliente não encontrado!");
         }
 
-        // salva a adoção primeiro
+        // salva a adoção
         Adocoes adocao = new Adocoes(animal, cliente, termoAssinado);
         adocoesRepository.salvar(adocao);
-
-        // depois atualiza o animal
-        animal.adotar();
-        animalRepository.atualizar(animal);
 
         System.out.println("Adoção registrada com sucesso!");
     }

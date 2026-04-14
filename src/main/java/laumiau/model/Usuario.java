@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "usuario") // Ajustado para o singular, igual ao Banco de Dados
+@Table(name = "usuarios") // Ajustado para o singular, igual ao Banco de Dados
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Usuario {
 
