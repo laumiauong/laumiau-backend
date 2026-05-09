@@ -4,15 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d3652bbd-39c9-4ec6-b6a4-217d986ca188" name="Changes" comment="Código arrumado v2">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/767692a0-0128-4a2d-8833-3c1d67ed73ec.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/767692a0-0128-4a2d-8833-3c1d67ed73ec.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/767692a0-0128-4a2d-8833-3c1d67ed73ec/storage_v2/_src_/database/postgres.edMnLQ/schema/public.abK9xQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/767692a0-0128-4a2d-8833-3c1d67ed73ec/storage_v2/_src_/database/postgres.edMnLQ/schema/public.abK9xQ.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/767692a0-0128-4a2d-8833-3c1d67ed73ec/storage_v2/_src_/database/postgres.edMnLQ/schema/public.abK9xQ.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/persistence.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/persistence.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/db/migration/V1__criar_tabelas_faltantes.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V1__criar_tabelas.sql" afterDir="false" />
-    </list>
+    <list default="true" id="d3652bbd-39c9-4ec6-b6a4-217d986ca188" name="Changes" comment="Código arrumado v2" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -40,12 +32,12 @@
     &quot;assignee&quot;: &quot;maystins&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/laumiauong/laumiau-backend.git",
-    "accountId": "658065e2-cb89-4655-8bab-ad04ed23818e"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/laumiauong/laumiau-backend.git&quot;,
+    &quot;accountId&quot;: &quot;658065e2-cb89-4655-8bab-ad04ed23818e&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 4

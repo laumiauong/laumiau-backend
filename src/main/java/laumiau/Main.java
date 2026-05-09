@@ -1,19 +1,11 @@
 package laumiau;
+
 import jakarta.persistence.EntityManager;
 import laumiau.infra.JPAUtil;
 import laumiau.model.*;
-import laumiau.service.AdocoesService;
-import laumiau.service.AnimalService;
-import laumiau.service.ClienteService;
-import laumiau.service.RelatorioService;
+import laumiau.service.*;
+import laumiau.repository.*;
 import org.flywaydb.core.Flyway;
-import laumiau.repository.AnimalRepository;
-import laumiau.repository.ClienteRepository;
-import laumiau.repository.AdocoesRepository;
-import laumiau.repository.UsuarioRepository;
-import laumiau.repository.JoinRepository;
-import laumiau.repository.VacinaRepository;
-import laumiau.service.VacinaService;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -29,82 +21,144 @@ public class Main {
     private static AdocoesService adocoesService;
     private static RelatorioService relatorioService;
     private static VacinaService vacinaService;
+    private static UsuarioRepository usuarioRepository;
 
+    private static Usuario usuarioLogado = null;
 
     public static void main(String[] args) {
+        configurarBanco();
+        inicializarServicos();
 
+        boolean executando = true;
+        while (executando) {
+            if (usuarioLogado == null) {
+                executando = exibirMenuLogin();
+            } else {
+                exibirMenuPrincipal();
+            }
+        }
+    }
+
+    private static void configurarBanco() {
         Flyway flyway = Flyway.configure()
                 .dataSource("jdbc:postgresql://localhost:5432/postgres", "postgres", "123")
                 .locations("classpath:db/migration")
                 .baselineOnMigrate(true)
                 .load();
+        flyway.repair();
         flyway.migrate();
         System.out.println("Banco de dados atualizado com sucesso!");
-        // jpa
         em = JPAUtil.getEntityManager();
-        // repositorios
+    }
+
+    private static void inicializarServicos() {
         AnimalRepository animalRepository = new AnimalRepository(em);
         ClienteRepository clienteRepository = new ClienteRepository(em);
         AdocoesRepository adocoesRepository = new AdocoesRepository(em);
-        UsuarioRepository usuarioRepository = new UsuarioRepository(em);
+        usuarioRepository = new UsuarioRepository(em);
         VacinaRepository vacinaRepository = new VacinaRepository(em);
-        // services
+
         vacinaService = new VacinaService(vacinaRepository, animalRepository);
         animalService = new AnimalService(animalRepository);
         clienteService = new ClienteService(clienteRepository, usuarioRepository);
         adocoesService = new AdocoesService(adocoesRepository, animalRepository, clienteRepository);
         relatorioService = new RelatorioService(em);
+    }
 
-        boolean executando = true;
-        while (executando) {
-            exibirMenuPrincipal();
-            int opcao = lerInt("Escolha uma opção: ");
+    private static boolean exibirMenuLogin() {
+        System.out.println("\n========== LAUMIAU - ACESSO ==========");
+        System.out.println("1. Fazer Login");
+        System.out.println("2. Cadastrar Novo Cliente");
+        System.out.println("0. Sair");
+        int opcao = lerInt("Escolha: ");
 
-            switch (opcao) {
-                case 1: cadastrarAnimal(); break;
-                case 2: listarAnimais(); break;
-                case 3: atualizarAnimal(); break;
-                case 4: removerAnimal(); break;
-                case 5: buscarAnimais(); break;
-                case 6: registrarAdocao(); break;
-                case 7: listarAdocoes(); break;
-                case 8: cadastrarCliente(); break;
-                case 9: relatorioService.gerarRelatorio(); break;
-                case 10: exibirJoins(); break;
-                case 11: registrarVacina(); break;
-                case 12: listarVacinas(); break;
-                case 13: vacinasPorAnimal(); break;
-                case 14: listarClientes(); break;
-                case 0:
-                    executando = false;
-                    em.close();
-                    JPAUtil.fechar();
-                    System.out.println("Encerrando sistema... Até logo!");
-                    break;
-                default:
-                    System.out.println("Opção inválida. Tente novamente.");
-            }
+        switch (opcao) {
+            case 1: realizarLogin(); return true;
+            case 2: cadastrarCliente(); return true;
+            case 0: return false;
+            default: return true;
+        }
+    }
+
+    private static void realizarLogin() {
+        System.out.println("\n--- LOGIN ---");
+        String email = lerTexto("Email: ");
+        String senha = lerTexto("Senha: ");
+
+        Usuario usuario = usuarioRepository.buscarPorEmail(email);
+
+        if (usuario != null && usuario.autenticar(senha)) {
+            usuarioLogado = usuario;
+            System.out.println("\nBem-vindo(a), " + usuario.getNome() + "!");
+            System.out.println("Perfil: " + usuario.getTipo().toString().toUpperCase());
+        } else {
+            System.out.println("Erro: Email ou senha inválidos.");
         }
     }
 
     private static void exibirMenuPrincipal() {
-        System.out.println("\n========== LAUMIAU - SISTEMA DA ONG ==========");
-        System.out.println("1. Cadastrar animal");
-        System.out.println("2. Listar animais");
-        System.out.println("3. Atualizar animal");
-        System.out.println("4. Remover animal");
-        System.out.println("5. Buscar animais (filtros)");
-        System.out.println("6. Registrar adoção");
-        System.out.println("7. Listar adoções");
-        System.out.println("8. Cadastrar cliente");
-        System.out.println("9. Relatório de negócio");
-        System.out.println("10. Consultas JOIN");
-        System.out.println("11. Registrar vacina");
-        System.out.println("12. Listar vacinas");
-        System.out.println("13. Vacinas por animal");
-        System.out.println("14. Listar clientes");
-        System.out.println("0. Sair");
-        System.out.println("==============================================");
+        System.out.println("\n========== LAUMIAU - MENU PRINCIPAL ==========");
+        System.out.println("Usuário: " + usuarioLogado.getNome() + " [" + usuarioLogado.getTipo() + "]");
+        System.out.println("----------------------------------------------");
+
+        System.out.println("1. Listar animais");
+        System.out.println("2. Buscar animais (filtros)");
+        System.out.println("3. Vacinas por animal");
+
+        if (usuarioLogado.getTipo() == TipoUsuario.admin) {
+            System.out.println("\n--- ÁREA ADMINISTRATIVA ---");
+            System.out.println("4. Cadastrar animal");
+            System.out.println("5. Atualizar animal");
+            System.out.println("6. Remover animal");
+            System.out.println("7. Registrar adoção");
+            System.out.println("8. Listar adoções");
+            System.out.println("9. Relatório de negócio");
+            System.out.println("10. Consultas JOIN");
+            System.out.println("11. Registrar vacina");
+            System.out.println("12. Listar vacinas");
+            System.out.println("13. Listar clientes");
+        }
+
+        System.out.println("\n99. Logout");
+        System.out.println("0. Sair do Sistema");
+
+        int opcao = lerInt("\nEscolha uma opção: ");
+        processarOpcao(opcao);
+    }
+
+    private static void processarOpcao(int opcao) {
+        if (usuarioLogado.getTipo() != TipoUsuario.admin && opcao >= 4 && opcao <= 13) {
+            System.out.println("Acesso Negado: Esta opção é exclusiva para administradores.");
+            return;
+        }
+
+        switch (opcao) {
+            case 1: listarAnimais(); break;
+            case 2: buscarAnimais(); break;
+            case 3: vacinasPorAnimal(); break;
+            case 4: cadastrarAnimal(); break;
+            case 5: atualizarAnimal(); break;
+            case 6: removerAnimal(); break;
+            case 7: registrarAdocao(); break;
+            case 8: listarAdocoes(); break;
+            case 9: relatorioService.gerarRelatorio(); break;
+            case 10: exibirJoins(); break;
+            case 11: registrarVacina(); break;
+            case 12: listarVacinas(); break;
+            case 13: listarClientes(); break;
+            case 99:
+                usuarioLogado = null;
+                System.out.println("Logout efetuado.");
+                break;
+            case 0:
+                System.out.println("Encerrando... Até logo!");
+                em.close();
+                JPAUtil.fechar();
+                System.exit(0);
+                break;
+            default:
+                System.out.println("Opção inválida.");
+        }
     }
 
     private static void cadastrarAnimal() {
@@ -263,7 +317,6 @@ public class Main {
             System.out.println("Animais disponíveis:");
             for (Animal a : disponiveis) System.out.println(a);
 
-            // mostra clientes disponíveis
             System.out.println("\nClientes cadastrados:");
             List<Cliente> clientes = clienteService.listarTodos();
             if (clientes.isEmpty()) {
@@ -415,22 +468,15 @@ public class Main {
 
     private static void listarClientes() {
         System.out.println("\n--- LISTA DE CLIENTES ---");
-
         try {
             List<Cliente> clientes = clienteService.listarTodos();
-
             if (clientes.isEmpty()) {
                 System.out.println("Nenhum cliente cadastrado.");
             } else {
                 System.out.println("ID | NOME | EMAIL");
                 System.out.println("-----------------------");
-
                 for (Cliente cliente : clientes) {
-                    System.out.println(
-                            cliente.getId() + " | " +
-                                    cliente.getNome() + " | " +
-                                    cliente.getEmail()
-                    );
+                    System.out.println(cliente.getId() + " | " + cliente.getNome() + " | " + cliente.getEmail());
                 }
             }
         } catch (Exception e) {
@@ -439,7 +485,6 @@ public class Main {
         System.out.println("-----------------------\n");
     }
 
-    // métodos auxiliares
     private static String lerTexto(String mensagem) {
         while (true) {
             System.out.print(mensagem);
