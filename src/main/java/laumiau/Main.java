@@ -41,7 +41,7 @@ public class Main {
 
     private static void configurarBanco() {
         Flyway flyway = Flyway.configure()
-                .dataSource("jdbc:postgresql://localhost:5432/postgres", "postgres", "123")
+                .dataSource("jdbc:postgresql://localhost:5432/postgres", "postgres", "35784636")
                 .locations("classpath:db/migration")
                 .baselineOnMigrate(true)
                 .load();
