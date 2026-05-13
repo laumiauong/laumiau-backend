@@ -112,12 +112,13 @@ public class AnimaisCadastradosView extends JFrame {
 
         for (Animal animal : animalService.listarTodos()) {
     grid.add(criarCard(
-            animal.getNome(),
-            "#" + animal.getId(),
-            animal.getEspecie(),
-            animal.getIdade() + " Meses",
-            animal.getStatus().toString(),
-            animal.getCaminhoFoto()
+        animal.getId(),
+        animal.getNome(),
+        "#" + animal.getId(),
+        animal.getEspecie(),
+        animal.getIdade() + " Meses",
+        animal.getStatus().toString(),
+        animal.getCaminhoFoto()
     ));
 }
 
@@ -127,7 +128,7 @@ public class AnimaisCadastradosView extends JFrame {
         return fundo;
     }
 
-    private JPanel criarCard(String nome, String id, String especie,
+    private JPanel criarCard(Long animalId, String nome, String id, String especie,
                          String idade, String status, String caminhoFoto) {
 
     JPanel card = new RoundedPanel(25, Color.WHITE);
@@ -194,6 +195,21 @@ public class AnimaisCadastradosView extends JFrame {
     painelEditar.setOpaque(false);
 
     painelEditar.add(editar);
+    
+    editar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+editar.addMouseListener(new java.awt.event.MouseAdapter() {
+
+    @Override
+    public void mouseClicked(java.awt.event.MouseEvent e) {
+
+        JOptionPane.showMessageDialog(
+                null,
+                "Tela de edição em desenvolvimento!"
+        );
+
+    }
+});
 
     topo.add(painelEditar, BorderLayout.NORTH);
 
@@ -270,6 +286,31 @@ public class AnimaisCadastradosView extends JFrame {
     rodape.setOpaque(false);
 
     rodape.add(excluir);
+    
+    excluir.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+excluir.addMouseListener(new java.awt.event.MouseAdapter() {
+
+    @Override
+    public void mouseClicked(java.awt.event.MouseEvent e) {
+
+        int confirmar = JOptionPane.showConfirmDialog(
+                null,
+                "Deseja excluir esse animal?",
+                "Confirmar exclusão",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirmar == JOptionPane.YES_OPTION) {
+
+            animalService.remover(animalId);
+
+            dispose();
+
+            new AnimaisCadastradosView(animalService);
+        }
+    }
+});
 
     // ADICIONA
     card.add(topo);
