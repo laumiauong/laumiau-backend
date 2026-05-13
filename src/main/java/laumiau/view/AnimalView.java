@@ -5,8 +5,14 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.RoundRectangle2D;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
-public class AnimalView extends JFrame {
+import laumiau.repository.AnimalRepository;
+import laumiau.service.AnimalService;
+
+public class AnimalView extends JFrame {    
 
     private final Color LARANJA      = new Color(255, 107, 43);
     private final Color LARANJA_HOVER= new Color(255, 140, 80);
@@ -14,8 +20,11 @@ public class AnimalView extends JFrame {
     private final Color CINZA        = new Color(160, 170, 185);
     private final Color FUNDO        = new Color(253, 247, 242);
     private final Color CARD_BG      = Color.WHITE;
+    
+    private AnimalService animalService;
 
-    public AnimalView() {
+    public AnimalView(AnimalService animalService) { 
+        this.animalService = animalService;
         setTitle("LAU & MIAU - Animais");
         setSize(1280, 780);
         setMinimumSize(new Dimension(900, 600));
@@ -166,7 +175,7 @@ public class AnimalView extends JFrame {
         verTodos.addMouseListener(new java.awt.event.MouseAdapter() {
         @Override
         public void mouseClicked(java.awt.event.MouseEvent e) {
-            new AnimaisCadastradosView();
+            new AnimaisCadastradosView(animalService);
     }
 });
         verTodos.setFont(new Font("SansSerif", Font.BOLD, 14));
@@ -386,11 +395,20 @@ public class AnimalView extends JFrame {
     }
 
     public static void main(String[] args) {
-        // Deixa a UI com visual nativo limpo no macOS/Windows/Linux
-        try {
-            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-        } catch (Exception ignored) {}
 
-        SwingUtilities.invokeLater(AnimalView::new);
-    }
+    EntityManagerFactory emf =
+            Persistence.createEntityManagerFactory("laumiau");
+
+    EntityManager em = emf.createEntityManager();
+
+    AnimalRepository repository =
+            new AnimalRepository(em);
+
+    AnimalService service =
+            new AnimalService(repository);
+
+    SwingUtilities.invokeLater(
+            () -> new AnimalView(service)
+    );
+}
 }
