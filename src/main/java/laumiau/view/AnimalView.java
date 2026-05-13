@@ -106,7 +106,7 @@ public class AnimalView extends JFrame {
             }
         });
 
-        btn.addActionListener(e -> new AnimaisCadastradosView());
+        //btn.addActionListener(e -> new AnimaisCadastradosView());
         return btn;
     }
 
@@ -163,6 +163,12 @@ public class AnimalView extends JFrame {
         titulo.setForeground(TEXTO);
 
         JLabel verTodos = new JLabel("Ver todos →");
+        verTodos.addMouseListener(new java.awt.event.MouseAdapter() {
+        @Override
+        public void mouseClicked(java.awt.event.MouseEvent e) {
+            new AnimaisCadastradosView();
+    }
+});
         verTodos.setFont(new Font("SansSerif", Font.BOLD, 14));
         verTodos.setForeground(LARANJA);
         verTodos.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
