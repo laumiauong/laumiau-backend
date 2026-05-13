@@ -4,6 +4,13 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+import laumiau.model.Animal;
+
+import laumiau.repository.AnimalRepository;
+import laumiau.service.AnimalService;
 
 public class AnimaisCadastradosView extends JFrame {
 
@@ -11,19 +18,24 @@ public class AnimaisCadastradosView extends JFrame {
     private final Color FUNDO = new Color(255, 248, 241);
     private final Color TEXTO = new Color(31, 42, 68);
     private final Color CINZA = new Color(120, 130, 150);
+    
+    private AnimalService animalService;
+    
+    public AnimaisCadastradosView(AnimalService animalService) {
 
-    public AnimaisCadastradosView() {
-        setTitle("Animais Cadastrados");
-        setSize(1200, 720);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
+    this.animalService = animalService;
 
-        add(criarTopo(), BorderLayout.NORTH);
-        add(criarConteudo(), BorderLayout.CENTER);
+    setTitle("Animais Cadastrados");
+    setSize(1200, 720);
+    setLocationRelativeTo(null);
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    setLayout(new BorderLayout());
 
-        setVisible(true);
-    }
+    add(criarTopo(), BorderLayout.NORTH);
+    add(criarConteudo(), BorderLayout.CENTER);
+
+    setVisible(true);
+}
 
    private JPanel criarTopo() {
     JPanel topo = new JPanel(new BorderLayout());
@@ -41,7 +53,7 @@ public class AnimaisCadastradosView extends JFrame {
 
         dispose();
 
-        new AnimalView();
+        new AnimalView(animalService);
     }
 });
 
@@ -85,25 +97,29 @@ public class AnimaisCadastradosView extends JFrame {
 
         JButton btnNovo = new RoundedButton("+  Novo Cadastro", LARANJA, Color.WHITE);
         btnNovo.setFont(new Font("SansSerif", Font.BOLD, 16));
-        btnNovo.addActionListener(e -> new CadastroAnimalView());
+        btnNovo.addActionListener(
+        e -> new CadastroAnimalView(animalService)
+);
         
         pesquisa.setPreferredSize(new Dimension(430, 45));
         
         barra.add(pesquisa, BorderLayout.WEST);
         barra.add(btnNovo, BorderLayout.EAST);
 
-        JPanel grid = new JPanel(new GridLayout(0, 3, 25, 25));
+        JPanel grid = new JPanel(new GridLayout(0, 5, 24, 24));
         grid.setOpaque(false);
         grid.setBorder(new EmptyBorder(30, 0, 0, 0));
 
-        grid.add(criarCard("Mia", "#12345", "Gato", "2 Anos", "Disponível"));
-        grid.add(criarCard("Rex", "#12346", "Cachorro", "5 Meses", "Em Adoção"));
-        grid.add(criarCard("Luna", "#12347", "Gato", "1 Ano", "Disponível"));
-        grid.add(criarCard("Thor", "#12348", "Cachorro", "3 Anos", "Disponível"));
-        grid.add(criarCard("Felix", "#12349", "Gato", "8 Meses", "Disponível"));
-        grid.add(criarCard("Bela", "#12350", "Cachorro", "4 Anos", "Adotado"));
-        grid.add(criarCard("Milo", "#12351", "Gato", "6 Anos", "Disponível"));
-        grid.add(criarCard("Kiko", "#12352", "Cachorro", "1 Mês", "Em Adoção"));
+        for (Animal animal : animalService.listarTodos()) {
+    grid.add(criarCard(
+            animal.getNome(),
+            "#" + animal.getId(),
+            animal.getEspecie(),
+            animal.getIdade() + " Meses",
+            animal.getStatus().toString(),
+            animal.getCaminhoFoto()
+    ));
+}
 
         fundo.add(barra, BorderLayout.NORTH);
         fundo.add(grid, BorderLayout.CENTER);
@@ -111,81 +127,192 @@ public class AnimaisCadastradosView extends JFrame {
         return fundo;
     }
 
-    private JPanel criarCard(String nome, String id, String especie, String idade, String status) {
-        JPanel card = new RoundedPanel(25, Color.WHITE);
-        card.setLayout(new BorderLayout());
-        card.setBorder(new EmptyBorder(20, 20, 20, 20));
+    private JPanel criarCard(String nome, String id, String especie,
+                         String idade, String status, String caminhoFoto) {
 
-        JLabel foto = new JLabel("🐾", SwingConstants.CENTER);
+    JPanel card = new RoundedPanel(25, Color.WHITE);
+
+    card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+
+    card.setBorder(new EmptyBorder(0, 0, 12, 0));
+
+    card.setPreferredSize(new Dimension(250, 340));
+
+    card.setMaximumSize(new Dimension(250, 340));
+
+    // FOTO
+    JLabel foto = new JLabel("", SwingConstants.CENTER);
+
+    foto.setOpaque(true);
+
+    foto.setBackground(new Color(245, 246, 250));
+
+    foto.setPreferredSize(new Dimension(250, 200));
+
+    foto.setMinimumSize(new Dimension(250, 200));
+
+    foto.setMaximumSize(new Dimension(250, 200));
+
+    if (caminhoFoto != null && !caminhoFoto.isBlank()) {
+
+        ImageIcon imagem = new ImageIcon(caminhoFoto);
+
+        Image img = imagem.getImage().getScaledInstance(
+                250,
+                200,
+                Image.SCALE_SMOOTH
+        );
+
+        foto.setIcon(new ImageIcon(img));
+
+    } else {
+
+        foto.setText("🐾");
+
         foto.setFont(new Font("SansSerif", Font.PLAIN, 42));
+
         foto.setForeground(new Color(150, 160, 175));
-        foto.setOpaque(true);
-        foto.setBackground(new Color(245, 246, 250));
-        foto.setPreferredSize(new Dimension(100, 100));
-
-        JPanel info = new JPanel();
-        info.setOpaque(false);
-        info.setLayout(new BoxLayout(info, BoxLayout.Y_AXIS));
-
-        JLabel lblNome = new JLabel(nome);
-        lblNome.setFont(new Font("SansSerif", Font.BOLD, 22));
-        lblNome.setForeground(TEXTO);
-
-        JLabel lblId = new JLabel("ID: " + id);
-        lblId.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        lblId.setForeground(CINZA);
-
-        JPanel tags = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
-        tags.setOpaque(false);
-        tags.add(tag(especie, new Color(230, 190, 255), new Color(100, 45, 180)));
-        tags.add(tag(idade, new Color(255, 235, 185), new Color(150, 80, 0)));
-
-        Color corStatus = status.equals("Adotado")
-                ? new Color(225, 229, 235)
-                : new Color(185, 245, 220);
-
-        tags.add(tag(status, corStatus, new Color(20, 100, 75)));
-
-        info.add(lblNome);
-        info.add(Box.createVerticalStrut(5));
-        info.add(lblId);
-        info.add(Box.createVerticalStrut(15));
-        info.add(tags);
-
-        JPanel icones = new JPanel();
-        icones.setOpaque(false);
-        icones.setLayout(new BoxLayout(icones, BoxLayout.Y_AXIS));
-
-        JLabel editar = new JLabel("✎");
-        editar.setFont(new Font("SansSerif", Font.BOLD, 22));
-        editar.setForeground(LARANJA);
-
-        JLabel excluir = new JLabel("🗑");
-        excluir.setFont(new Font("SansSerif", Font.BOLD, 18));
-        excluir.setForeground(new Color(255, 90, 100));
-
-        icones.add(editar);
-        icones.add(Box.createVerticalStrut(30));
-        icones.add(excluir);
-
-        card.add(foto, BorderLayout.WEST);
-        card.add(info, BorderLayout.CENTER);
-        card.add(icones, BorderLayout.EAST);
-
-        return card;
     }
 
+    JPanel topo = new JPanel(new BorderLayout());
+
+    topo.setOpaque(false);
+
+    topo.add(foto, BorderLayout.CENTER);
+
+    // EDITAR
+    JLabel editar = new JLabel("✎");
+
+    editar.setFont(new Font("SansSerif", Font.BOLD, 22));
+
+    editar.setForeground(LARANJA);
+
+    JPanel painelEditar = new JPanel(
+            new FlowLayout(FlowLayout.RIGHT, 10, 10)
+    );
+
+    painelEditar.setOpaque(false);
+
+    painelEditar.add(editar);
+
+    topo.add(painelEditar, BorderLayout.NORTH);
+
+    // INFO
+    JPanel info = new JPanel();
+
+    info.setOpaque(false);
+
+    info.setBorder(new EmptyBorder(14, 18, 0, 18));
+
+    info.setLayout(new BoxLayout(info, BoxLayout.Y_AXIS));
+
+    JLabel lblNome = new JLabel(nome);
+
+    lblNome.setFont(new Font("SansSerif", Font.BOLD, 18));
+
+    lblNome.setForeground(TEXTO);
+
+    JLabel lblId = new JLabel("ID: " + id);
+
+    lblId.setFont(new Font("SansSerif", Font.PLAIN, 13));
+
+    lblId.setForeground(CINZA);
+
+    JPanel tags = new JPanel(
+            new FlowLayout(FlowLayout.LEFT, 8, 0)
+    );
+
+    tags.setOpaque(false);
+
+    tags.add(tag(
+            especie,
+            new Color(230, 190, 255),
+            new Color(100, 45, 180)
+    ));
+
+    tags.add(tag(
+            idade,
+            new Color(255, 235, 185),
+            new Color(150, 80, 0)
+    ));
+
+    Color corStatus = status.equalsIgnoreCase("ADOTADO")
+            ? new Color(225, 229, 235)
+            : new Color(185, 245, 220);
+
+    tags.add(tag(
+            status,
+            corStatus,
+            new Color(20, 100, 75)
+    ));
+
+    info.add(lblNome);
+
+    info.add(Box.createVerticalStrut(5));
+
+    info.add(lblId);
+
+    info.add(Box.createVerticalStrut(12));
+
+    info.add(tags);
+
+    // EXCLUIR
+    JLabel excluir = new JLabel("🗑");
+
+    excluir.setFont(new Font("SansSerif", Font.BOLD, 18));
+
+    excluir.setForeground(new Color(255, 90, 100));
+
+    JPanel rodape = new JPanel(
+            new FlowLayout(FlowLayout.RIGHT, 18, 0)
+    );
+
+    rodape.setOpaque(false);
+
+    rodape.add(excluir);
+
+    // ADICIONA
+    card.add(topo);
+
+    card.add(info);
+
+    card.add(Box.createVerticalGlue());
+
+    card.add(rodape);
+
+    return card;
+}
     private JLabel tag(String texto, Color fundo, Color corTexto) {
-        JLabel label = new JLabel(texto);
-        label.setOpaque(true);
-        label.setBackground(fundo);
-        label.setForeground(corTexto);
-        label.setFont(new Font("SansSerif", Font.BOLD, 12));
-        label.setBorder(new EmptyBorder(6, 12, 6, 12));
-        return label;
-    }
 
+    JLabel label = new JLabel(texto);
+
+    label.setOpaque(true);
+
+    label.setBackground(fundo);
+
+    label.setForeground(corTexto);
+
+    label.setFont(new Font("SansSerif", Font.BOLD, 13));
+
+    label.setBorder(new EmptyBorder(8, 14, 8, 14));
+
+    return label;
+}
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(AnimaisCadastradosView::new);
-    }
+
+    EntityManagerFactory emf =
+            Persistence.createEntityManagerFactory("laumiau");
+
+    EntityManager em = emf.createEntityManager();
+
+    AnimalRepository repository =
+            new AnimalRepository(em);
+
+    AnimalService service =
+            new AnimalService(repository);
+
+    SwingUtilities.invokeLater(
+            () -> new AnimaisCadastradosView(service)
+    );
+}
 }
