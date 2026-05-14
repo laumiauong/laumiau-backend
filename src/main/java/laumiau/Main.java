@@ -141,7 +141,13 @@ public class Main {
             case 6: removerAnimal(); break;
             case 7: registrarAdocao(); break;
             case 8: listarAdocoes(); break;
-            case 9: relatorioService.gerarRelatorio(); break;
+            case 9:
+                // CORREÇÃO: Sincronizado com RelatorioService.java
+                Relatorio relatorio = relatorioService.obterRelatorioGeral();
+                if (relatorio != null) {
+                    relatorio.imprimirResumo();
+                }
+                break;
             case 10: exibirJoins(); break;
             case 11: registrarVacina(); break;
             case 12: listarVacinas(); break;
@@ -160,6 +166,8 @@ public class Main {
                 System.out.println("Opção inválida.");
         }
     }
+
+    // ... (Métodos auxiliares permanecem iguais aos seus)
 
     private static void cadastrarAnimal() {
         System.out.println("\n--- Cadastro de Animal ---");

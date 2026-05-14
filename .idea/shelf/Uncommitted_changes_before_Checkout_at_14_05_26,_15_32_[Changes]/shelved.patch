@@ -1,0 +1,101 @@
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"AutoImportSettings\">\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\n  </component>\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"5f80c2d0-0380-4745-b251-254a12458a7d\" name=\"Changes\" comment=\"\">\n      <change afterPath=\"$PROJECT_DIR$/src/main/resources/db/migration/V3__Criar_Relacionamentos_Complexos.sql\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/laumiau/Main.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/laumiau/Main.java\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/laumiau/model/Usuario.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/laumiau/model/Usuario.java\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/src/main/resources/META-INF/persistence.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/resources/META-INF/persistence.xml\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/src/main/resources/db/migration/V1__criar_tabelas_faltantes.sql\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/resources/db/migration/V1__criar_tabelas_faltantes.sql\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/src/main/resources/db/migration/V2__criar_triggers.sql\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/resources/db/migration/V2__criar_triggers.sql\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/src/main/resources/db/migration/V4__criar_tabela_tutor_animal.sql\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/resources/db/migration/V4__criar_tabela_tutor_animal.sql\" afterDir=\"false\" />\n    </list>\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\n  </component>\n  <component name=\"GitHubPullRequestSearchHistory\">{\n  &quot;lastFilter&quot;: {\n    &quot;state&quot;: &quot;OPEN&quot;,\n    &quot;assignee&quot;: &quot;maystins&quot;\n  }\n}</component>\n  <component name=\"GithubPullRequestsUISettings\">{\n  &quot;selectedUrlAndAccountId&quot;: {\n    &quot;url&quot;: &quot;https://github.com/laumiauong/laumiau-backend.git&quot;,\n    &quot;accountId&quot;: &quot;472abda3-6ab6-4b0e-8617-85dabe62d65f&quot;\n  }\n}</component>\n  <component name=\"ProjectColorInfo\">{\n  &quot;customColor&quot;: &quot;&quot;,\n  &quot;associatedIndex&quot;: 5\n}</component>\n  <component name=\"ProjectId\" id=\"3CJWIqHPyHJ5AKNSwmVFIFxOGrQ\" />\n  <component name=\"ProjectLevelVcsManager\">\n    <ConfirmationsSetting value=\"2\" id=\"Add\" />\n  </component>\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\">{\n  &quot;keyToString&quot;: {\n    &quot;Application.Main.executor&quot;: &quot;Run&quot;,\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\n    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,\n    &quot;git-widget-placeholder&quot;: &quot;main&quot;,\n    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,\n    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;\n  }\n}</component>\n  <component name=\"SharedIndexes\">\n    <attachedChunks>\n      <set>\n        <option value=\"bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.30387.90\" />\n      </set>\n    </attachedChunks>\n  </component>\n  <component name=\"TaskManager\">\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\n      <changelist id=\"5f80c2d0-0380-4745-b251-254a12458a7d\" name=\"Changes\" comment=\"\" />\n      <created>1776104079942</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1776104079942</updated>\n    </task>\n    <servers />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 93ba168fc2933501a8ee7c2ba481223452800eb7)
++++ b/.idea/workspace.xml	(date 1778783278111)
+@@ -5,19 +5,22 @@
+   </component>
+   <component name="ChangeListManager">
+     <list default="true" id="5f80c2d0-0380-4745-b251-254a12458a7d" name="Changes" comment="">
+-      <change afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V3__Criar_Relacionamentos_Complexos.sql" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/Main.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Usuario.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Usuario.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/persistence.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/persistence.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/resources/db/migration/V1__criar_tabelas_faltantes.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V1__criar_tabelas_faltantes.sql" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/resources/db/migration/V2__criar_triggers.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V2__criar_triggers.sql" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/service/RelatorioService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/service/RelatorioService.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/main/resources/db/migration/V4__criar_tabela_tutor_animal.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V4__criar_tabela_tutor_animal.sql" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+     <option name="LAST_RESOLUTION" value="IGNORE" />
++  </component>
++  <component name="FileTemplateManagerImpl">
++    <option name="RECENT_TEMPLATES">
++      <list>
++        <option value="Class" />
++      </list>
++    </option>
+   </component>
+   <component name="Git.Settings">
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+@@ -28,12 +31,12 @@
+     &quot;assignee&quot;: &quot;maystins&quot;
+   }
+ }</component>
+-  <component name="GithubPullRequestsUISettings">{
+-  &quot;selectedUrlAndAccountId&quot;: {
+-    &quot;url&quot;: &quot;https://github.com/laumiauong/laumiau-backend.git&quot;,
+-    &quot;accountId&quot;: &quot;472abda3-6ab6-4b0e-8617-85dabe62d65f&quot;
+-  }
+-}</component>
++  <component name="GithubPullRequestsUISettings"><![CDATA[{
++  "selectedUrlAndAccountId": {
++    "url": "https://github.com/laumiauong/laumiau-backend.git",
++    "accountId": "1d3c4cb6-6031-4052-b413-2b94d3ca7294"
++  }
++}]]></component>
+   <component name="ProjectColorInfo">{
+   &quot;customColor&quot;: &quot;&quot;,
+   &quot;associatedIndex&quot;: 5
+@@ -46,16 +49,17 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent">{
+-  &quot;keyToString&quot;: {
+-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
++  <component name="PropertiesComponent"><![CDATA[{
++  "keyToString": {
++    "Application.Main.executor": "Run",
++    "RunOnceActivity.ShowReadmeOnStart": "true",
++    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
++    "RunOnceActivity.git.unshallow": "true",
++    "git-widget-placeholder": "main",
++    "ignore.virus.scanning.warn.message": "true",
++    "kotlin-language-version-configured": "true"
+   }
+-}</component>
++}]]></component>
+   <component name="SharedIndexes">
+     <attachedChunks>
+       <set>
+Index: src/main/resources/db/migration/V4__criar_tabela_tutor_animal.sql
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>CREATE TABLE animal (\n                        id BIGSERIAL PRIMARY KEY,\n                        nome VARCHAR(100) NOT NULL,\n                        especie VARCHAR(100) NOT NULL,\n                        raca VARCHAR(100) NOT NULL,\n                        idade_meses INTEGER NOT NULL CHECK (idade_meses >= 0),\n                        sexo VARCHAR(10) NOT NULL,\n                        status VARCHAR(20) NOT NULL DEFAULT 'DISPONIVEL',\n                        vacinado BOOLEAN NOT NULL DEFAULT FALSE,\n                        porte VARCHAR(10)\n);\n\nCREATE TABLE vacina (\n                        id BIGSERIAL PRIMARY KEY,\n                        animal_id BIGINT NOT NULL REFERENCES animal(id) ON DELETE CASCADE,\n                        nome VARCHAR(100) NOT NULL,\n                        data_aplicacao DATE NOT NULL,\n                        proxima_dose DATE\n);
+===================================================================
+diff --git a/src/main/resources/db/migration/V4__criar_tabela_tutor_animal.sql b/src/main/resources/db/migration/V4__criar_tabela_tutor_animal.sql
+--- a/src/main/resources/db/migration/V4__criar_tabela_tutor_animal.sql	(revision 93ba168fc2933501a8ee7c2ba481223452800eb7)
++++ b/src/main/resources/db/migration/V4__criar_tabela_tutor_animal.sql	(date 1778715000592)
+@@ -14,6 +14,6 @@
+                         id BIGSERIAL PRIMARY KEY,
+                         animal_id BIGINT NOT NULL REFERENCES animal(id) ON DELETE CASCADE,
+                         nome VARCHAR(100) NOT NULL,
+-                        data_aplicacao DATE NOT NULL,
++                        data_aplicacao DATE NOT NUL     L,
+                         proxima_dose DATE
+ );
+\ No newline at end of file
