@@ -5,6 +5,10 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.io.File;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import laumiau.model.Animal;
+import laumiau.model.Sexo;
+import laumiau.service.AnimalService;
+import laumiau.model.Porte;
 
 public class CadastroAnimalView extends JFrame {
 
@@ -22,19 +26,57 @@ public class CadastroAnimalView extends JFrame {
     private JComboBox<String> comboSexo;
 
     private String caminhoFotoSelecionada;
-   
+    private AnimalService animalService;
+    private Animal animalEditando;
+    
+    public CadastroAnimalView(AnimalService animalService, Animal animalEditando) {
+    this.animalService = animalService;
+    this.animalEditando = animalEditando;
 
-    public CadastroAnimalView() {
-        setTitle("Cadastrar Animal");
-        setSize(1000, 720);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLayout(new BorderLayout());
+    setTitle("Editar Animal");
+    setSize(1000, 720);
+    setLocationRelativeTo(null);
+    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    setLayout(new BorderLayout());
 
-        add(criarTela(), BorderLayout.CENTER);
+    add(criarTela(), BorderLayout.CENTER);
 
-        setVisible(true);
+    preencherCamposEdicao();
+
+    setVisible(true);
+}
+    
+    private void preencherCamposEdicao() {
+    if (animalEditando != null) {
+        campoNome.setText(animalEditando.getNome());
+        campoRaca.setText(animalEditando.getRaca());
+        campoIdade.setText(String.valueOf(animalEditando.getIdade()));
+        comboEspecie.setSelectedItem(animalEditando.getEspecie());
+
+        if (animalEditando.getSexo() == Sexo.MACHO) {
+            comboSexo.setSelectedItem("Macho");
+        } else {
+            comboSexo.setSelectedItem("Fêmea");
+        }
+
+        caminhoFotoSelecionada = animalEditando.getCaminhoFoto();
     }
+}
+    
+    public CadastroAnimalView(AnimalService animalService) {
+    this.animalService = animalService;
+
+    setTitle("Cadastrar Animal");
+    setSize(1000, 720);
+    setLocationRelativeTo(null);
+    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    setLayout(new BorderLayout());
+
+    add(criarTela(), BorderLayout.CENTER);
+
+    setVisible(true);
+}
+   
 
     private JPanel criarTela() {
         JPanel fundo = new JPanel(new BorderLayout());
@@ -175,12 +217,56 @@ public class CadastroAnimalView extends JFrame {
         System.out.println(idade);
         System.out.println(sexo);
         System.out.println(caminhoFotoSelecionada);
+        
+        if (animalEditando == null) {
 
-        JOptionPane.showMessageDialog(this,
-                "Animal cadastrado com sucesso!");
+    Animal animal = new Animal(
+            nome,
+            especie,
+            raca,
+            idade,
+            sexo.equals("Macho") ? Sexo.MACHO : Sexo.FEMEA,
+            false,
+            null,
+            caminhoFotoSelecionada
+    );
 
-        dispose();
+    animalService.cadastrar(animal);
 
+    JOptionPane.showMessageDialog(
+            this,
+            "Animal cadastrado com sucesso!"
+    );
+
+} else {
+
+    animalEditando.setNome(nome);
+
+    animalEditando.setEspecie(especie);
+
+    animalEditando.setRaca(raca);
+
+    animalEditando.setIdade(idade);
+
+    animalEditando.setSexo(
+            sexo.equals("Macho")
+                    ? Sexo.MACHO
+                    : Sexo.FEMEA
+    );
+
+    animalEditando.setCaminhoFoto(caminhoFotoSelecionada);
+
+    animalService.atualizar(animalEditando);
+
+    JOptionPane.showMessageDialog(
+            this,
+            "Animal atualizado com sucesso!"
+    );
+}
+
+dispose();
+
+new AnimaisCadastradosView(animalService); 
     } catch (NumberFormatException erro) {
 
         JOptionPane.showMessageDialog(this,
