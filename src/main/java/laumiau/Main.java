@@ -19,6 +19,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
+import javax.swing.SwingUtilities;
 
 public class Main {
 
@@ -32,7 +33,10 @@ public class Main {
 
 
     public static void main(String[] args) {
-
+        
+         SwingUtilities.invokeLater(() -> {
+            new SobreNosFrame().setVisible(true);
+        });
         Flyway flyway = Flyway.configure()
                 .dataSource("jdbc:postgresql://localhost:5432/postgres", "postgres", "2811")
                 .locations("classpath:db/migration")
@@ -54,7 +58,7 @@ public class Main {
         clienteService = new ClienteService(clienteRepository, usuarioRepository);
         adocoesService = new AdocoesService(adocoesRepository, animalRepository, clienteRepository);
         relatorioService = new RelatorioService(em);
-
+        
         boolean executando = true;
         while (executando) {
             exibirMenuPrincipal();

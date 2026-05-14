@@ -17,8 +17,6 @@ public class Cliente extends Usuario {
     @Override
     public void exibirPermissoes() {
         System.out.println(" Permissões do CLIENTE: ");
-        System.out.println("- Cadastrar usuário");
-        System.out.println("- Realizar login");
         System.out.println("- Acessar perfil");
         System.out.println("- Acessar galeria de animais");
         System.out.println("- Acessar formulário de adoção");
