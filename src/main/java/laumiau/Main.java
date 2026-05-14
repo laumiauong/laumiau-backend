@@ -34,7 +34,7 @@ public class Main {
     public static void main(String[] args) {
 
         Flyway flyway = Flyway.configure()
-                .dataSource("jdbc:postgresql://localhost:5432/postgres", "postgres", "2811")
+                .dataSource("jdbc:postgresql://localhost:5432/postgres", "postgres", "123")
                 .locations("classpath:db/migration")
                 .baselineOnMigrate(true)
                 .load();
@@ -118,7 +118,7 @@ public class Main {
             boolean vacinado = lerBoolean("Vacinado? (s/n): ");
             Porte porte = lerPorte();
 
-            Animal animal = new Animal(nome, especie, raca, idade, sexo, vacinado, porte);
+            Animal animal = new Animal(nome, especie, raca, idade, sexo, vacinado, porte, null);
             animalService.cadastrar(animal);
             System.out.println("Animal cadastrado com sucesso!");
         } catch (Exception e) {
