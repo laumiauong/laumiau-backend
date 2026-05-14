@@ -18,6 +18,7 @@ public class Main {
     private static EntityManager em;
     private static AnimalService animalService;
     private static ClienteService clienteService;
+    private static AdminService adminService;
     private static AdocoesService adocoesService;
     private static RelatorioService relatorioService;
     private static VacinaService vacinaService;
@@ -46,6 +47,7 @@ public class Main {
                 .baselineOnMigrate(true)
                 .load();
         flyway.repair();
+        flyway.migrate(); // <- ADICIONAR ESTA LINHA
         System.out.println("Banco de dados atualizado com sucesso!");
         em = JPAUtil.getEntityManager();
     }
@@ -60,38 +62,77 @@ public class Main {
         vacinaService = new VacinaService(vacinaRepository, animalRepository);
         animalService = new AnimalService(animalRepository);
         clienteService = new ClienteService(clienteRepository, usuarioRepository);
+        adminService = new AdminService(usuarioRepository);
         adocoesService = new AdocoesService(adocoesRepository, animalRepository, clienteRepository);
         relatorioService = new RelatorioService(em);
     }
 
+    // ==================== MENUS ====================
+
     private static boolean exibirMenuLogin() {
         System.out.println("\n========== LAUMIAU - ACESSO ==========");
-        System.out.println("1. Fazer Login");
-        System.out.println("2. Cadastrar Novo Cliente");
+        System.out.println("1. Login de Cliente");
+        System.out.println("2. Cadastrar-se como Cliente");
+        System.out.println("3. Login de Administrador");
         System.out.println("0. Sair");
         int opcao = lerInt("Escolha: ");
 
         switch (opcao) {
-            case 1: realizarLogin(); return true;
+            case 1: realizarLoginCliente(); return true;
             case 2: cadastrarCliente(); return true;
+            case 3: realizarLoginAdmin(); return true;
             case 0: return false;
             default: return true;
         }
     }
 
-    private static void realizarLogin() {
-        System.out.println("\n--- LOGIN ---");
+    private static void realizarLoginCliente() {
+        System.out.println("\n--- LOGIN CLIENTE ---");
         String email = lerTexto("Email: ");
         String senha = lerTexto("Senha: ");
 
         Usuario usuario = usuarioRepository.buscarPorEmail(email);
 
-        if (usuario != null && usuario.autenticar(senha)) {
+        if (usuario != null && usuario.autenticar(senha) && usuario.getTipo() == TipoUsuario.cliente) {
             usuarioLogado = usuario;
             System.out.println("\nBem-vindo(a), " + usuario.getNome() + "!");
-            System.out.println("Perfil: " + usuario.getTipo().toString().toUpperCase());
         } else {
             System.out.println("Erro: Email ou senha inválidos.");
+        }
+    }
+
+    private static void realizarLoginAdmin() {
+        System.out.println("\n--- LOGIN ADMINISTRADOR ---");
+        String email = lerTexto("Email: ");
+        String senha = lerTexto("Senha: ");
+
+        Usuario usuario = usuarioRepository.buscarPorEmail(email);
+
+        if (usuario != null && usuario.autenticar(senha) && usuario.getTipo() == TipoUsuario.admin) {
+            usuarioLogado = usuario;
+            System.out.println("\nBem-vindo(a), Administrador " + usuario.getNome() + "!");
+        } else {
+            System.out.println("Erro: Credenciais inválidas ou sem permissão de administrador.");
+        }
+    }
+
+    private static void cadastrarAdmin() {
+        System.out.println("\n--- Cadastro de Administrador ---");
+        try {
+            // Senha mestra para proteger o cadastro de admins
+            String senhaMestra = lerTexto("Senha mestra: ");
+            if (!senhaMestra.equals("laumiau@admin2025")) {
+                System.out.println("Acesso negado: senha mestra incorreta.");
+                return;
+            }
+
+            String nome = lerTexto("Nome: ");
+            String email = lerTexto("Email: ");
+            String senha = lerTexto("Senha: ");
+            Admin admin = new Admin(null, nome, email, senha);
+            adminService.cadastrar(admin);
+        } catch (Exception e) {
+            System.out.println("Erro: " + e.getMessage());
         }
     }
 
@@ -157,6 +198,39 @@ public class Main {
                 System.out.println("Opção inválida.");
         }
     }
+
+    // ==================== AUTH ====================
+
+    private static void realizarLogin() {
+        System.out.println("\n--- LOGIN ---");
+        String email = lerTexto("Email: ");
+        String senha = lerTexto("Senha: ");
+
+        Usuario usuario = usuarioRepository.buscarPorEmail(email);
+
+        if (usuario != null && usuario.autenticar(senha)) {
+            usuarioLogado = usuario;
+            System.out.println("\nBem-vindo(a), " + usuario.getNome() + "!");
+            System.out.println("Perfil: " + usuario.getTipo().toString().toUpperCase());
+        } else {
+            System.out.println("Erro: Email ou senha inválidos.");
+        }
+    }
+
+    private static void cadastrarCliente() {
+        System.out.println("\n--- Cadastro de Cliente ---");
+        try {
+            String nome = lerTexto("Nome: ");
+            String email = lerTexto("Email: ");
+            String senha = lerTexto("Senha: ");
+            Cliente cliente = new Cliente(null, nome, email, senha);
+            clienteService.cadastrar(cliente);
+        } catch (Exception e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+    }
+
+    // ==================== ANIMAIS ====================
 
     private static void cadastrarAnimal() {
         System.out.println("\n--- Cadastro de Animal ---");
@@ -298,6 +372,8 @@ public class Main {
         }
     }
 
+    // ==================== ADOÇÕES ====================
+
     private static void registrarAdocao() {
         System.out.println("\n--- Registrar Adoção ---");
         try {
@@ -349,18 +425,7 @@ public class Main {
         }
     }
 
-    private static void cadastrarCliente() {
-        System.out.println("\n--- Cadastro de Cliente ---");
-        try {
-            String nome = lerTexto("Nome: ");
-            String email = lerTexto("Email: ");
-            String senha = lerTexto("Senha: ");
-            Cliente cliente = new Cliente(null, nome, email, senha);
-            clienteService.cadastrar(cliente);
-        } catch (Exception e) {
-            System.out.println("Erro: " + e.getMessage());
-        }
-    }
+    // ==================== JOINS ====================
 
     private static void exibirJoins() {
         System.out.println("\n--- Consultas JOIN ---");
@@ -410,6 +475,8 @@ public class Main {
         }
     }
 
+    // ==================== VACINAS ====================
+
     private static void registrarVacina() {
         System.out.println("\n--- Registrar Vacina ---");
         try {
@@ -449,6 +516,8 @@ public class Main {
             System.out.println("Erro: " + e.getMessage());
         }
     }
+
+    // ==================== UTILITÁRIOS ====================
 
     private static String lerTexto(String mensagem) {
         while (true) {
