@@ -1,4 +1,4 @@
-package laumiau; // ALTERE PARA SEU PACOTE
+package laumiau; 
 
 import javax.swing.*;
 import java.awt.*;

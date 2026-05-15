@@ -13,13 +13,18 @@ public class Admin extends Usuario {
 
     public Admin() {}
 
-    public Admin(Long id, String nome, String email, String senha) {
-        super(id, nome, email, senha);
+    public Admin(Long id, String nome, String email, String senha, Endereco endereco) {
+        super(id, nome, email, senha, endereco);
         this.setTipo(TipoUsuario.admin);
     }
 
-    public Usuario getUsuario() { return usuario; }
-    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
 
     @Override
     public void exibirPermissoes() {
