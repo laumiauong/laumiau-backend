@@ -18,62 +18,50 @@ public class TutorView extends JFrame {
 
     public TutorView() {
         setTitle("Lau Miau – Área do Tutor");
-        setSize(900, 700);
-        setMinimumSize(new Dimension(700, 620));
+        setSize(1000, 720);
+        setMinimumSize(new Dimension(760, 650));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
         criarTela();
     }
 
     private void criarTela() {
+
         JPanel fundo = new JPanel(new GridBagLayout());
         fundo.setBackground(COR_FUNDO);
         setContentPane(fundo);
 
-        JPanel wrapper = new JPanel();
-        wrapper.setOpaque(false);
-        wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
-        wrapper.setMaximumSize(new Dimension(520, 9999));
+        JPanel card = new JPanel();
+        card.setBackground(COR_CARD);
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setPreferredSize(new Dimension(540, 650));
 
-        JPanel topo = new JPanel(new BorderLayout());
-        topo.setOpaque(false);
-
-        JButton btnVoltar = new JButton("←");
-        btnVoltar.setFont(new Font("SansSerif", Font.BOLD, 18));
-        btnVoltar.setBackground(Color.WHITE);
-        btnVoltar.setForeground(COR_TEXTO);
-        btnVoltar.setBorder(new RoundedBorder(12, COR_BORDA));
-        btnVoltar.setFocusPainted(false);
-        btnVoltar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btnVoltar.setPreferredSize(new Dimension(44, 44));
-        btnVoltar.addActionListener(e -> dispose());
+        card.setBorder(BorderFactory.createCompoundBorder(
+                new RoundedBorder(50, new Color(0xE8E8E8)),
+                new EmptyBorder(40, 50, 40, 50)
+        ));
 
         JLabel logo = criarLogo();
+        logo.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        topo.add(btnVoltar, BorderLayout.WEST);
-        topo.add(logo, BorderLayout.CENTER);
-        topo.setMaximumSize(new Dimension(520, 60));
+        JLabel slogan = new JLabel("Transformando vidas, espalhando amor.");
+        slogan.setFont(new Font("SansSerif", Font.BOLD, 14));
+        slogan.setForeground(COR_PLACEHOLDER);
+        slogan.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel titulo = new JLabel("Área do Tutor");
-        titulo.setFont(new Font("SansSerif", Font.BOLD, 28));
+        titulo.setFont(new Font("SansSerif", Font.BOLD, 38));
         titulo.setForeground(COR_TEXTO);
         titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel subtitulo = new JLabel("Acompanhe seus interesses e adoções");
-        subtitulo.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        subtitulo.setFont(new Font("SansSerif", Font.PLAIN, 15));
         subtitulo.setForeground(COR_PLACEHOLDER);
         subtitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JPanel card = new JPanel();
-        card.setBackground(COR_CARD);
-        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-        card.setBorder(BorderFactory.createCompoundBorder(
-                new RoundedBorder(20, COR_BORDA),
-                new EmptyBorder(32, 36, 32, 36)
-        ));
-
         JLabel nome = new JLabel("Olá, Tutor!");
-        nome.setFont(new Font("SansSerif", Font.BOLD, 22));
+        nome.setFont(new Font("SansSerif", Font.BOLD, 24));
         nome.setForeground(COR_TEXTO);
         nome.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -82,113 +70,188 @@ public class TutorView extends JFrame {
         email.setForeground(COR_PLACEHOLDER);
         email.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        RoundedButton btnInteresse = new RoundedButton("🐾 Meus animais de interesse");
-        RoundedButton btnAcompanhar = new RoundedButton("📋 Acompanhar adoção");
-        RoundedButton btnEditar = new RoundedButton("✏ Editar perfil");
+        RoundedButton btnInteresse = new RoundedButton("🐾  Meus animais de interesse");
+        RoundedButton btnAcompanhar = new RoundedButton("📋  Acompanhar adoção");
+        RoundedButton btnEditar = new RoundedButton("✏  Editar perfil");
         RoundedButton btnSair = new RoundedButton("Sair");
+
+        configurarBotao(btnInteresse);
+        configurarBotao(btnAcompanhar);
+        configurarBotao(btnEditar);
+        configurarBotao(btnSair);
 
         btnInteresse.addActionListener(e -> new AnimaisInteresseView().setVisible(true));
         btnAcompanhar.addActionListener(e -> new AcompanharAdocaoView().setVisible(true));
         btnEditar.addActionListener(e -> new EditarPerfilTutorView().setVisible(true));
         btnSair.addActionListener(e -> dispose());
 
+        card.add(logo);
+        card.add(Box.createVerticalStrut(10));
+        card.add(slogan);
+        card.add(Box.createVerticalStrut(36));
+        card.add(titulo);
+        card.add(Box.createVerticalStrut(10));
+        card.add(subtitulo);
+        card.add(Box.createVerticalStrut(36));
         card.add(nome);
         card.add(Box.createVerticalStrut(6));
         card.add(email);
-        card.add(Box.createVerticalStrut(30));
+        card.add(Box.createVerticalStrut(36));
         card.add(btnInteresse);
-        card.add(Box.createVerticalStrut(14));
+        card.add(Box.createVerticalStrut(16));
         card.add(btnAcompanhar);
-        card.add(Box.createVerticalStrut(14));
+        card.add(Box.createVerticalStrut(16));
         card.add(btnEditar);
-        card.add(Box.createVerticalStrut(14));
+        card.add(Box.createVerticalStrut(16));
         card.add(btnSair);
+        card.add(Box.createVerticalStrut(28));
 
         JPanel rodape = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 0));
         rodape.setOpaque(false);
+
         rodape.add(linkLabel("Política de Privacidade"));
         rodape.add(new JLabel("🐾"));
         rodape.add(linkLabel("Termos de Serviço"));
 
-        wrapper.add(topo);
-        wrapper.add(Box.createVerticalStrut(18));
-        wrapper.add(titulo);
-        wrapper.add(Box.createVerticalStrut(6));
-        wrapper.add(subtitulo);
-        wrapper.add(Box.createVerticalStrut(25));
-        wrapper.add(card);
-        wrapper.add(Box.createVerticalStrut(18));
-        wrapper.add(rodape);
+        card.add(rodape);
 
-        fundo.add(wrapper);
+        fundo.add(card);
+    }
+
+    private void configurarBotao(RoundedButton botao) {
+        botao.setPreferredSize(new Dimension(390, 54));
+        botao.setMaximumSize(new Dimension(390, 54));
+        botao.setAlignmentX(Component.CENTER_ALIGNMENT);
     }
 
     private JLabel criarLogo() {
-        JLabel logo = new JLabel("LAU 🐾 MIAU", SwingConstants.CENTER);
-        logo.setFont(new Font("SansSerif", Font.BOLD, 26));
+
+        java.net.URL url = getClass().getResource("/img/logo-lau-miau.png");
+
+        if (url != null) {
+
+            ImageIcon icon = new ImageIcon(url);
+
+            Image img = icon.getImage().getScaledInstance(
+                    240,
+                    85,
+                    Image.SCALE_SMOOTH
+            );
+
+            return new JLabel(new ImageIcon(img));
+        }
+
+        JLabel logo = new JLabel("LAU 🐾 MIAU");
+        logo.setFont(new Font("SansSerif", Font.BOLD, 34));
         logo.setForeground(COR_LARANJA);
+
         return logo;
     }
 
     private JLabel linkLabel(String texto) {
+
         JLabel label = new JLabel(texto);
+
         label.setFont(new Font("SansSerif", Font.PLAIN, 12));
         label.setForeground(COR_PLACEHOLDER);
+
         return label;
     }
 
+    // =========================================================
+    // TELA MEUS ANIMAIS
+    // =========================================================
+
     static class AnimaisInteresseView extends JFrame {
+
         public AnimaisInteresseView() {
+
             setTitle("Meus animais de interesse");
             setSize(650, 450);
             setLocationRelativeTo(null);
+            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
             JPanel fundo = basePanel();
+            JPanel card = cardInterno();
+
             JLabel titulo = titulo("Meus animais de interesse");
 
             JTextArea lista = new JTextArea(
-                    "🐱 Preciosinha - Disponível\n\n"
+                    "🐱 Gatinho - Disponível\n\n"
                     + "🐶 Rabinho - Em adoção\n\n"
                     + "🐱 Charmosa - Disponível"
             );
-            lista.setEditable(false);
-            lista.setFont(new Font("SansSerif", Font.PLAIN, 16));
-            lista.setBorder(new EmptyBorder(25, 25, 25, 25));
 
-            fundo.add(titulo, BorderLayout.NORTH);
-            fundo.add(lista, BorderLayout.CENTER);
+            lista.setEditable(false);
+            lista.setFocusable(false);
+            lista.setOpaque(false);
+            lista.setFont(new Font("SansSerif", Font.PLAIN, 16));
+            lista.setForeground(COR_TEXTO);
+
+            card.add(titulo);
+            card.add(Box.createVerticalStrut(25));
+            card.add(lista);
+
+            fundo.add(card);
             add(fundo);
         }
     }
 
+    // =========================================================
+    // TELA ACOMPANHAR ADOÇÃO
+    // =========================================================
+
     static class AcompanharAdocaoView extends JFrame {
+
         public AcompanharAdocaoView() {
+
             setTitle("Acompanhar adoção");
             setSize(650, 450);
             setLocationRelativeTo(null);
+            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
             JPanel fundo = basePanel();
+            JPanel card = cardInterno();
+
             JLabel titulo = titulo("Acompanhar adoção");
 
             JTextArea status = new JTextArea(
-                    "Animal: Preciosinha\n"
+                    "Animal: Gatinho\n"
                     + "Status: Em análise\n\n"
                     + "Sua solicitação foi recebida.\n"
                     + "A equipe Lau Miau irá avaliar as informações e entrar em contato."
             );
-            status.setEditable(false);
-            status.setFont(new Font("SansSerif", Font.PLAIN, 16));
-            status.setBorder(new EmptyBorder(25, 25, 25, 25));
 
-            JButton fechar = new RoundedButton("Entendi");
+            status.setEditable(false);
+            status.setFocusable(false);
+            status.setOpaque(false);
+            status.setFont(new Font("SansSerif", Font.PLAIN, 16));
+            status.setForeground(COR_TEXTO);
+            status.setLineWrap(true);
+            status.setWrapStyleWord(true);
+
+            RoundedButton fechar = new RoundedButton("Entendi");
+
+            fechar.setPreferredSize(new Dimension(320, 48));
+            fechar.setMaximumSize(new Dimension(320, 48));
+            fechar.setAlignmentX(Component.CENTER_ALIGNMENT);
+
             fechar.addActionListener(e -> dispose());
 
-            fundo.add(titulo, BorderLayout.NORTH);
-            fundo.add(status, BorderLayout.CENTER);
-            fundo.add(fechar, BorderLayout.SOUTH);
+            card.add(titulo);
+            card.add(Box.createVerticalStrut(25));
+            card.add(status);
+            card.add(Box.createVerticalStrut(25));
+            card.add(fechar);
+
+            fundo.add(card);
             add(fundo);
         }
     }
+
+    // =========================================================
+    // EDITAR PERFIL
+    // =========================================================
 
     static class EditarPerfilTutorView extends JFrame {
 
@@ -197,88 +260,139 @@ public class TutorView extends JFrame {
         private JTextField campoTelefone;
 
         public EditarPerfilTutorView() {
+
             setTitle("Editar perfil");
             setSize(650, 500);
             setLocationRelativeTo(null);
+            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
             JPanel fundo = basePanel();
-            JLabel titulo = titulo("Editar perfil");
+            JPanel card = cardInterno();
 
-            JPanel card = new JPanel();
-            card.setBackground(Color.WHITE);
-            card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-            card.setBorder(new EmptyBorder(30, 40, 30, 40));
+            JLabel titulo = titulo("Editar perfil");
 
             campoNome = campo("Nome do tutor");
             campoEmail = campo("email@exemplo.com");
             campoTelefone = campo("(45) 99999-9999");
 
-            JButton salvar = new RoundedButton("Salvar alterações");
-            salvar.addActionListener(e -> JOptionPane.showMessageDialog(
-                    this,
-                    "Perfil atualizado com sucesso!",
-                    "Sucesso",
-                    JOptionPane.INFORMATION_MESSAGE
-            ));
+            RoundedButton salvar = new RoundedButton("Salvar alterações");
 
+            salvar.setPreferredSize(new Dimension(320, 48));
+            salvar.setMaximumSize(new Dimension(320, 48));
+            salvar.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            salvar.addActionListener(e ->
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Perfil atualizado com sucesso!",
+                            "Sucesso",
+                            JOptionPane.INFORMATION_MESSAGE
+                    )
+            );
+
+            card.add(titulo);
+            card.add(Box.createVerticalStrut(28));
             card.add(campoNome);
             card.add(Box.createVerticalStrut(15));
             card.add(campoEmail);
             card.add(Box.createVerticalStrut(15));
             card.add(campoTelefone);
-            card.add(Box.createVerticalStrut(25));
+            card.add(Box.createVerticalStrut(28));
             card.add(salvar);
 
-            fundo.add(titulo, BorderLayout.NORTH);
-            fundo.add(card, BorderLayout.CENTER);
+            fundo.add(card);
             add(fundo);
         }
 
         private JTextField campo(String texto) {
+
             JTextField campo = new JTextField(texto);
+
             campo.setFont(new Font("SansSerif", Font.PLAIN, 15));
-            campo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+
+            campo.setMaximumSize(new Dimension(320, 42));
+            campo.setPreferredSize(new Dimension(320, 42));
+
             campo.setBorder(BorderFactory.createCompoundBorder(
-                    new RoundedBorder(14, new Color(0xE8E8E8)),
+                    new RoundedBorder(18, COR_BORDA),
                     new EmptyBorder(0, 18, 0, 18)
             ));
+
             return campo;
         }
     }
 
+    // =========================================================
+    // HELPERS
+    // =========================================================
+
     private static JPanel basePanel() {
-        JPanel fundo = new JPanel(new BorderLayout(20, 20));
+
+        JPanel fundo = new JPanel(new GridBagLayout());
         fundo.setBackground(COR_FUNDO);
-        fundo.setBorder(new EmptyBorder(30, 40, 30, 40));
+
         return fundo;
     }
 
+    private static JPanel cardInterno() {
+
+        JPanel card = new JPanel();
+
+        card.setBackground(Color.WHITE);
+
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+
+        card.setPreferredSize(new Dimension(430, 340));
+
+        card.setBorder(BorderFactory.createCompoundBorder(
+                new RoundedBorder(40, COR_BORDA),
+                new EmptyBorder(34, 40, 34, 40)
+        ));
+
+        return card;
+    }
+
     private static JLabel titulo(String texto) {
-        JLabel label = new JLabel(texto, SwingConstants.CENTER);
+
+        JLabel label = new JLabel(texto);
+
         label.setFont(new Font("SansSerif", Font.BOLD, 26));
         label.setForeground(COR_TEXTO);
+        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         return label;
     }
 
+    // =========================================================
+    // BOTÃO CUSTOMIZADO
+    // =========================================================
+
     static class RoundedButton extends JButton {
+
         RoundedButton(String text) {
+
             super(text);
+
             setFont(new Font("SansSerif", Font.BOLD, 16));
+
             setForeground(Color.WHITE);
             setBackground(COR_LARANJA);
+
             setFocusPainted(false);
             setBorderPainted(false);
             setContentAreaFilled(false);
+
             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            setPreferredSize(new Dimension(360, 52));
-            setMaximumSize(new Dimension(Integer.MAX_VALUE, 52));
 
             addMouseListener(new MouseAdapter() {
+
+                @Override
                 public void mouseEntered(MouseEvent e) {
                     setBackground(COR_LARANJA_HV);
                     repaint();
                 }
 
+                @Override
                 public void mouseExited(MouseEvent e) {
                     setBackground(COR_LARANJA);
                     repaint();
@@ -288,16 +402,47 @@ public class TutorView extends JFrame {
 
         @Override
         protected void paintComponent(Graphics g) {
+
             Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            g2.setRenderingHint(
+                    RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON
+            );
+
             g2.setColor(getBackground());
-            g2.fill(new RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 26, 26));
-            super.paintComponent(g);
+
+            g2.fill(new RoundRectangle2D.Float(
+                    0,
+                    0,
+                    getWidth(),
+                    getHeight(),
+                    24,
+                    24
+            ));
+
+            FontMetrics fm = g2.getFontMetrics();
+
+            int x = (getWidth() - fm.stringWidth(getText())) / 2;
+
+            int y = ((getHeight() - fm.getHeight()) / 2)
+                    + fm.getAscent();
+
+            g2.setColor(getForeground());
+            g2.setFont(getFont());
+
+            g2.drawString(getText(), x, y);
+
             g2.dispose();
         }
     }
 
+    // =========================================================
+    // BORDA CUSTOMIZADA
+    // =========================================================
+
     static class RoundedBorder extends AbstractBorder {
+
         private final int radius;
         private final Color color;
 
@@ -307,21 +452,52 @@ public class TutorView extends JFrame {
         }
 
         @Override
-        public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
+        public void paintBorder(
+                Component c,
+                Graphics g,
+                int x,
+                int y,
+                int w,
+                int h
+        ) {
+
             Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            g2.setRenderingHint(
+                    RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON
+            );
+
             g2.setColor(color);
-            g2.drawRoundRect(x, y, w - 1, h - 1, radius, radius);
+
+            g2.drawRoundRect(
+                    x,
+                    y,
+                    w - 1,
+                    h - 1,
+                    radius,
+                    radius
+            );
+
             g2.dispose();
         }
 
         @Override
         public Insets getBorderInsets(Component c) {
-            return new Insets(radius / 2, radius / 2, radius / 2, radius / 2);
+
+            return new Insets(
+                    radius / 2,
+                    radius / 2,
+                    radius / 2,
+                    radius / 2
+            );
         }
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new TutorView().setVisible(true));
+
+        SwingUtilities.invokeLater(() ->
+                new TutorView().setVisible(true)
+        );
     }
 }
