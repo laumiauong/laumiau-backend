@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
+import javax.swing.SwingUtilities;
 
 public class Main {
 
@@ -27,6 +28,10 @@ public class Main {
     private static Usuario usuarioLogado = null;
 
     public static void main(String[] args) {
+
+         SwingUtilities.invokeLater(() -> {
+            new SobreNosFrame().setVisible(true);
+        });
         configurarBanco();
         inicializarServicos();
 
@@ -158,7 +163,7 @@ public class Main {
             System.out.println("12. Listar vacinas");
         }
 
-        System.out.println("\n99. Logout");
+        System.out.println( "\n99. Logout");
         System.out.println("0. Sair do Sistema");
 
         int opcao = lerInt("\nEscolha uma opção: ");
@@ -198,7 +203,6 @@ public class Main {
                 System.out.println("Opção inválida.");
         }
     }
-
     // ==================== AUTH ====================
 
     private static void realizarLogin() {

@@ -19,23 +19,45 @@ public class Tutor extends Usuario {
             inverseJoinColumns = @JoinColumn(name = "animal_id")
     )
     private List<Animal> animaisInteresse = new ArrayList<>();
+    @OneToMany
+    @JoinColumn(name = "cliente_id")
+    private List<Animal> petsAdotados = new ArrayList<>();
 
     public Tutor() {}
 
-    public Tutor(Long id, String nome, String email, String senha, String telefone) {
-        super(id, nome, email, senha);
+    public Tutor(Long id, String nome, String email, String senha, Endereco endereco, String telefone) {
+        super(id, nome, email, senha, endereco);
         this.telefone = telefone;
         this.setTipo(TipoUsuario.tutor);
     }
 
-    public String getTelefone() { return telefone; }
-    public void setTelefone(String telefone) { this.telefone = telefone; }
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
 
     public List<Animal> getAnimaisInteresse() { return animaisInteresse; }
     public void adicionarInteresse(Animal animal) { this.animaisInteresse.add(animal); }
+    public void adicionarPet(Animal animal) {
+        this.petsAdotados.add(animal);
+    }
+
+    public List<Animal> getPetsAdotados() {
+        return petsAdotados;
+    }
 
     public Adocoes preencherFormulario(Animal animal, boolean termoAssinado) {
-        Cliente cliente = new Cliente(this.getId(), this.getNome(), this.getEmail(), null);
+        Cliente cliente = new Cliente(
+                this.getId(),
+                this.getNome(),
+                this.getEmail(),
+                this.getSenha(),
+                this.getEndereco()
+        );
+
         return new Adocoes(animal, cliente, termoAssinado);
     }
 

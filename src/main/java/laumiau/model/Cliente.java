@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 public class Cliente extends Usuario {
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "endereco_id") // cria a FK na tabela cliente
+    @JoinColumn(name = "endereco_id")
     private Endereco endereco;
 
     public Cliente() {}
