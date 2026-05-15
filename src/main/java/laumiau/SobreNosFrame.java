@@ -73,7 +73,6 @@ public class SobreNosFrame extends JFrame {
         setTitle("Lau Miau - Sobre Nós");
         setSize(1200, 700);
 
-        // Fundo com gradiente diagonal suave
         JPanel backgroundPanel = new JPanel() {
             @Override protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
@@ -85,7 +84,6 @@ public class SobreNosFrame extends JFrame {
                 g2.setPaint(gp);
                 g2.fillRect(0, 0, getWidth(), getHeight());
 
-                // Círculos decorativos difusos no fundo
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setColor(new Color(255, 107, 38, 12));
                 g2.fillOval(getWidth() - 300, -100, 400, 400);
@@ -104,7 +102,7 @@ public class SobreNosFrame extends JFrame {
             System.out.println("Logo não encontrada");
         }
 
-        // ── HEADER com gradiente sutil ────────────────────────────────────────
+        // ── HEADER 
         headerPanel = new JPanel(null) {
             @Override protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
@@ -112,7 +110,6 @@ public class SobreNosFrame extends JFrame {
                 GradientPaint gp = new GradientPaint(0, 0, BRANCO, 0, getHeight(), new Color(252, 252, 253));
                 g2.setPaint(gp);
                 g2.fillRect(0, 0, getWidth(), getHeight());
-                // Linha inferior refinada com gradiente
                 g2.setColor(new Color(230, 230, 235));
                 g2.drawLine(0, getHeight() - 1, getWidth(), getHeight() - 1);
                 g2.dispose();
@@ -120,7 +117,7 @@ public class SobreNosFrame extends JFrame {
         };
         headerPanel.setOpaque(false);
 
-        // LAU 🐾 MIAU com sombra de texto
+        // LAU 🐾 MIAU 
         JLabel lauLabel = new JLabel("LAU") {
             @Override protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
@@ -166,7 +163,6 @@ public class SobreNosFrame extends JFrame {
         miauLabel.setBounds(136, 22, 75, 28);
         headerPanel.add(miauLabel);
 
-        // ── Menu items com hover underline ────────────────────────────────────
         menuHome = new JLabel("Home");
         menuHome.setFont(FONTE_UI);
         menuHome.setForeground(TEXTO_MEDIO);
@@ -187,7 +183,6 @@ public class SobreNosFrame extends JFrame {
         });
         headerPanel.add(menuAnimais);
 
-        // Botão "Sobre nós" ativo com gradiente
         sobrePanel = new JPanel(new GridBagLayout()) {
             @Override protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
@@ -209,7 +204,6 @@ public class SobreNosFrame extends JFrame {
         sobrePanel.add(menuSobre);
         headerPanel.add(sobrePanel);
 
-        // Botão Admin com sombra interna sutil
         adminPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 8)) {
             private boolean hover = false;
             {
@@ -241,7 +235,6 @@ public class SobreNosFrame extends JFrame {
 
         getContentPane().add(headerPanel);
 
-        // ── CARD PRINCIPAL com sombra multicamada aprimorada ──────────────────
         mainContent = new JPanel(null) {
             @Override protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
@@ -272,12 +265,11 @@ public class SobreNosFrame extends JFrame {
         };
         mainContent.setOpaque(false);
 
-        // ── Imagem ────────────────────────────────────────────────────────────
+        // ── Imagem 
         int imgW = 310, imgH = 420;
         int imgX = CARD_W - imgW - 50;
         int imgY = (CARD_H - imgH) / 2;
 
-        // Painel de imagem com moldura decorativa integrada (evita conflito de z-order)
         int moldOffX = imgX - 12;
         int moldOffY = imgY - 12;
         JPanel imagemPanel = new JPanel() {
@@ -286,7 +278,6 @@ public class SobreNosFrame extends JFrame {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
-                // Moldura decorativa desenhada primeiro, dentro do mesmo painel
                 int offX = imgX - moldOffX;
                 int offY = imgY - moldOffY;
                 GradientPaint moldGp = new GradientPaint(offX, offY, LARANJA_SOFT,
@@ -322,18 +313,14 @@ public class SobreNosFrame extends JFrame {
                 g2.dispose();
             }
         };
-        // Bounds expandidos para incluir a moldura (deslocamento de 12px em cada lado)
         imagemPanel.setBounds(moldOffX, moldOffY, imgW + 24, imgH + 24);
         imagemPanel.setOpaque(false);
         mainContent.add(imagemPanel);
 
-        // ── Texto ─────────────────────────────────────────────────────────────
+        // ── Texto 
         int txtX      = 55;
-        // Swing ignora CSS width no JLabel — a quebra de linha real é controlada
-        // pelos bounds do label. Usamos uma largura menor para garantir folga.
         int textAreaW = imgX - txtX - 60;
 
-        // Acento laranja com gradiente e bordas arredondadas
         JPanel acento = new JPanel() {
             @Override protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
@@ -371,7 +358,6 @@ public class SobreNosFrame extends JFrame {
             + "basta entrar em contato. O cuidado com os animais é levado a sério!</p>"
             + "</body></html>";
 
-        // Altura máxima: botões estão em (CARD_H - 76), texto começa em y=122
         int textMaxH = (CARD_H - 76) - 122 - 14;
 
         JLabel textoLabel = new JLabel(textoHtml);
