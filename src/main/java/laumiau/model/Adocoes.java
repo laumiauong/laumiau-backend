@@ -26,6 +26,10 @@ public class Adocoes {
     @Column(name = "termo_assinado", nullable = false)
     private boolean termoAssinado;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status_adocao", nullable = false)
+    private StatusAdocao status;
+
     public Adocoes() {}
 
     public Adocoes(Animal animal, Cliente cliente, boolean termoAssinado) {
@@ -47,8 +51,8 @@ public class Adocoes {
             this.animal = animal;
             this.cliente = cliente;
             this.dataAdocao = LocalDate.now();
-            this.termoAssinado = true;
-            this.animal.adotar();
+        this.termoAssinado = termoAssinado;
+        this.status = StatusAdocao.PENDENTE;
     }
 
     public Long getIdAdocao() { return idAdocao; }
@@ -68,6 +72,17 @@ public class Adocoes {
             throw new IllegalStateException("Não é permitido remover o termo assinado!");
         }
         this.termoAssinado = true;
+    }
+    public StatusAdocao getStatus() { return status; }
+
+    public void aprovar() {
+        if (!this.termoAssinado) throw new IllegalStateException("Termo não assinado!");
+        this.status = StatusAdocao.APROVADO;
+        this.animal.adotar();
+    }
+
+    public void recusar() {
+        this.status = StatusAdocao.RECUSADO;
     }
     public String gerarResumo() {
 

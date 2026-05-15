@@ -15,15 +15,19 @@ public class RelatorioService {
     }
 
     public void gerarRelatorio() {
-        // busca os dados do banco
         List<Animal> animais = em.createQuery("FROM Animal", Animal.class)
                 .getResultList();
-
         List<Adocoes> adocoes = em.createQuery("FROM Adocoes", Adocoes.class)
                 .getResultList();
-
-        // passa para o Relatorio que já faz os cálculos
         Relatorio relatorio = new Relatorio(animais, adocoes);
         relatorio.imprimirResumo();
+    }
+
+    public Relatorio obterRelatorioGeral() {
+        List<Animal> animais = em.createQuery("FROM Animal", Animal.class)
+                .getResultList();
+        List<Adocoes> adocoes = em.createQuery("FROM Adocoes", Adocoes.class)
+                .getResultList();
+        return new Relatorio(animais, adocoes);
     }
 }
