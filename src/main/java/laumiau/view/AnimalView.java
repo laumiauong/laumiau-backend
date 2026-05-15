@@ -5,26 +5,23 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.RoundRectangle2D;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
 
-import laumiau.repository.AnimalRepository;
 import laumiau.service.AnimalService;
 
-public class AnimalView extends JFrame {    
+public class AnimalView extends JFrame {
 
-    private final Color LARANJA      = new Color(255, 107, 43);
-    private final Color LARANJA_HOVER= new Color(255, 140, 80);
-    private final Color TEXTO        = new Color(15, 23, 42);
-    private final Color CINZA        = new Color(160, 170, 185);
-    private final Color FUNDO        = new Color(253, 247, 242);
-    private final Color CARD_BG      = Color.WHITE;
-    
+    private final Color LARANJA = new Color(255, 107, 43);
+    private final Color LARANJA_HOVER = new Color(255, 140, 80);
+    private final Color TEXTO = new Color(15, 23, 42);
+    private final Color CINZA = new Color(160, 170, 185);
+    private final Color FUNDO = new Color(253, 247, 242);
+    private final Color CARD_BG = Color.WHITE;
+
     private AnimalService animalService;
 
-    public AnimalView(AnimalService animalService) { 
+    public AnimalView(AnimalService animalService) {
         this.animalService = animalService;
+
         setTitle("LAU & MIAU - Animais");
         setSize(1280, 780);
         setMinimumSize(new Dimension(900, 600));
@@ -39,32 +36,26 @@ public class AnimalView extends JFrame {
         setVisible(true);
     }
 
-    // ─── TOPO / NAVBAR ────────────────────────────────────────────────────────
-
     private JPanel criarTopo() {
         JPanel topo = new JPanel(new BorderLayout());
         topo.setBackground(Color.WHITE);
         topo.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(235, 228, 220)),
-            new EmptyBorder(0, 40, 0, 40)
+                BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(235, 228, 220)),
+                new EmptyBorder(0, 40, 0, 40)
         ));
         topo.setPreferredSize(new Dimension(0, 68));
 
-        // ── Logo ──────────────────────────────────────────────────────────────
         JLabel logo = new JLabel("LAU 🐾 MIAU");
         logo.setFont(new Font("SansSerif", Font.BOLD, 26));
         logo.setForeground(LARANJA);
 
-        // ── Menu central ──────────────────────────────────────────────────────
         JPanel menu = new JPanel(new FlowLayout(FlowLayout.CENTER, 6, 0));
         menu.setOpaque(false);
 
-        menu.add(criarItemMenu("Home",    true));
+        menu.add(criarItemMenu("Home", true));
         menu.add(criarItemMenu("Animais", false));
         menu.add(criarItemMenu("Sobre nós", false));
 
-        // ── Botão Admin ───────────────────────────────────────────────────────
-        // Fundo laranja, texto branco, ícone de pessoa, pill shape
         JButton admin = criarBotaoAdmin();
 
         topo.add(logo, BorderLayout.WEST);
@@ -80,14 +71,25 @@ public class AnimalView extends JFrame {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
                 Color bg = getModel().isRollover() ? LARANJA_HOVER : LARANJA;
                 g2.setColor(bg);
-                g2.fill(new RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), getHeight(), getHeight()));
+                g2.fill(new RoundRectangle2D.Float(
+                        0,
+                        0,
+                        getWidth(),
+                        getHeight(),
+                        getHeight(),
+                        getHeight()
+                ));
+
                 g2.dispose();
                 super.paintComponent(g);
             }
+
             @Override
-            protected void paintBorder(Graphics g) {}
+            protected void paintBorder(Graphics g) {
+            }
         };
 
         btn.setFont(new Font("SansSerif", Font.BOLD, 14));
@@ -98,28 +100,33 @@ public class AnimalView extends JFrame {
         btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btn.setBorder(new EmptyBorder(9, 20, 9, 20));
 
-        // Ícone de usuário à esquerda do texto
         btn.setIcon(new Icon() {
-            @Override public int getIconWidth()  { return 18; }
-            @Override public int getIconHeight() { return 18; }
+            @Override
+            public int getIconWidth() {
+                return 18;
+            }
+
+            @Override
+            public int getIconHeight() {
+                return 18;
+            }
+
             @Override
             public void paintIcon(Component c, Graphics g, int x, int y) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
                 g2.setColor(Color.WHITE);
-                // cabeça
                 g2.fillOval(x + 4, y, 10, 10);
-                // corpo (arco)
                 g2.fillArc(x, y + 10, 18, 12, 0, 180);
+
                 g2.dispose();
             }
         });
 
-        //btn.addActionListener(e -> new AnimaisCadastradosView());
         return btn;
     }
 
-    /** Item de menu: se ativo → pill laranja + texto branco; senão → texto escuro */
     private JPanel criarItemMenu(String texto, boolean ativo) {
         JPanel pill = new JPanel() {
             @Override
@@ -127,13 +134,24 @@ public class AnimalView extends JFrame {
                 if (ativo) {
                     Graphics2D g2 = (Graphics2D) g.create();
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
                     g2.setColor(LARANJA);
-                    g2.fill(new RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), getHeight(), getHeight()));
+                    g2.fill(new RoundRectangle2D.Float(
+                            0,
+                            0,
+                            getWidth(),
+                            getHeight(),
+                            getHeight(),
+                            getHeight()
+                    ));
+
                     g2.dispose();
                 }
+
                 super.paintComponent(g);
             }
         };
+
         pill.setOpaque(false);
         pill.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
 
@@ -146,23 +164,28 @@ public class AnimalView extends JFrame {
 
         if (!ativo) {
             pill.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
             pill.addMouseListener(new MouseAdapter() {
-                @Override public void mouseEntered(MouseEvent e) { lbl.setForeground(LARANJA); }
-                @Override public void mouseExited(MouseEvent e)  { lbl.setForeground(new Color(90, 80, 70)); }
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    lbl.setForeground(LARANJA);
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    lbl.setForeground(new Color(90, 80, 70));
+                }
             });
         }
 
         return pill;
     }
 
-    // ─── CONTEÚDO PRINCIPAL ───────────────────────────────────────────────────
-
     private JScrollPane criarConteudo() {
         JPanel conteudo = new JPanel(new BorderLayout());
         conteudo.setBackground(FUNDO);
         conteudo.setBorder(new EmptyBorder(36, 40, 40, 40));
 
-        // Cabeçalho "Adotar pet" + "Ver todos"
         JPanel cabecalho = new JPanel(new BorderLayout());
         cabecalho.setOpaque(false);
         cabecalho.setBorder(new EmptyBorder(0, 0, 24, 0));
@@ -172,80 +195,91 @@ public class AnimalView extends JFrame {
         titulo.setForeground(TEXTO);
 
         JLabel verTodos = new JLabel("Ver todos →");
-        verTodos.addMouseListener(new java.awt.event.MouseAdapter() {
-        @Override
-        public void mouseClicked(java.awt.event.MouseEvent e) {
-            new AnimaisCadastradosView(animalService);
-    }
-});
         verTodos.setFont(new Font("SansSerif", Font.BOLD, 14));
         verTodos.setForeground(LARANJA);
         verTodos.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        cabecalho.add(titulo,  BorderLayout.WEST);
+        verTodos.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                new AnimaisCadastradosView(animalService);
+            }
+        });
+
+        cabecalho.add(titulo, BorderLayout.WEST);
         cabecalho.add(verTodos, BorderLayout.EAST);
 
-        // Grid de cards (5 colunas)
         JPanel grid = new JPanel(new GridLayout(2, 5, 18, 18));
         grid.setOpaque(false);
 
-        grid.add(criarCard("Fofuxo",   "Macho", "img/gato1.png"));
+        grid.add(criarCard("Fofuxo", "Macho", "img/gato1.png"));
         grid.add(criarCard("Princesa", "Fêmea", "img/gato2.png"));
-        grid.add(criarCard("Bonitão",  "Macho", "img/gato3.png"));
-        grid.add(criarCard("Bebe",     "Fêmea", "img/gato4.png"));
-        grid.add(criarCard("Rabinho",  "Macho", "img/cachorro1.png"));
+        grid.add(criarCard("Bonitão", "Macho", "img/gato3.png"));
+        grid.add(criarCard("Bebe", "Fêmea", "img/gato4.png"));
+        grid.add(criarCard("Rabinho", "Macho", "img/cachorro1.png"));
 
         grid.add(criarCard("Charmosa", "Fêmea", "img/gato6.png"));
         grid.add(criarCard("Banguela", "Macho", "img/cachorro2.png"));
         grid.add(criarCard("Preciosa", "Fêmea", "img/gato8.png"));
-        grid.add(criarCard("Renê",     "Macho", "img/gato9.png"));
+        grid.add(criarCard("Renê", "Macho", "img/gato9.png"));
         grid.add(criarCard("Perninha", "Macho", "img/gato10.png"));
 
         conteudo.add(cabecalho, BorderLayout.NORTH);
-        conteudo.add(grid,      BorderLayout.CENTER);
+        conteudo.add(grid, BorderLayout.CENTER);
 
         JScrollPane scroll = new JScrollPane(conteudo);
         scroll.setBorder(null);
         scroll.setBackground(FUNDO);
         scroll.getViewport().setBackground(FUNDO);
         scroll.getVerticalScrollBar().setUnitIncrement(16);
+
         return scroll;
     }
 
-    // ─── CARD DE ANIMAL ───────────────────────────────────────────────────────
-
     private JPanel criarCard(String nome, String sexo, String caminhoImg) {
-        // Painel externo com sombra simulada via borda + fundo branco arredondado
         JPanel sombra = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                // sombra suave
+
                 for (int i = 4; i >= 1; i--) {
                     g2.setColor(new Color(0, 0, 0, 8));
-                    g2.fill(new RoundRectangle2D.Float(i, i + 2, getWidth() - i * 2, getHeight() - i * 2, 20, 20));
+                    g2.fill(new RoundRectangle2D.Float(
+                            i,
+                            i + 2,
+                            getWidth() - i * 2,
+                            getHeight() - i * 2,
+                            20,
+                            20
+                    ));
                 }
-                // fundo branco
+
                 g2.setColor(CARD_BG);
-                g2.fill(new RoundRectangle2D.Float(0, 0, getWidth() - 4, getHeight() - 4, 20, 20));
+                g2.fill(new RoundRectangle2D.Float(
+                        0,
+                        0,
+                        getWidth() - 4,
+                        getHeight() - 4,
+                        20,
+                        20
+                ));
+
                 g2.dispose();
             }
         };
+
         sombra.setOpaque(false);
         sombra.setBorder(new EmptyBorder(0, 0, 4, 4));
         sombra.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        // ── Área da imagem com coração sobreposto ──────────────────────────
-        JPanel areaImg = new JPanel(null); // layout null para sobreposição
+        JPanel areaImg = new JPanel(null);
         areaImg.setOpaque(false);
         areaImg.setPreferredSize(new Dimension(0, 200));
 
-        // Foto recortada com cantos arredondados apenas no topo
         JLabel foto = carregarImagem(caminhoImg, 230, 200);
         foto.setBounds(0, 0, 230, 200);
 
-        // Botão coração – círculo branco, ícone cinza
         JButton coracao = new JButton("♡") {
             private boolean favoritado = false;
 
@@ -253,18 +287,20 @@ public class AnimalView extends JFrame {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                // sombra leve
+
                 g2.setColor(new Color(0, 0, 0, 20));
                 g2.fillOval(1, 2, getWidth() - 1, getHeight() - 1);
-                // fundo branco
+
                 g2.setColor(Color.WHITE);
                 g2.fillOval(0, 0, getWidth() - 1, getHeight() - 1);
+
                 g2.dispose();
                 super.paintComponent(g);
             }
 
             @Override
-            protected void paintBorder(Graphics g) {}
+            protected void paintBorder(Graphics g) {
+            }
 
             {
                 addActionListener(e -> {
@@ -274,6 +310,7 @@ public class AnimalView extends JFrame {
                 });
             }
         };
+
         coracao.setFont(new Font("SansSerif", Font.BOLD, 16));
         coracao.setForeground(CINZA);
         coracao.setContentAreaFilled(false);
@@ -281,23 +318,22 @@ public class AnimalView extends JFrame {
         coracao.setFocusPainted(false);
         coracao.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         coracao.setSize(32, 32);
-        coracao.setLocation(190, 12);  // canto superior direito
+        coracao.setLocation(190, 12);
 
         areaImg.add(foto);
         areaImg.add(coracao);
 
-        // Listener para redimensionamento dinâmico do coração e foto
         areaImg.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 int w = areaImg.getWidth();
                 int h = areaImg.getHeight();
+
                 foto.setBounds(0, 0, w, h);
                 coracao.setLocation(w - 42, 12);
             }
         });
 
-        // ── Informações abaixo da imagem ───────────────────────────────────
         JPanel info = new JPanel();
         info.setOpaque(false);
         info.setLayout(new BoxLayout(info, BoxLayout.Y_AXIS));
@@ -308,23 +344,29 @@ public class AnimalView extends JFrame {
         lblNome.setForeground(TEXTO);
         lblNome.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // Bullet colorido + texto do sexo
-        Color corSexo = sexo.equals("Fêmea") ? new Color(236, 72, 153) : new Color(59, 130, 246);
+        Color corSexo = sexo.equals("Fêmea")
+                ? new Color(236, 72, 153)
+                : new Color(59, 130, 246);
+
         JPanel sexoRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         sexoRow.setOpaque(false);
         sexoRow.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel bullet = new JLabel("● ") {
-            @Override protected void paintComponent(Graphics g) {
+            @Override
+            protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
                 g2.setColor(corSexo);
                 int sz = 10;
                 int y = (getHeight() - sz) / 2;
                 g2.fillOval(0, y, sz, sz);
+
                 g2.dispose();
             }
         };
+
         bullet.setPreferredSize(new Dimension(16, 18));
 
         JLabel lblSexo = new JLabel(sexo);
@@ -355,60 +397,51 @@ public class AnimalView extends JFrame {
         info.add(localRow);
 
         sombra.add(areaImg, BorderLayout.NORTH);
-        sombra.add(info,    BorderLayout.CENTER);
+        sombra.add(info, BorderLayout.CENTER);
 
         return sombra;
     }
 
-    // ─── UTILITÁRIO: carrega e escala imagem ──────────────────────────────────
-
     private JLabel carregarImagem(String caminho, int largura, int altura) {
         try {
             java.net.URL url = getClass().getClassLoader().getResource(caminho);
+
             if (url != null) {
                 ImageIcon icon = new ImageIcon(url);
-                Image img = icon.getImage().getScaledInstance(largura, altura, Image.SCALE_SMOOTH);
+                Image img = icon.getImage().getScaledInstance(
+                        largura,
+                        altura,
+                        Image.SCALE_SMOOTH
+                );
+
                 JLabel lbl = new JLabel(new ImageIcon(img));
                 lbl.setHorizontalAlignment(SwingConstants.CENTER);
+
                 return lbl;
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        // Placeholder se imagem não encontrar
         JLabel placeholder = new JLabel("🐾", SwingConstants.CENTER) {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
                 g2.setColor(new Color(240, 234, 228));
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
+
                 g2.dispose();
                 super.paintComponent(g);
             }
         };
+
         placeholder.setFont(new Font("SansSerif", Font.PLAIN, 52));
         placeholder.setPreferredSize(new Dimension(largura, altura));
         placeholder.setOpaque(false);
+
         return placeholder;
     }
-
-    public static void main(String[] args) {
-
-    EntityManagerFactory emf =
-            Persistence.createEntityManagerFactory("laumiau");
-
-    EntityManager em = emf.createEntityManager();
-
-    AnimalRepository repository =
-            new AnimalRepository(em);
-
-    AnimalService service =
-            new AnimalService(repository);
-
-    SwingUtilities.invokeLater(
-            () -> new AnimalView(service)
-    );
-}
 }
