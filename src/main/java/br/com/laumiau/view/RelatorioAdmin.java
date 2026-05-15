@@ -13,10 +13,8 @@ import java.awt.event.*;
 import javax.swing.Timer;
 import java.util.List;
 
-// IMPORTS DAS TELAS
-import br.com.laumiau.view.AnimaisCadastrados;
-import br.com.laumiau.view.Tutores;
-import br.com.laumiau.view.CadastrarNovoPet;
+import laumiau.view.AnimaisCadastradosView;
+import laumiau.view.CadastroAnimalView;
 
 public class RelatorioAdmin extends JFrame {
 
@@ -52,8 +50,6 @@ public class RelatorioAdmin extends JFrame {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
 
-        // ================= TÍTULO =================
-
         JPanel tPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         tPanel.setOpaque(false);
 
@@ -68,8 +64,6 @@ public class RelatorioAdmin extends JFrame {
         gbc.insets = new Insets(0, 0, 25, 0);
 
         mainContent.add(tPanel, gbc);
-
-        // ================= CARDS =================
 
         JPanel cardsRow = new JPanel(new GridLayout(1, 4, 20, 0));
         cardsRow.setOpaque(false);
@@ -88,8 +82,6 @@ public class RelatorioAdmin extends JFrame {
         gbc.insets = new Insets(0, 0, 35, 0);
 
         mainContent.add(cardsRow, gbc);
-
-        // ================= PAINEL INFERIOR =================
 
         gbc.gridy = 2;
         gbc.gridwidth = 1;
@@ -117,12 +109,8 @@ public class RelatorioAdmin extends JFrame {
         timer.start();
     }
 
-    // ================= SOLICITAÇÕES =================
-
     private void carregarSolicitacoes() {
-
         try {
-
             List<laumiau.model.Adocoes> adocoes = em.createQuery(
                             "FROM Adocoes ORDER BY dataAdocao DESC",
                             laumiau.model.Adocoes.class)
@@ -130,47 +118,34 @@ public class RelatorioAdmin extends JFrame {
                     .getResultList();
 
             SwingUtilities.invokeLater(() -> {
-
                 painelListaSolicitacoes.removeAll();
 
                 if (adocoes.isEmpty()) {
-
                     JLabel vazio = new JLabel("Nenhuma solicitação encontrada.");
                     vazio.setForeground(Color.GRAY);
-
                     painelListaSolicitacoes.add(vazio);
-
                 } else {
-
                     for (laumiau.model.Adocoes a : adocoes) {
-
                         painelListaSolicitacoes.add(
                                 new ItemSolicitacao(
                                         a.getAnimal().getNome(),
                                         a.getStatus().toString(),
                                         a.getCliente().getNome()));
-
                         painelListaSolicitacoes.add(Box.createVerticalStrut(10));
                     }
                 }
 
                 painelListaSolicitacoes.revalidate();
                 painelListaSolicitacoes.repaint();
-
             });
 
         } catch (Exception e) {
-
             System.err.println("Erro ao carregar solicitações: " + e.getMessage());
         }
     }
 
-    // ================= ATUALIZAÇÃO =================
-
     public void atualizarDadosDoBanco() {
-
         try {
-
             if (em != null && em.isOpen()) {
                 em.close();
             }
@@ -181,43 +156,29 @@ public class RelatorioAdmin extends JFrame {
             Relatorio dados = relatorioService.obterRelatorioGeral();
 
             if (dados != null) {
-
                 SwingUtilities.invokeLater(() -> {
-
-                    lblPetsDisponiveis.setText(
-                            String.valueOf(dados.getTotalAnimaisDisponiveis()));
-
-                    lblAdocoesMes.setText(
-                            String.valueOf(dados.getTotalAdocoes()));
-
-                    lblTotalAdotados.setText(
-                            String.valueOf(dados.getTotalAnimaisAdotados()));
-
-                    lblVacinados.setText(
-                            String.valueOf(dados.getTotalAnimaisVacinados()));
+                    lblPetsDisponiveis.setText(String.valueOf(dados.getTotalAnimaisDisponiveis()));
+                    lblAdocoesMes.setText(String.valueOf(dados.getTotalAdocoes()));
+                    lblTotalAdotados.setText(String.valueOf(dados.getTotalAnimaisAdotados()));
+                    lblVacinados.setText(String.valueOf(dados.getTotalAnimaisVacinados()));
                 });
             }
 
             carregarSolicitacoes();
 
         } catch (Exception e) {
-
             System.err.println("Erro ao atualizar dashboard: " + e.getMessage());
         }
     }
 
-    // ================= NAVBAR =================
-
     private JPanel criarNavbar() {
 
         JPanel nav = new JPanel(new BorderLayout());
-
         nav.setBackground(BRANCO);
         nav.setPreferredSize(new Dimension(1280, 65));
         nav.setBorder(new MatteBorder(0, 0, 1, 0, BORDAS_LEVES));
 
         JLabel logo = new JLabel(" LAU 🐾 MIAU");
-
         logo.setFont(new Font("SansSerif", Font.BOLD, 20));
         logo.setForeground(LARANJA_BASE);
         logo.setBorder(new EmptyBorder(0, 80, 0, 0));
@@ -232,11 +193,10 @@ public class RelatorioAdmin extends JFrame {
         JLabel animais = new JLabel("Animais");
         animais.setFont(new Font("SansSerif", Font.BOLD, 14));
         animais.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
         animais.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                new AnimaisCadastrados().setVisible(true);
+                new AnimaisCadastradosView().setVisible(true);
                 dispose();
             }
         });
@@ -244,11 +204,10 @@ public class RelatorioAdmin extends JFrame {
         JLabel adotantes = new JLabel("Adotantes");
         adotantes.setFont(new Font("SansSerif", Font.BOLD, 14));
         adotantes.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
         adotantes.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                new Tutores().setVisible(true);
+                // new Tutores().setVisible(true); // TODO: implementar tela de Tutores
                 dispose();
             }
         });
@@ -261,24 +220,15 @@ public class RelatorioAdmin extends JFrame {
         sairContainer.setOpaque(false);
 
         JButton btnSair = new JButton("Sair ➔") {
-
             @Override
             protected void paintComponent(Graphics g) {
-
                 Graphics2D g2 = (Graphics2D) g.create();
-
-                g2.setRenderingHint(
-                        RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON);
-
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setColor(BRANCO);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
-
                 g2.setColor(BORDAS_LEVES);
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 12, 12);
-
                 super.paintComponent(g);
-
                 g2.dispose();
             }
         };
@@ -289,7 +239,6 @@ public class RelatorioAdmin extends JFrame {
         btnSair.setContentAreaFilled(false);
         btnSair.setBorderPainted(false);
         btnSair.setFocusPainted(false);
-
         btnSair.addActionListener(e -> dispose());
 
         sairContainer.add(btnSair);
@@ -301,36 +250,24 @@ public class RelatorioAdmin extends JFrame {
         return nav;
     }
 
-    // ================= SOLICITAÇÕES =================
-
     private JPanel criarPainelSolicitacoes() {
 
         JPanel p = new RoundedPanel(25);
-
         p.setLayout(new BorderLayout());
         p.setBorder(new EmptyBorder(25, 25, 25, 25));
 
         JLabel t = new JLabel("Solicitações Recentes");
         t.setFont(new Font("SansSerif", Font.BOLD, 18));
-
         p.add(t, BorderLayout.NORTH);
 
         painelListaSolicitacoes = new JPanel();
-
-        painelListaSolicitacoes.setLayout(
-                new BoxLayout(painelListaSolicitacoes, BoxLayout.Y_AXIS));
-
+        painelListaSolicitacoes.setLayout(new BoxLayout(painelListaSolicitacoes, BoxLayout.Y_AXIS));
         painelListaSolicitacoes.setOpaque(false);
-
-        painelListaSolicitacoes.setBorder(
-                new EmptyBorder(20, 0, 0, 0));
-
+        painelListaSolicitacoes.setBorder(new EmptyBorder(20, 0, 0, 0));
         p.add(painelListaSolicitacoes, BorderLayout.CENTER);
 
         return p;
     }
-
-    // ================= AÇÕES RÁPIDAS =================
 
     private JPanel criarAcoesRapidas() {
 
@@ -339,53 +276,40 @@ public class RelatorioAdmin extends JFrame {
 
         JLabel t = new JLabel("AÇÕES RÁPIDAS", SwingConstants.CENTER);
         t.setFont(new Font("SansSerif", Font.BOLD, 12));
-
         p.add(t, BorderLayout.NORTH);
 
         JPanel botoes = new JPanel(new GridLayout(2, 1, 0, 15));
         botoes.setOpaque(false);
 
-        OrangeButton btnCadastrar =
-                new OrangeButton("➕  Cadastrar Novo Pet");
-
+        OrangeButton btnCadastrar = new OrangeButton("➕  Cadastrar Novo Pet");
         btnCadastrar.addActionListener(e -> {
-            new CadastrarNovoPet().setVisible(true);
+            new CadastroAnimalView().setVisible(true);
             dispose();
         });
 
-        OrangeButton btnGerenciar =
-                new OrangeButton("📊  Gerenciar Animais");
-
+        OrangeButton btnGerenciar = new OrangeButton("📊  Gerenciar Animais");
         btnGerenciar.addActionListener(e -> {
-            new AnimaisCadastrados().setVisible(true);
+            new AnimaisCadastradosView().setVisible(true);
             dispose();
         });
 
         botoes.add(btnCadastrar);
         botoes.add(btnGerenciar);
-
         p.add(botoes, BorderLayout.CENTER);
 
         return p;
     }
 
-    // ================= COMPONENTES =================
-
     class RoundedCard extends JPanel {
 
         public RoundedCard(String titulo, JLabel valor, String icon) {
-
             setLayout(new BorderLayout());
-
             setBackground(BRANCO);
             setPreferredSize(new Dimension(220, 130));
-
             setBorder(new EmptyBorder(20, 20, 20, 20));
 
             JLabel t = new JLabel(titulo);
-
             t.setForeground(new Color(150, 150, 150));
-
             valor.setFont(new Font("SansSerif", Font.BOLD, 32));
 
             add(t, BorderLayout.NORTH);
@@ -395,27 +319,12 @@ public class RelatorioAdmin extends JFrame {
 
         @Override
         protected void paintComponent(Graphics g) {
-
             Graphics2D g2 = (Graphics2D) g.create();
-
-            g2.setRenderingHint(
-                    RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
-
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2.setColor(BRANCO);
-
             g2.fillRoundRect(0, 0, getWidth(), getHeight(), 25, 25);
-
             g2.setColor(BORDAS_LEVES);
-
-            g2.drawRoundRect(
-                    0,
-                    0,
-                    getWidth() - 1,
-                    getHeight() - 1,
-                    25,
-                    25);
-
+            g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 25, 25);
             g2.dispose();
         }
     }
@@ -423,49 +332,22 @@ public class RelatorioAdmin extends JFrame {
     class OrangeButton extends JButton {
 
         public OrangeButton(String text) {
-
             super(text);
-
             setFont(new Font("SansSerif", Font.BOLD, 14));
             setForeground(BRANCO);
-
             setContentAreaFilled(false);
-
             setBorder(new EmptyBorder(15, 20, 15, 20));
-
             setFocusPainted(false);
         }
 
         @Override
         protected void paintComponent(Graphics g) {
-
             Graphics2D g2 = (Graphics2D) g.create();
-
-            g2.setRenderingHint(
-                    RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
-
-            GradientPaint grad =
-                    new GradientPaint(
-                            0,
-                            0,
-                            LARANJA_BASE,
-                            getWidth(),
-                            0,
-                            LARANJA_DARK);
-
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            GradientPaint grad = new GradientPaint(0, 0, LARANJA_BASE, getWidth(), 0, LARANJA_DARK);
             g2.setPaint(grad);
-
-            g2.fillRoundRect(
-                    0,
-                    0,
-                    getWidth(),
-                    getHeight(),
-                    20,
-                    20);
-
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
             super.paintComponent(g);
-
             g2.dispose();
         }
     }
@@ -475,42 +357,19 @@ public class RelatorioAdmin extends JFrame {
         private int r;
 
         public RoundedPanel(int radius) {
-
             this.r = radius;
-
             setOpaque(false);
             setBackground(BRANCO);
         }
 
         @Override
         protected void paintComponent(Graphics g) {
-
             Graphics2D g2 = (Graphics2D) g.create();
-
-            g2.setRenderingHint(
-                    RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
-
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2.setColor(getBackground());
-
-            g2.fillRoundRect(
-                    0,
-                    0,
-                    getWidth(),
-                    getHeight(),
-                    r,
-                    r);
-
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), r, r);
             g2.setColor(BORDAS_LEVES);
-
-            g2.drawRoundRect(
-                    0,
-                    0,
-                    getWidth() - 1,
-                    getHeight() - 1,
-                    r,
-                    r);
-
+            g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, r, r);
             g2.dispose();
         }
     }
@@ -518,51 +377,28 @@ public class RelatorioAdmin extends JFrame {
     class ItemSolicitacao extends JPanel {
 
         public ItemSolicitacao(String nome, String status, String tutor) {
-
             setLayout(new BorderLayout());
-
             setOpaque(false);
+            setBorder(new MatteBorder(0, 0, 1, 0, BORDAS_LEVES));
 
-            setBorder(
-                    new MatteBorder(0, 0, 1, 0, BORDAS_LEVES));
-
-            add(
-                    new JLabel(
-                            "<html><b>"
-                                    + nome
-                                    + "</b><br><font color='gray'>Por: "
-                                    + tutor
-                                    + "</font></html>"),
+            add(new JLabel("<html><b>" + nome + "</b><br><font color='gray'>Por: " + tutor + "</font></html>"),
                     BorderLayout.CENTER);
 
             JLabel st = new JLabel(status);
-
             st.setFont(new Font("SansSerif", Font.BOLD, 12));
 
             switch (status) {
-
-                case "PENDENTE" ->
-                        st.setForeground(new Color(234, 179, 8));
-
-                case "APROVADO" ->
-                        st.setForeground(new Color(34, 197, 94));
-
-                case "RECUSADO" ->
-                        st.setForeground(new Color(239, 68, 68));
-
-                default ->
-                        st.setForeground(Color.GRAY);
+                case "PENDENTE" -> st.setForeground(new Color(234, 179, 8));
+                case "APROVADO" -> st.setForeground(new Color(34, 197, 94));
+                case "RECUSADO" -> st.setForeground(new Color(239, 68, 68));
+                default -> st.setForeground(Color.GRAY);
             }
 
             add(st, BorderLayout.EAST);
         }
     }
 
-    // ================= MAIN =================
-
     public static void main(String[] args) {
-
-        SwingUtilities.invokeLater(() ->
-                new RelatorioAdmin().setVisible(true));
+        SwingUtilities.invokeLater(() -> new RelatorioAdmin().setVisible(true));
     }
 }
