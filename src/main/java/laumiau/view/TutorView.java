@@ -8,32 +8,20 @@ import java.awt.geom.RoundRectangle2D;
 
 public class TutorView extends JFrame {
 
-    // ── Paleta Lau Miau ──────────────────────────────────────────────────────
-    private static final Color COR_FUNDO      = new Color(0xFFF8F2);
-    private static final Color COR_LARANJA    = new Color(0xFF6600);
+    private static final Color COR_FUNDO = new Color(0xFFF8F2);
+    private static final Color COR_LARANJA = new Color(0xFF6600);
     private static final Color COR_LARANJA_HV = new Color(0xE55C00);
-    private static final Color COR_TEXTO      = new Color(0x1A1E2E);
-    private static final Color COR_PLACEHOLDER= new Color(0x9AA0B0);
-    private static final Color COR_BORDA      = new Color(0xE8E8E8);
-    private static final Color COR_CARD       = Color.WHITE;
-
-    // ── Campos ────────────────────────────────────────────────────────────────
-    private RoundedField  campoNome;
-    private RoundedField  campoEmail;
-    private RoundedField  campoTelefone;
-    private RoundedPassword campoSenha;
-    private RoundedPassword campoConfSenha;
-    private JCheckBox     checkTermos;
-    private RoundedButton btnCadastrar;
-    private JButton       btnVoltar;
+    private static final Color COR_TEXTO = new Color(0x1A1E2E);
+    private static final Color COR_PLACEHOLDER = new Color(0x9AA0B0);
+    private static final Color COR_BORDA = new Color(0xE8E8E8);
+    private static final Color COR_CARD = Color.WHITE;
 
     public TutorView() {
-        setTitle("Lau Miau – Crie sua Conta");
-        setSize(780, 700);
-        setMinimumSize(new Dimension(600, 620));
+        setTitle("Lau Miau – Área do Tutor");
+        setSize(900, 700);
+        setMinimumSize(new Dimension(700, 620));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setResizable(true);
         criarTela();
     }
 
@@ -45,13 +33,12 @@ public class TutorView extends JFrame {
         JPanel wrapper = new JPanel();
         wrapper.setOpaque(false);
         wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
-        wrapper.setMaximumSize(new Dimension(500, 9999));
+        wrapper.setMaximumSize(new Dimension(520, 9999));
 
-        // ── Topo ─────────────────────────────────────────────────────────────
         JPanel topo = new JPanel(new BorderLayout());
         topo.setOpaque(false);
 
-        btnVoltar = new JButton("←");
+        JButton btnVoltar = new JButton("←");
         btnVoltar.setFont(new Font("SansSerif", Font.BOLD, 18));
         btnVoltar.setBackground(Color.WHITE);
         btnVoltar.setForeground(COR_TEXTO);
@@ -65,123 +52,75 @@ public class TutorView extends JFrame {
 
         topo.add(btnVoltar, BorderLayout.WEST);
         topo.add(logo, BorderLayout.CENTER);
-        topo.setMaximumSize(new Dimension(500, 60));
+        topo.setMaximumSize(new Dimension(520, 60));
 
-        // ── Subtítulo ────────────────────────────────────────────────────────
-        JLabel titulo = new JLabel("Crie sua Conta");
-        titulo.setFont(new Font("SansSerif", Font.BOLD, 26));
+        JLabel titulo = new JLabel("Área do Tutor");
+        titulo.setFont(new Font("SansSerif", Font.BOLD, 28));
         titulo.setForeground(COR_TEXTO);
         titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // ── Card ─────────────────────────────────────────────────────────────
+        JLabel subtitulo = new JLabel("Acompanhe seus interesses e adoções");
+        subtitulo.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        subtitulo.setForeground(COR_PLACEHOLDER);
+        subtitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         JPanel card = new JPanel();
         card.setBackground(COR_CARD);
-        card.setBorder(new RoundedBorder(20, COR_BORDA));
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBorder(BorderFactory.createCompoundBorder(
                 new RoundedBorder(20, COR_BORDA),
                 new EmptyBorder(32, 36, 32, 36)
         ));
 
-        campoNome     = new RoundedField("👤  Nome Completo");
-        campoEmail    = new RoundedField("✉  Email");
-        campoTelefone = new RoundedField("📱  Telefone");
-        campoSenha    = new RoundedPassword("🔒  Crie uma Senha");
-        campoConfSenha= new RoundedPassword("🔒  Confirme sua Senha");
+        JLabel nome = new JLabel("Olá, Tutor!");
+        nome.setFont(new Font("SansSerif", Font.BOLD, 22));
+        nome.setForeground(COR_TEXTO);
+        nome.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        checkTermos = new JCheckBox("<html>Li e concordo com os <font color='#FF6600'>Termos de Uso</font></html>");
-        checkTermos.setOpaque(false);
-        checkTermos.setFont(new Font("SansSerif", Font.PLAIN, 13));
-        checkTermos.setForeground(COR_TEXTO);
-        checkTermos.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JLabel email = new JLabel("email@exemplo.com");
+        email.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        email.setForeground(COR_PLACEHOLDER);
+        email.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        btnCadastrar = new RoundedButton("Cadastrar");
-        btnCadastrar.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btnCadastrar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 52));
-        btnCadastrar.addActionListener(e -> cadastrarTutor());
+        RoundedButton btnInteresse = new RoundedButton("🐾 Meus animais de interesse");
+        RoundedButton btnAcompanhar = new RoundedButton("📋 Acompanhar adoção");
+        RoundedButton btnEditar = new RoundedButton("✏ Editar perfil");
+        RoundedButton btnSair = new RoundedButton("Sair");
 
-        card.add(campoNome);      card.add(Box.createVerticalStrut(14));
-        card.add(campoEmail);     card.add(Box.createVerticalStrut(14));
-        card.add(campoTelefone);  card.add(Box.createVerticalStrut(14));
-        card.add(campoSenha);     card.add(Box.createVerticalStrut(14));
-        card.add(campoConfSenha); card.add(Box.createVerticalStrut(18));
-        card.add(checkTermos);    card.add(Box.createVerticalStrut(24));
-        card.add(btnCadastrar);
+        btnInteresse.addActionListener(e -> new AnimaisInteresseView().setVisible(true));
+        btnAcompanhar.addActionListener(e -> new AcompanharAdocaoView().setVisible(true));
+        btnEditar.addActionListener(e -> new EditarPerfilTutorView().setVisible(true));
+        btnSair.addActionListener(e -> dispose());
 
-        // ── Rodapé ────────────────────────────────────────────────────────────
+        card.add(nome);
+        card.add(Box.createVerticalStrut(6));
+        card.add(email);
+        card.add(Box.createVerticalStrut(30));
+        card.add(btnInteresse);
+        card.add(Box.createVerticalStrut(14));
+        card.add(btnAcompanhar);
+        card.add(Box.createVerticalStrut(14));
+        card.add(btnEditar);
+        card.add(Box.createVerticalStrut(14));
+        card.add(btnSair);
+
         JPanel rodape = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 0));
         rodape.setOpaque(false);
-        JLabel pol = linkLabel("Política de Privacidade");
-        JLabel pata = new JLabel("🐾");
-        JLabel termos = linkLabel("Termos de Serviço");
-        rodape.add(pol); rodape.add(pata); rodape.add(termos);
-        rodape.setMaximumSize(new Dimension(500, 30));
+        rodape.add(linkLabel("Política de Privacidade"));
+        rodape.add(new JLabel("🐾"));
+        rodape.add(linkLabel("Termos de Serviço"));
 
-        // ── Montagem ─────────────────────────────────────────────────────────
         wrapper.add(topo);
         wrapper.add(Box.createVerticalStrut(18));
         wrapper.add(titulo);
-        wrapper.add(Box.createVerticalStrut(20));
+        wrapper.add(Box.createVerticalStrut(6));
+        wrapper.add(subtitulo);
+        wrapper.add(Box.createVerticalStrut(25));
         wrapper.add(card);
-        wrapper.add(Box.createVerticalStrut(16));
+        wrapper.add(Box.createVerticalStrut(18));
         wrapper.add(rodape);
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 0;
-        gbc.weighty = 1;
-        gbc.insets = new Insets(30, 30, 30, 30);
-        fundo.add(wrapper, gbc);
-    }
-
-    // ── Lógica de cadastro ────────────────────────────────────────────────────
-    private void cadastrarTutor() {
-        String nome      = campoNome.getValor("👤  Nome Completo");
-        String email     = campoEmail.getValor("✉  Email");
-        String telefone  = campoTelefone.getValor("📱  Telefone");
-        String senha     = campoSenha.getValor("🔒  Crie uma Senha");
-        String confSenha = campoConfSenha.getValor("🔒  Confirme sua Senha");
-
-        // Campos obrigatórios
-        if (nome.isEmpty() || email.isEmpty() || telefone.isEmpty()
-                || senha.isEmpty() || confSenha.isEmpty()) {
-            erro("Preencha todos os campos obrigatórios.");
-            return;
-        }
-
-        // E-mail básico
-        if (!email.matches("^[\\w._%+\\-]+@[\\w.\\-]+\\.[a-zA-Z]{2,}$")) {
-            erro("Informe um e-mail válido.");
-            return;
-        }
-
-        // Senhas coincidem
-        if (!senha.equals(confSenha)) {
-            erro("As senhas não coincidem.");
-            return;
-        }
-
-        // Força mínima da senha
-        if (senha.length() < 6) {
-            erro("A senha deve ter no mínimo 6 caracteres.");
-            return;
-        }
-
-        // Termos
-        if (!checkTermos.isSelected()) {
-            erro("Você precisa aceitar os Termos de Uso.");
-            return;
-        }
-
-        JOptionPane.showMessageDialog(this,
-                "✅  Conta criada com sucesso!\n\nBem-vindo(a), " + nome + "!",
-                "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-        dispose();
-    }
-
-    // ── Helpers ──────────────────────────────────────────────────────────────
-    private void erro(String msg) {
-        JOptionPane.showMessageDialog(this, msg, "Atenção", JOptionPane.WARNING_MESSAGE);
+        fundo.add(wrapper);
     }
 
     private JLabel criarLogo() {
@@ -192,144 +131,163 @@ public class TutorView extends JFrame {
     }
 
     private JLabel linkLabel(String texto) {
-        JLabel l = new JLabel(texto);
-        l.setFont(new Font("SansSerif", Font.PLAIN, 12));
-        l.setForeground(COR_PLACEHOLDER);
-        return l;
+        JLabel label = new JLabel(texto);
+        label.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        label.setForeground(COR_PLACEHOLDER);
+        return label;
     }
 
-    // ════════════════════════════════════════════════════════════════════════
-    //  Componentes internos
-    // ════════════════════════════════════════════════════════════════════════
+    static class AnimaisInteresseView extends JFrame {
+        public AnimaisInteresseView() {
+            setTitle("Meus animais de interesse");
+            setSize(650, 450);
+            setLocationRelativeTo(null);
 
-    /** Campo de texto arredondado com placeholder */
-    static class RoundedField extends JPanel {
-        private final JTextField field;
-        private final String placeholder;
+            JPanel fundo = basePanel();
+            JLabel titulo = titulo("Meus animais de interesse");
 
-        RoundedField(String placeholder) {
-            this.placeholder = placeholder;
-            setLayout(new BorderLayout());
-            setBackground(new Color(0xF5F5F5));
-            setBorder(new RoundedBorder(14, new Color(0xE8E8E8)));
-            setMaximumSize(new Dimension(Integer.MAX_VALUE, 52));
-            setPreferredSize(new Dimension(360, 52));
+            JTextArea lista = new JTextArea(
+                    "🐱 Preciosinha - Disponível\n\n"
+                    + "🐶 Rabinho - Em adoção\n\n"
+                    + "🐱 Charmosa - Disponível"
+            );
+            lista.setEditable(false);
+            lista.setFont(new Font("SansSerif", Font.PLAIN, 16));
+            lista.setBorder(new EmptyBorder(25, 25, 25, 25));
 
-            field = new JTextField(placeholder);
-            field.setFont(new Font("SansSerif", Font.PLAIN, 14));
-            field.setForeground(new Color(0x9AA0B0));
-            field.setOpaque(false);
-            field.setBorder(new EmptyBorder(0, 18, 0, 18));
-            field.addFocusListener(new FocusAdapter() {
-                public void focusGained(FocusEvent e) {
-                    if (field.getText().equals(placeholder)) {
-                        field.setText("");
-                        field.setForeground(new Color(0x1A1E2E));
-                    }
-                }
-                public void focusLost(FocusEvent e) {
-                    if (field.getText().isEmpty()) {
-                        field.setText(placeholder);
-                        field.setForeground(new Color(0x9AA0B0));
-                    }
-                }
-            });
-            add(field, BorderLayout.CENTER);
-        }
-
-        String getValor(String ph) {
-            String t = field.getText().trim();
-            return t.equals(ph) ? "" : t;
+            fundo.add(titulo, BorderLayout.NORTH);
+            fundo.add(lista, BorderLayout.CENTER);
+            add(fundo);
         }
     }
 
-    /** Campo de senha arredondado com placeholder e olho */
-    static class RoundedPassword extends JPanel {
-        private final JPasswordField field;
-        private final String placeholder;
-        private boolean visible = false;
+    static class AcompanharAdocaoView extends JFrame {
+        public AcompanharAdocaoView() {
+            setTitle("Acompanhar adoção");
+            setSize(650, 450);
+            setLocationRelativeTo(null);
 
-        RoundedPassword(String placeholder) {
-            this.placeholder = placeholder;
-            setLayout(new BorderLayout());
-            setBackground(new Color(0xF5F5F5));
-            setBorder(new RoundedBorder(14, new Color(0xE8E8E8)));
-            setMaximumSize(new Dimension(Integer.MAX_VALUE, 52));
-            setPreferredSize(new Dimension(360, 52));
+            JPanel fundo = basePanel();
+            JLabel titulo = titulo("Acompanhar adoção");
 
-            field = new JPasswordField(placeholder);
-            field.setEchoChar((char) 0);
-            field.setFont(new Font("SansSerif", Font.PLAIN, 14));
-            field.setForeground(new Color(0x9AA0B0));
-            field.setOpaque(false);
-            field.setBorder(new EmptyBorder(0, 18, 0, 0));
+            JTextArea status = new JTextArea(
+                    "Animal: Preciosinha\n"
+                    + "Status: Em análise\n\n"
+                    + "Sua solicitação foi recebida.\n"
+                    + "A equipe Lau Miau irá avaliar as informações e entrar em contato."
+            );
+            status.setEditable(false);
+            status.setFont(new Font("SansSerif", Font.PLAIN, 16));
+            status.setBorder(new EmptyBorder(25, 25, 25, 25));
 
-            JButton eye = new JButton("👁");
-            eye.setBorderPainted(false);
-            eye.setFocusPainted(false);
-            eye.setContentAreaFilled(false);
-            eye.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            eye.setFont(new Font("SansSerif", Font.PLAIN, 14));
-            eye.setBorder(new EmptyBorder(0, 4, 0, 12));
-            eye.addActionListener(e -> {
-                visible = !visible;
-                if (visible) {
-                    field.setEchoChar((char) 0);
-                    eye.setText("🙈");
-                } else {
-                    if (!String.valueOf(field.getPassword()).equals(placeholder))
-                        field.setEchoChar('●');
-                    eye.setText("👁");
-                }
-            });
+            JButton fechar = new RoundedButton("Entendi");
+            fechar.addActionListener(e -> dispose());
 
-            field.addFocusListener(new FocusAdapter() {
-                public void focusGained(FocusEvent e) {
-                    if (String.valueOf(field.getPassword()).equals(placeholder)) {
-                        field.setText("");
-                        field.setForeground(new Color(0x1A1E2E));
-                        if (!visible) field.setEchoChar('●');
-                    }
-                }
-                public void focusLost(FocusEvent e) {
-                    if (String.valueOf(field.getPassword()).isEmpty()) {
-                        field.setText(placeholder);
-                        field.setForeground(new Color(0x9AA0B0));
-                        field.setEchoChar((char) 0);
-                    }
-                }
-            });
-
-            add(field, BorderLayout.CENTER);
-            add(eye, BorderLayout.EAST);
-        }
-
-        String getValor(String ph) {
-            String t = String.valueOf(field.getPassword()).trim();
-            return t.equals(ph) ? "" : t;
+            fundo.add(titulo, BorderLayout.NORTH);
+            fundo.add(status, BorderLayout.CENTER);
+            fundo.add(fechar, BorderLayout.SOUTH);
+            add(fundo);
         }
     }
 
-    /** Botão laranja arredondado */
+    static class EditarPerfilTutorView extends JFrame {
+
+        private JTextField campoNome;
+        private JTextField campoEmail;
+        private JTextField campoTelefone;
+
+        public EditarPerfilTutorView() {
+            setTitle("Editar perfil");
+            setSize(650, 500);
+            setLocationRelativeTo(null);
+
+            JPanel fundo = basePanel();
+            JLabel titulo = titulo("Editar perfil");
+
+            JPanel card = new JPanel();
+            card.setBackground(Color.WHITE);
+            card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+            card.setBorder(new EmptyBorder(30, 40, 30, 40));
+
+            campoNome = campo("Nome do tutor");
+            campoEmail = campo("email@exemplo.com");
+            campoTelefone = campo("(45) 99999-9999");
+
+            JButton salvar = new RoundedButton("Salvar alterações");
+            salvar.addActionListener(e -> JOptionPane.showMessageDialog(
+                    this,
+                    "Perfil atualizado com sucesso!",
+                    "Sucesso",
+                    JOptionPane.INFORMATION_MESSAGE
+            ));
+
+            card.add(campoNome);
+            card.add(Box.createVerticalStrut(15));
+            card.add(campoEmail);
+            card.add(Box.createVerticalStrut(15));
+            card.add(campoTelefone);
+            card.add(Box.createVerticalStrut(25));
+            card.add(salvar);
+
+            fundo.add(titulo, BorderLayout.NORTH);
+            fundo.add(card, BorderLayout.CENTER);
+            add(fundo);
+        }
+
+        private JTextField campo(String texto) {
+            JTextField campo = new JTextField(texto);
+            campo.setFont(new Font("SansSerif", Font.PLAIN, 15));
+            campo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+            campo.setBorder(BorderFactory.createCompoundBorder(
+                    new RoundedBorder(14, new Color(0xE8E8E8)),
+                    new EmptyBorder(0, 18, 0, 18)
+            ));
+            return campo;
+        }
+    }
+
+    private static JPanel basePanel() {
+        JPanel fundo = new JPanel(new BorderLayout(20, 20));
+        fundo.setBackground(COR_FUNDO);
+        fundo.setBorder(new EmptyBorder(30, 40, 30, 40));
+        return fundo;
+    }
+
+    private static JLabel titulo(String texto) {
+        JLabel label = new JLabel(texto, SwingConstants.CENTER);
+        label.setFont(new Font("SansSerif", Font.BOLD, 26));
+        label.setForeground(COR_TEXTO);
+        return label;
+    }
+
     static class RoundedButton extends JButton {
         RoundedButton(String text) {
             super(text);
             setFont(new Font("SansSerif", Font.BOLD, 16));
             setForeground(Color.WHITE);
-            setBackground(new Color(0xFF6600));
+            setBackground(COR_LARANJA);
             setFocusPainted(false);
             setBorderPainted(false);
             setContentAreaFilled(false);
             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             setPreferredSize(new Dimension(360, 52));
+            setMaximumSize(new Dimension(Integer.MAX_VALUE, 52));
 
             addMouseListener(new MouseAdapter() {
-                public void mouseEntered(MouseEvent e) { setBackground(new Color(0xE55C00)); repaint(); }
-                public void mouseExited(MouseEvent e)  { setBackground(new Color(0xFF6600)); repaint(); }
+                public void mouseEntered(MouseEvent e) {
+                    setBackground(COR_LARANJA_HV);
+                    repaint();
+                }
+
+                public void mouseExited(MouseEvent e) {
+                    setBackground(COR_LARANJA);
+                    repaint();
+                }
             });
         }
 
-        @Override protected void paintComponent(Graphics g) {
+        @Override
+        protected void paintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2.setColor(getBackground());
@@ -339,22 +297,30 @@ public class TutorView extends JFrame {
         }
     }
 
-    /** Borda arredondada reutilizável */
     static class RoundedBorder extends AbstractBorder {
         private final int radius;
         private final Color color;
-        RoundedBorder(int radius, Color color) { this.radius = radius; this.color = color; }
-        @Override public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
+
+        RoundedBorder(int radius, Color color) {
+            this.radius = radius;
+            this.color = color;
+        }
+
+        @Override
+        public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2.setColor(color);
             g2.drawRoundRect(x, y, w - 1, h - 1, radius, radius);
             g2.dispose();
         }
-        @Override public Insets getBorderInsets(Component c) { return new Insets(radius/2, radius/2, radius/2, radius/2); }
+
+        @Override
+        public Insets getBorderInsets(Component c) {
+            return new Insets(radius / 2, radius / 2, radius / 2, radius / 2);
+        }
     }
 
-    // ── Entrypoint ───────────────────────────────────────────────────────────
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new TutorView().setVisible(true));
     }
