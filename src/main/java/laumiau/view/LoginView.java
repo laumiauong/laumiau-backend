@@ -120,7 +120,7 @@ public class LoginView extends JFrame {
             JOptionPane.showMessageDialog(
                     this,
                     "O acesso administrativo é feito pelo Main.java.\n" +
-                            "No momento sta tela é destinada ao login e cadastro de usuários."
+                            "No momento esta tela é destinada ao login e cadastro de usuários."
             );
         });
 
