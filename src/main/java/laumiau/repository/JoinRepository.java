@@ -12,7 +12,6 @@ public class JoinRepository {
     }
 
     // INNER JOIN — apenas adoções que têm animal e cliente
-    @SuppressWarnings("unchecked")
     public List<Object[]> innerJoinAdocoes() {
         try {
             return em.createNativeQuery("""
