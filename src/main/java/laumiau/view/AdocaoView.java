@@ -21,7 +21,6 @@ public class AdocaoView extends JFrame {
     private final String statusAnimal;
 
     private JCheckBox checkTermo;
-    private RoundedButton btnConfirmar;
 
     public AdocaoView() {
         this("Gatinho", "Lauanda", "Disponível para adoção responsável");
@@ -33,8 +32,8 @@ public class AdocaoView extends JFrame {
         this.statusAnimal = statusAnimal;
 
         setTitle("Lau Miau – Confirmar Adoção");
-        setSize(900, 720);
-        setMinimumSize(new Dimension(700, 650));
+        setSize(900, 760);
+        setMinimumSize(new Dimension(700, 700));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -49,12 +48,13 @@ public class AdocaoView extends JFrame {
         JPanel wrapper = new JPanel();
         wrapper.setOpaque(false);
         wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
-        wrapper.setPreferredSize(new Dimension(620, 610));
-        wrapper.setMaximumSize(new Dimension(620, 610));
+        wrapper.setPreferredSize(new Dimension(620, 665));
+        wrapper.setMaximumSize(new Dimension(620, 665));
 
         JPanel topo = new JPanel(new BorderLayout());
         topo.setOpaque(false);
         topo.setMaximumSize(new Dimension(620, 50));
+        topo.setPreferredSize(new Dimension(620, 50));
 
         JButton btnVoltar = new JButton("←");
         btnVoltar.setFont(new Font("SansSerif", Font.BOLD, 18));
@@ -66,12 +66,22 @@ public class AdocaoView extends JFrame {
         btnVoltar.setPreferredSize(new Dimension(44, 44));
         btnVoltar.addActionListener(e -> dispose());
 
-        JLabel logo = new JLabel("LAU 🐾 MIAU", SwingConstants.CENTER);
+        JPanel logoPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        logoPanel.setOpaque(false);
+
+        JLabel logo = new JLabel("LAU 🐾 MIAU");
         logo.setFont(new Font("SansSerif", Font.BOLD, 27));
         logo.setForeground(COR_LARANJA);
 
+        logoPanel.add(logo);
+
+        JPanel espacoDireita = new JPanel();
+        espacoDireita.setOpaque(false);
+        espacoDireita.setPreferredSize(new Dimension(44, 44));
+
         topo.add(btnVoltar, BorderLayout.WEST);
-        topo.add(logo, BorderLayout.CENTER);
+        topo.add(logoPanel, BorderLayout.CENTER);
+        topo.add(espacoDireita, BorderLayout.EAST);
 
         JLabel titulo = new JLabel("Confirmar Adoção");
         titulo.setFont(new Font("SansSerif", Font.BOLD, 32));
@@ -90,11 +100,11 @@ public class AdocaoView extends JFrame {
                 new RoundedBorder(20, COR_BORDA),
                 new EmptyBorder(32, 40, 32, 40)
         ));
-        card.setMaximumSize(new Dimension(620, 390));
+        card.setMaximumSize(new Dimension(620, 400));
+        card.setPreferredSize(new Dimension(620, 400));
 
         card.add(infoRow("🐱 Animal:", nomeAnimal, COR_LARANJA, 21, Font.BOLD));
         card.add(Box.createVerticalStrut(18));
-
         card.add(infoRow("👤 Adotante:", nomeAdotante, COR_TEXTO, 18, Font.BOLD));
         card.add(Box.createVerticalStrut(18));
 
@@ -143,7 +153,7 @@ public class AdocaoView extends JFrame {
         avisoPanel.add(aviso, BorderLayout.CENTER);
         card.add(avisoPanel);
 
-        card.add(Box.createVerticalStrut(22));
+        card.add(Box.createVerticalStrut(24));
 
         JPanel checkPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         checkPanel.setOpaque(false);
@@ -157,8 +167,10 @@ public class AdocaoView extends JFrame {
         checkPanel.add(checkTermo);
         card.add(checkPanel);
 
-        btnConfirmar = new RoundedButton("❤  Confirmar adoção");
+        RoundedButton btnConfirmar = new RoundedButton("❤  Confirmar adoção");
         btnConfirmar.setMaximumSize(new Dimension(620, 56));
+        btnConfirmar.setPreferredSize(new Dimension(620, 56));
+        btnConfirmar.setMinimumSize(new Dimension(620, 56));
         btnConfirmar.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnConfirmar.addActionListener(e -> confirmarAdocao());
 
@@ -176,14 +188,12 @@ public class AdocaoView extends JFrame {
         wrapper.add(subtitulo);
         wrapper.add(Box.createVerticalStrut(22));
         wrapper.add(card);
-        wrapper.add(Box.createVerticalStrut(22));
+        wrapper.add(Box.createVerticalStrut(28));
         wrapper.add(btnConfirmar);
-        wrapper.add(Box.createVerticalStrut(14));
+        wrapper.add(Box.createVerticalStrut(18));
         wrapper.add(rodape);
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 1;
@@ -281,30 +291,32 @@ public class AdocaoView extends JFrame {
             setBorderPainted(false);
             setContentAreaFilled(false);
             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            setPreferredSize(new Dimension(620, 56));
-
-            addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                    setBackground(COR_LARANJA_HV);
-                    repaint();
-                }
-
-                @Override
-                public void mouseExited(MouseEvent e) {
-                    setBackground(COR_LARANJA);
-                    repaint();
-                }
-            });
         }
 
         @Override
         protected void paintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(getBackground());
+
+            ButtonModel model = getModel();
+
+            if (model.isRollover()) {
+                g2.setColor(COR_LARANJA_HV);
+            } else {
+                g2.setColor(getBackground());
+            }
+
             g2.fill(new RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 26, 26));
-            super.paintComponent(g);
+
+            FontMetrics fm = g2.getFontMetrics();
+            String texto = getText();
+            int x = (getWidth() - fm.stringWidth(texto)) / 2;
+            int y = ((getHeight() - fm.getHeight()) / 2) + fm.getAscent();
+
+            g2.setColor(getForeground());
+            g2.setFont(getFont());
+            g2.drawString(texto, x, y);
+
             g2.dispose();
         }
     }
