@@ -19,7 +19,7 @@ public class FormularioContatoFrame extends JFrame {
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Lau Miau - Entre em Contato");
         setSize(600, 650);
-        getContentPane().setBackground(new Color(255, 248, 240));
+        getContentPane().setBackground(new Color(255, 245, 240));
         setLayout(null);
         
         // Painel principal
@@ -27,8 +27,10 @@ public class FormularioContatoFrame extends JFrame {
         mainPanel.setBounds(50, 30, 500, 560);
         mainPanel.setBackground(Color.WHITE);
         mainPanel.setLayout(null);
-        mainPanel.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220), 1));
-        
+        mainPanel.setBorder(BorderFactory.createCompoundBorder(
+        BorderFactory.createLineBorder(new Color(235, 235, 235), 1),
+        BorderFactory.createEmptyBorder(15, 15, 15, 15)
+));        
         // Título
         JLabel tituloLabel = new JLabel("Entre em Contato");
         tituloLabel.setFont(new Font("Arial", Font.BOLD, 28));
@@ -113,7 +115,19 @@ public class FormularioContatoFrame extends JFrame {
         btnEnviar.setFocusPainted(false);
         btnEnviar.setBorderPainted(false);
         btnEnviar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        
+        btnEnviar.setBorder(BorderFactory.createEmptyBorder());
+        btnEnviar.addMouseListener(new java.awt.event.MouseAdapter() {
+            
+        @Override
+        public void mouseEntered(java.awt.event.MouseEvent evt) {
+            btnEnviar.setBackground(new Color(235, 97, 28));
+        }
+
+        @Override
+        public void mouseExited(java.awt.event.MouseEvent evt) {
+            btnEnviar.setBackground(new Color(255, 122, 48));
+        }
+    });
         btnEnviar.addActionListener(e -> enviarFormulario());
         
         mainPanel.add(btnEnviar);

@@ -1,147 +1,307 @@
-package laumiau; 
+package laumiau;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.geom.RoundRectangle2D;
 
 public class SobreNosFrame extends JFrame {
-    
+
+    private static final Color LARANJA      = new Color(255, 107, 38);
+    private static final Color LARANJA_DARK = new Color(230, 85, 20);
+    private static final Color BRANCO       = Color.WHITE;
+    private static final Color CINZA_BG     = new Color(245, 245, 247);
+    private static final Color CINZA_BORDA  = new Color(220, 220, 225);
+    private static final Color TEXTO_DARK   = new Color(30, 30, 35);
+    private static final Color TEXTO_MEDIO  = new Color(80, 80, 90);
+    private static final Font  FONTE_UI     = new Font("Segoe UI", Font.PLAIN, 14);
+
+    private JPanel headerPanel;
+    private JPanel mainContent;
+    private JPanel menuRight;
+    private JLabel menuHome;
+    private JLabel menuAnimais;
+    private JPanel sobrePanel;
+    private JPanel adminPanel;
+
+    private static final int CARD_W = 980;
+    private static final int CARD_H = 510;
+    private static final int CARD_Y = 100;
+
     public SobreNosFrame() {
         initComponents();
         setSize(1200, 700);
-        setLocationRelativeTo(null); // Centraliza a janela
+        setLocationRelativeTo(null);
+
+        getContentPane().addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                repositionAll();
+            }
+        });
     }
-    
+
+    private void repositionAll() {
+        int w = getContentPane().getWidth();
+
+        headerPanel.setBounds(0, 0, w, 72);
+
+        int adminX   = w - 105 - 48;
+        int sobreX   = adminX - 115 - 18;
+        int animaisX = sobreX  -  70 - 22;
+        int homeX    = animaisX -  55 - 18;
+
+        menuHome.setBounds(homeX,    24,  55, 24);
+        menuAnimais.setBounds(animaisX, 24,  70, 24);
+        sobrePanel.setBounds(sobreX,  18, 115, 36);
+        adminPanel.setBounds(adminX,  18, 105, 36);
+
+        int cardX = (w - CARD_W) / 2;
+        mainContent.setBounds(cardX, CARD_Y, CARD_W, CARD_H);
+
+        headerPanel.repaint();
+        mainContent.repaint();
+    }
+
     private void initComponents() {
-        // Configurações da janela
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("Lau Miau - Sobre Nós");
         setSize(1200, 700);
-        getContentPane().setBackground(new Color(255, 248, 240));
+        getContentPane().setBackground(CINZA_BG);
         setLayout(null);
+
+        try {
+            setIconImage(new ImageIcon(getClass().getResource("/imagens/logo.png")).getImage());
+        } catch (Exception e) {
+            System.out.println("Logo não encontrada");
+        }
+
+        // HEADER
+        headerPanel = new JPanel(null);
+        headerPanel.setBackground(BRANCO);
+        headerPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, CINZA_BORDA));
+
+        // LAU 🐾 MIAU
+        JLabel lauLabel = new JLabel("LAU");
+        lauLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        lauLabel.setForeground(LARANJA);
+        lauLabel.setBounds(48, 22, 55, 28);
+        headerPanel.add(lauLabel);
+
+        try {
+            ImageIcon logoIcon = new ImageIcon(getClass().getResource("/imagens/logo.png"));
+            Image logoImg = logoIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH);
+            JLabel logoImagem = new JLabel(new ImageIcon(logoImg));
+            logoImagem.setBounds(106, 23, 26, 26);
+            headerPanel.add(logoImagem);
+        } catch (Exception e) {
+            System.out.println("Logo não encontrada");
+        }
+
+        JLabel miauLabel = new JLabel("MIAU");
+        miauLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        miauLabel.setForeground(LARANJA);
+        miauLabel.setBounds(136, 22, 75, 28);
+        headerPanel.add(miauLabel);
+
         
-        // Painel do Header
-        JPanel headerPanel = new JPanel();
-        headerPanel.setBounds(0, 0, 1200, 80);
-        headerPanel.setBackground(Color.WHITE);
-        headerPanel.setLayout(null);
-        
-        // Logo
-        JLabel logoLabel = new JLabel("LAU🐾MIAU");
-        logoLabel.setFont(new Font("Arial", Font.BOLD, 28));
-        logoLabel.setForeground(new Color(255, 107, 38));
-        logoLabel.setBounds(50, 20, 200, 40);
-        headerPanel.add(logoLabel);
-        
-        // Menu
-        JLabel menuHome = createMenuLabel("Home", 570, 30);
-        JLabel menuAnimais = createMenuLabel("Animais", 660, 30);
-        JLabel menuSobre = createMenuLabel("Sobre nós", 780, 30);
-        menuSobre.setForeground(new Color(255, 107, 38));
-        menuSobre.setBackground(new Color(255, 220, 190));
-        menuSobre.setOpaque(true);
-        
-        JLabel menuAdmin = new JLabel("👤 Admin");
-        menuAdmin.setFont(new Font("Arial", Font.PLAIN, 16));
-        menuAdmin.setBounds(1050, 30, 100, 25);
-        menuAdmin.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        
+        menuHome = new JLabel("Home");
+        menuHome.setFont(FONTE_UI);
+        menuHome.setForeground(TEXTO_MEDIO);
+        menuHome.setCursor(new Cursor(Cursor.HAND_CURSOR));
         headerPanel.add(menuHome);
+
+        menuAnimais = new JLabel("Animais");
+        menuAnimais.setFont(FONTE_UI);
+        menuAnimais.setForeground(TEXTO_MEDIO);
+        menuAnimais.setCursor(new Cursor(Cursor.HAND_CURSOR));
         headerPanel.add(menuAnimais);
-        headerPanel.add(menuSobre);
-        headerPanel.add(menuAdmin);
-        
+
+        sobrePanel = new JPanel(new GridBagLayout()) {
+            @Override protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(LARANJA);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
+                g2.dispose();
+            }
+        };
+        sobrePanel.setOpaque(false);
+        sobrePanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        JLabel menuSobre = new JLabel("Sobre nós");
+        menuSobre.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        menuSobre.setForeground(BRANCO);
+        sobrePanel.add(menuSobre);
+        headerPanel.add(sobrePanel);
+
+        adminPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 8)) {
+            @Override protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(BRANCO);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
+                g2.setColor(CINZA_BORDA);
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 10, 10);
+                g2.dispose();
+            }
+        };
+        adminPanel.setOpaque(false);
+        adminPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        JLabel adminIcon = new JLabel("👤");
+        JLabel adminText = new JLabel("Admin");
+        adminText.setFont(FONTE_UI);
+        adminText.setForeground(TEXTO_DARK);
+        adminPanel.add(adminIcon);
+        adminPanel.add(adminText);
+        headerPanel.add(adminPanel);
+
         add(headerPanel);
-        
-        // Painel de conteúdo
-        JPanel contentPanel = new JPanel();
-        contentPanel.setBounds(150, 150, 900, 450);
-        contentPanel.setBackground(Color.WHITE);
-        contentPanel.setLayout(null);
-        
-        // Título
-        JLabel tituloLabel = new JLabel("Sobre nós!");
-        tituloLabel.setFont(new Font("Arial", Font.BOLD, 36));
-        tituloLabel.setBounds(50, 30, 300, 50);
-        contentPanel.add(tituloLabel);
-        
-        // Texto descritivo
-        JTextArea textoArea = new JTextArea();
-        textoArea.setText("O Lau Miau nasceu com a missão de aproximar animais incríveis\n" +
-                         "de lares cheios de amor, agora, por meio de uma plataforma\n" +
-                         "moderna e interativa! Aqui, quem deseja adotar encontra um\n" +
-                         "guia fácil e divertido de localizar cães e gatos que estão prontos\n" +
-                         "para dar e receber carinho.\n\n" +
-                         "À frente do projeto está a Dra. Lavanda Lara, médica\n" +
-                         "veterinária e pet sitter, dedicada ao bem-estar animal. Com\n" +
-                         "ampla experiência e amor pela causa, ela também oferece\n" +
-                         "serviços profissionais de atendimento veterinário e cuidados\n" +
-                         "personalizados para pets. Ideais para quem busca confiança e\n" +
-                         "carinho nos momentos em que não pode estar presente.\n\n" +
-                         "Para saber mais sobre os serviços veterinários ou de pet sitter,\n" +
-                         "basta entrar em contato. O cuidado com os animais é levado a\n" +
-                         "sério – sempre com responsabilidade, afeto e profissionalismo.");
-        textoArea.setFont(new Font("Arial", Font.PLAIN, 13));
-        textoArea.setLineWrap(true);
-        textoArea.setWrapStyleWord(true);
-        textoArea.setEditable(false);
-        textoArea.setBackground(Color.WHITE);
-        textoArea.setBounds(50, 90, 450, 280);
-        contentPanel.add(textoArea);
-        
-        // Botões
-        JButton btnConhecerServicos = createButton("🧡 Conhecer serviços", 50, 380, new Color(255, 107, 38));
-        JButton btnContato = createButton("Entre em contato", 250, 380, Color.WHITE);
-        btnContato.setForeground(new Color(255, 107, 38));
-        btnContato.setBorder(BorderFactory.createLineBorder(new Color(255, 107, 38), 2));
-        
-        // Ação do botão contato
+
+        // CARD PRINCIPAL 
+        mainContent = new JPanel(null) {
+            @Override protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                for (int i = 8; i >= 1; i--) {
+                    g2.setColor(new Color(0, 0, 0, (int)(2.5 * i)));
+                    g2.fillRoundRect(i, i, getWidth() - i * 2, getHeight() - i * 2, 20, 20);
+                }
+                g2.setColor(BRANCO);
+                g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 20, 20);
+                g2.dispose();
+            }
+        };
+        mainContent.setOpaque(false);
+
+        // ── Imagem ───────────────────────────────────────────────────────────
+        int imgW = 310, imgH = 420;
+        int imgX = CARD_W - imgW - 50;
+        int imgY = (CARD_H - imgH) / 2;
+
+        JPanel imagemPanel = new JPanel() {
+            @Override protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                try {
+                    ImageIcon icon = new ImageIcon(getClass().getResource("/imagens/vet.png"));
+                    Image imgOriginal = icon.getImage();
+                    double ratW  = (double) getWidth()  / imgOriginal.getWidth(this);
+                    double ratH  = (double) getHeight() / imgOriginal.getHeight(this);
+                    double scale = Math.max(ratW, ratH);
+                    int fW = (int)(imgOriginal.getWidth(this)  * scale);
+                    int fH = (int)(imgOriginal.getHeight(this) * scale);
+                    int x  = (getWidth()  - fW) / 2;
+                    int y  = (getHeight() - fH) / 2;
+                    g2.setClip(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 18, 18));
+                    g2.drawImage(imgOriginal, x, y, fW, fH, this);
+                } catch (Exception e) {
+                    g2.setColor(new Color(240, 240, 240));
+                    g2.fillRoundRect(0, 0, getWidth(), getHeight(), 18, 18);
+                }
+                g2.dispose();
+            }
+        };
+        imagemPanel.setBounds(imgX, imgY, imgW, imgH);
+        imagemPanel.setOpaque(false);
+        mainContent.add(imagemPanel);
+
+        // Texto
+        int txtX      = 55;
+        int textAreaW = imgX - txtX - 30;
+
+        JPanel acento = new JPanel();
+        acento.setBounds(txtX, 48, 48, 4);
+        acento.setBackground(LARANJA);
+        mainContent.add(acento);
+
+        JLabel titulo = new JLabel("Sobre nós!");
+        titulo.setFont(new Font("Segoe UI", Font.BOLD, 38));
+        titulo.setForeground(TEXTO_DARK);
+        titulo.setBounds(txtX, 62, 320, 50);
+        mainContent.add(titulo);
+
+        String textoHtml = "<html><body style='width:" + textAreaW + "px;"
+            + "line-height:1.7;color:#505060;font-size:13px;'>"
+            + "<p>O Lau Miau nasceu com a missão de aproximar animais incríveis "
+            + "de lares cheios de amor, agora, por meio de uma plataforma "
+            + "moderna e interativa!</p><br>"
+            + "<p>Aqui, quem deseja adotar encontra um guia fácil e divertido de "
+            + "localizar cães e gatos que estão prontos para dar e receber carinho.</p><br>"
+            + "<p>À frente do projeto está a <b>Dra. Lavanda Lara</b>, médica "
+            + "veterinária e pet sitter, dedicada ao bem-estar animal. Com "
+            + "ampla experiência e amor pela causa, ela também oferece "
+            + "serviços profissionais.</p><br>"
+            + "<p>Ideais para quem busca confiança e carinho nos momentos em que "
+            + "não pode estar presente.</p><br>"
+            + "<p>Para saber mais sobre os serviços veterinários ou de pet sitter, "
+            + "basta entrar em contato. O cuidado com os animais é levado a sério!</p>"
+            + "</body></html>";
+
+        JLabel textoLabel = new JLabel(textoHtml);
+        textoLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        textoLabel.setVerticalAlignment(SwingConstants.TOP);
+        textoLabel.setBounds(txtX, 122, textAreaW, 310);
+        mainContent.add(textoLabel);
+
+        // ── Botões ────────────────────────────────────────────────────────────
+        int btnY = CARD_H - 76;
+
+        JButton btnConhecer = new JButton("Conhecer serviços") {
+            @Override protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(getModel().isRollover() ? LARANJA_DARK : LARANJA);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
+                super.paintComponent(g);
+                g2.dispose();
+            }
+        };
+        btnConhecer.setBounds(txtX, btnY, 190, 42);
+        btnConhecer.setForeground(BRANCO);
+        btnConhecer.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnConhecer.setFocusPainted(false);
+        btnConhecer.setBorderPainted(false);
+        btnConhecer.setContentAreaFilled(false);
+        btnConhecer.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        mainContent.add(btnConhecer);
+
+        JButton btnContato = new JButton("Entre em contato") {
+            @Override protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(getModel().isRollover() ? new Color(255, 245, 240) : BRANCO);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
+                g2.setColor(LARANJA);
+                g2.setStroke(new BasicStroke(2));
+                g2.drawRoundRect(1, 1, getWidth() - 2, getHeight() - 2, 10, 10);
+                super.paintComponent(g);
+                g2.dispose();
+            }
+        };
+        btnContato.setBounds(txtX + 206, btnY, 190, 42);
+        btnContato.setForeground(LARANJA);
+        btnContato.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnContato.setFocusPainted(false);
+        btnContato.setBorderPainted(false);
+        btnContato.setContentAreaFilled(false);
+        btnContato.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnContato.addActionListener(e -> {
-            new FormularioContatoFrame().setVisible(true);
+            try {
+                new FormularioContatoFrame().setVisible(true);
+            } catch (Exception ex) {
+                System.out.println("FormularioContatoFrame não encontrado");
+            }
         });
-        
-        contentPanel.add(btnConhecerServicos);
-        contentPanel.add(btnContato);
-        
-        // Imagem (placeholder)
-        JPanel imagemPanel = new JPanel();
-        imagemPanel.setBounds(550, 30, 300, 400);
-        imagemPanel.setBackground(new Color(50, 50, 50));
-        imagemPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
-        
-        JLabel imagemLabel = new JLabel("Imagem da Veterinária", SwingConstants.CENTER);
-        imagemLabel.setForeground(Color.WHITE);
-        imagemPanel.add(imagemLabel);
-        
-        contentPanel.add(imagemPanel);
-        
-        add(contentPanel);
+        mainContent.add(btnContato);
+
+        add(mainContent);
     }
-    
-    private JLabel createMenuLabel(String text, int x, int y) {
-        JLabel label = new JLabel(text);
-        label.setFont(new Font("Arial", Font.PLAIN, 16));
-        label.setBounds(x, y, 100, 25);
-        label.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        return label;
-    }
-    
-    private JButton createButton(String text, int x, int y, Color bgColor) {
-        JButton button = new JButton(text);
-        button.setBounds(x, y, 180, 40);
-        button.setBackground(bgColor);
-        button.setForeground(bgColor == Color.WHITE ? new Color(255, 107, 38) : Color.WHITE);
-        button.setFont(new Font("Arial", Font.BOLD, 13));
-        button.setFocusPainted(false);
-        button.setBorderPainted(false);
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        return button;
-    }
-    
+
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new SobreNosFrame().setVisible(true);
-        });
+        try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } catch (Exception e) {}
+        SwingUtilities.invokeLater(() -> new SobreNosFrame().setVisible(true));
     }
 }
