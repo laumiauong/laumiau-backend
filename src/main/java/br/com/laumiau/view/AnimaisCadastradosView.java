@@ -1,4 +1,4 @@
-package laumiau.view;
+package br.com.laumiau.view;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -135,19 +135,11 @@ public class AnimaisCadastradosView extends JFrame {
 
         pesquisa.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void insertUpdate(DocumentEvent e) {
-                carregarAnimais(pesquisa.getText());
-            }
-
+            public void insertUpdate(DocumentEvent e) { carregarAnimais(pesquisa.getText()); }
             @Override
-            public void removeUpdate(DocumentEvent e) {
-                carregarAnimais(pesquisa.getText());
-            }
-
+            public void removeUpdate(DocumentEvent e) { carregarAnimais(pesquisa.getText()); }
             @Override
-            public void changedUpdate(DocumentEvent e) {
-                carregarAnimais(pesquisa.getText());
-            }
+            public void changedUpdate(DocumentEvent e) { carregarAnimais(pesquisa.getText()); }
         });
 
         fundo.add(barra, BorderLayout.NORTH);
@@ -164,9 +156,7 @@ public class AnimaisCadastradosView extends JFrame {
     private void carregarAnimais(String filtro) {
         grid.removeAll();
 
-        String texto = filtro.equals(PLACEHOLDER)
-                ? ""
-                : filtro.toLowerCase().trim();
+        String texto = filtro.equals(PLACEHOLDER) ? "" : filtro.toLowerCase().trim();
 
         for (Animal animal : animalService.listarTodos()) {
             boolean correspondeNome = animal.getNome().toLowerCase().contains(texto);
@@ -182,7 +172,6 @@ public class AnimaisCadastradosView extends JFrame {
     }
 
     private JPanel criarCard(Animal animal) {
-
         JPanel card = new RoundedPanel(25, Color.WHITE);
         card.setLayout(new BorderLayout());
         card.setPreferredSize(new Dimension(250, 360));
@@ -217,7 +206,6 @@ public class AnimaisCadastradosView extends JFrame {
         editar.setForeground(LARANJA);
         editar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         editar.setAlignmentX(Component.CENTER_ALIGNMENT);
-
         editar.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -232,52 +220,34 @@ public class AnimaisCadastradosView extends JFrame {
         excluir.setForeground(new Color(255, 90, 100));
         excluir.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         excluir.setAlignmentX(Component.CENTER_ALIGNMENT);
-
         excluir.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 e.consume();
-
-                int confirmar = JOptionPane.showConfirmDialog(
-                        null,
+                int confirmar = JOptionPane.showConfirmDialog(null,
                         "Deseja excluir o animal " + animal.getNome() + "?",
-                        "Confirmar exclusão",
-                        JOptionPane.YES_NO_OPTION
-                );
-
+                        "Confirmar exclusão", JOptionPane.YES_NO_OPTION);
                 if (confirmar == JOptionPane.YES_OPTION) {
                     try {
                         animalService.remover(animal.getId());
                         carregarAnimais(pesquisa.getText());
-
-                        JOptionPane.showMessageDialog(
-                                null,
-                                "Animal excluído com sucesso!"
-                        );
-
+                        JOptionPane.showMessageDialog(null, "Animal excluído com sucesso!");
                     } catch (Exception erro) {
-                        JOptionPane.showMessageDialog(
-                                null,
-                                erro.getMessage()
-                        );
+                        JOptionPane.showMessageDialog(null, erro.getMessage());
                     }
                 }
             }
         });
 
         acoes.add(editar);
-        
+
         JLayeredPane camada = new JLayeredPane();
-camada.setPreferredSize(new Dimension(250, 200));
-
-foto.setBounds(0, 0, 250, 200);
-
-acoes.setBounds(205, 10, 35, 80);
-
-camada.add(foto, Integer.valueOf(0));
-camada.add(acoes, Integer.valueOf(1));
-
-topoFoto.add(camada, BorderLayout.CENTER);
+        camada.setPreferredSize(new Dimension(250, 200));
+        foto.setBounds(0, 0, 250, 200);
+        acoes.setBounds(205, 10, 35, 80);
+        camada.add(foto, Integer.valueOf(0));
+        camada.add(acoes, Integer.valueOf(1));
+        topoFoto.add(camada, BorderLayout.CENTER);
 
         JPanel info = new JPanel();
         info.setOpaque(false);
@@ -292,10 +262,7 @@ topoFoto.add(camada, BorderLayout.CENTER);
         nome.setFont(new Font("SansSerif", Font.BOLD, 18));
         nome.setForeground(TEXTO);
 
-        Color corSexo = animal.getSexo() == Sexo.FEMEA
-                ? new Color(236, 72, 153)
-                : new Color(59, 130, 246);
-
+        Color corSexo = animal.getSexo() == Sexo.FEMEA ? new Color(236, 72, 153) : new Color(59, 130, 246);
         JLabel sexo = new JLabel("● " + (animal.getSexo() == Sexo.FEMEA ? "Fêmea" : "Macho"));
         sexo.setForeground(corSexo);
         sexo.setFont(new Font("SansSerif", Font.BOLD, 13));
@@ -303,6 +270,11 @@ topoFoto.add(camada, BorderLayout.CENTER);
         JLabel local = new JLabel("📍 Foz do Iguaçu, Centro");
         local.setForeground(CINZA);
         local.setFont(new Font("SansSerif", Font.PLAIN, 12));
+
+        JPanel linhaExcluir = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        linhaExcluir.setOpaque(false);
+        excluir.setFont(new Font("SansSerif", Font.BOLD, 17));
+        linhaExcluir.add(excluir);
 
         info.add(id);
         info.add(Box.createVerticalStrut(4));
@@ -312,33 +284,15 @@ topoFoto.add(camada, BorderLayout.CENTER);
         info.add(Box.createVerticalStrut(12));
         info.add(local);
         info.add(Box.createVerticalGlue());
-
-JPanel linhaExcluir =
-        new JPanel(new FlowLayout(
-                FlowLayout.RIGHT,
-                0,
-                0
-        ));
-
-linhaExcluir.setOpaque(false);
-
-excluir.setFont(
-        new Font("SansSerif", Font.BOLD, 17)
-);
-
-linhaExcluir.add(excluir);
-
-info.add(Box.createVerticalStrut(12));
-info.add(linhaExcluir);
+        info.add(Box.createVerticalStrut(12));
+        info.add(linhaExcluir);
 
         card.add(topoFoto, BorderLayout.NORTH);
         card.add(info, BorderLayout.CENTER);
 
         MouseAdapter clique = new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                abrirDetalhes(animal);
-            }
+            public void mouseClicked(MouseEvent e) { abrirDetalhes(animal); }
         };
 
         card.addMouseListener(clique);
@@ -388,42 +342,16 @@ info.add(linhaExcluir);
         infos.setOpaque(false);
         infos.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
 
-        infos.add(criarBox(
-                animal.getSexo() == Sexo.FEMEA ? "Fêmea" : "Macho",
-                "Sexo"
-        ));
+        infos.add(criarBox(animal.getSexo() == Sexo.FEMEA ? "Fêmea" : "Macho", "Sexo"));
+        infos.add(criarBox(textoOuPadrao(animal.getCor(), "Não informado"), "Cor"));
+        infos.add(criarBox(animal.getPorte() != null ? animal.getPorte().toString() : "Não informado", "Porte"));
+        infos.add(criarBox(textoOuPadrao(animal.getPeso(), "Não informado"), "Peso"));
 
-        infos.add(criarBox(
-                textoOuPadrao(animal.getCor(), "Não informado"),
-                "Cor"
-        ));
-
-        infos.add(criarBox(
-                animal.getPorte() != null ? animal.getPorte().toString() : "Não informado",
-                "Porte"
-        ));
-
-        infos.add(criarBox(
-                textoOuPadrao(animal.getPeso(), "Não informado"),
-                "Peso"
-        ));
-
-        JPanel vacina = new RoundedPanel(
-                18,
-                animal.isVacinado()
-                        ? new Color(220, 255, 230)
-                        : new Color(255, 235, 235)
-        );
-
+        JPanel vacina = new RoundedPanel(18, animal.isVacinado() ? new Color(220, 255, 230) : new Color(255, 235, 235));
         vacina.setLayout(new FlowLayout(FlowLayout.LEFT));
         vacina.setMaximumSize(new Dimension(Integer.MAX_VALUE, 48));
 
-        JLabel vacinado = new JLabel(
-                animal.isVacinado()
-                        ? "✔ Vacinado"
-                        : "✖ Não vacinado"
-        );
-
+        JLabel vacinado = new JLabel(animal.isVacinado() ? "✔ Vacinado" : "✖ Não vacinado");
         vacinado.setFont(new Font("SansSerif", Font.BOLD, 14));
         vacina.add(vacinado);
 
@@ -431,30 +359,22 @@ info.add(linhaExcluir);
         responsavel.setOpaque(false);
         responsavel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
 
-        JLabel avatar = new JLabel("ONG", SwingConstants.CENTER);
-        avatar.setOpaque(true);
-        avatar.setBackground(new Color(238, 238, 238));
-        avatar.setForeground(Color.BLACK);
-        avatar.setFont(new Font("SansSerif", Font.BOLD, 13));
-        avatar.setPreferredSize(new Dimension(52, 52));
+        JLabel avatarResp = new JLabel("ONG", SwingConstants.CENTER);
+        avatarResp.setOpaque(true);
+        avatarResp.setBackground(new Color(238, 238, 238));
+        avatarResp.setForeground(Color.BLACK);
+        avatarResp.setFont(new Font("SansSerif", Font.BOLD, 13));
+        avatarResp.setPreferredSize(new Dimension(52, 52));
 
         String nomeResponsavel = textoOuPadrao(animal.getResponsavel(), "ONG Lau & Miau");
 
-        JLabel txtResp = new JLabel(
-                "<html><span style='color:#999999'>Com quem está:</span><br><b>"
-                        + nomeResponsavel +
-                        "</b></html>"
-        );
-
+        JLabel txtResp = new JLabel("<html><span style='color:#999999'>Com quem está:</span><br><b>" + nomeResponsavel + "</b></html>");
         txtResp.setFont(new Font("SansSerif", Font.PLAIN, 15));
 
-        responsavel.add(avatar);
+        responsavel.add(avatarResp);
         responsavel.add(txtResp);
 
-        JTextArea descricao = new JTextArea(
-                textoOuPadrao(animal.getDescricao(), "Sem descrição cadastrada.")
-        );
-
+        JTextArea descricao = new JTextArea(textoOuPadrao(animal.getDescricao(), "Sem descrição cadastrada."));
         descricao.setEditable(false);
         descricao.setLineWrap(true);
         descricao.setWrapStyleWord(true);
@@ -465,16 +385,9 @@ info.add(linhaExcluir);
         JButton adotar = new RoundedButton("❤ Quero adotar", LARANJA, Color.WHITE);
         adotar.setFont(new Font("SansSerif", Font.BOLD, 18));
         adotar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 58));
-
-        adotar.addActionListener(e -> {
-            JOptionPane.showMessageDialog(
-                    tela,
-                    "Solicitação enviada com sucesso!\n\n" +
-                            "Responsável: " + nomeResponsavel,
-                    "Adoção",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
-        });
+        adotar.addActionListener(e -> JOptionPane.showMessageDialog(tela,
+                "Solicitação enviada com sucesso!\n\nResponsável: " + nomeResponsavel,
+                "Adoção", JOptionPane.INFORMATION_MESSAGE));
 
         direita.add(nome);
         direita.add(Box.createVerticalStrut(8));
@@ -518,27 +431,42 @@ info.add(linhaExcluir);
     }
 
     private String textoOuPadrao(String texto, String padrao) {
-        if (texto == null || texto.trim().isEmpty()) {
-            return padrao;
-        }
-
+        if (texto == null || texto.trim().isEmpty()) return padrao;
         return texto;
     }
 
     public static void main(String[] args) {
-        EntityManagerFactory emf =
-                Persistence.createEntityManagerFactory("laumiau");
-
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("laumiau");
         EntityManager em = emf.createEntityManager();
+        AnimalRepository repository = new AnimalRepository(em);
+        AnimalService service = new AnimalService(repository);
+        SwingUtilities.invokeLater(() -> new AnimaisCadastradosView(service));
+    }
 
-        AnimalRepository repository =
-                new AnimalRepository(em);
+    // ==================== COMPONENTES ====================
 
-        AnimalService service =
-                new AnimalService(repository);
+    static class RoundedButton extends JButton {
+        private Color bg;
 
-        SwingUtilities.invokeLater(
-                () -> new AnimaisCadastradosView(service)
-        );
+        public RoundedButton(String text, Color bg, Color fg) {
+            super(text);
+            this.bg = bg;
+            setForeground(fg);
+            setContentAreaFilled(false);
+            setFocusPainted(false);
+            setBorderPainted(false);
+            setBorder(new EmptyBorder(12, 24, 12, 24));
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(bg);
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
+            super.paintComponent(g);
+            g2.dispose();
+        }
     }
 }

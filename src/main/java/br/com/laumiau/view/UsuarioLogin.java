@@ -1,6 +1,4 @@
-package laumiau;
-
-import laumiau.view.LoginView;
+package br.com.laumiau.view;
 
 import javax.swing.SwingUtilities;
 

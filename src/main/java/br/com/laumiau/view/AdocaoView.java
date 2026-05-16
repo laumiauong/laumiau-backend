@@ -1,4 +1,4 @@
-package laumiau.view;
+package br.com.laumiau.view;
 
 import javax.swing.*;
 import javax.swing.border.*;

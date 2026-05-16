@@ -1,4 +1,4 @@
-package laumiau; 
+package br.com.laumiau.view;
 
 import javax.swing.*;
 import java.awt.*;

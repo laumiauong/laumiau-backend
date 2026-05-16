@@ -7,14 +7,18 @@ import jakarta.persistence.*;
 @PrimaryKeyJoinColumn(name = "usuario_id")
 public class Cliente extends Usuario {
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "endereco_id")
-    private Endereco endereco;
+    // REMOVIDO o campo Endereco duplicado — já está em Usuario
 
     public Cliente() {}
 
     public Cliente(Long id, String nome, String email, String senha) {
         super(id, nome, email, senha);
+        this.setTipo(TipoUsuario.cliente);
+    }
+
+    // Construtor com Endereco adicionado
+    public Cliente(Long id, String nome, String email, String senha, Endereco endereco) {
+        super(id, nome, email, senha, endereco);
         this.setTipo(TipoUsuario.cliente);
     }
 

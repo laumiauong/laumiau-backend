@@ -1,28 +1,24 @@
-package laumiau.view;
+package br.com.laumiau.view;
 
 import jakarta.persistence.EntityManager;
 import laumiau.infra.JPAUtil;
-import laumiau.model.Cliente;
 import laumiau.model.Usuario;
+import laumiau.repository.AnimalRepository;
 import laumiau.repository.UsuarioRepository;
+import laumiau.service.AnimalService;
 
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 
-public class CadastroView extends JFrame {
+public class LoginView extends JFrame {
 
     private static final int CARD_LARGURA = 500;
     private static final int CARD_ALTURA = 620;
 
-    private JTextField txtNome;
     private JTextField txtEmail;
     private JPasswordField txtSenha;
-    private JPasswordField txtConfirmarSenha;
-
-    private JButton btnCadastrar;
     private JButton btnEntrar;
-
     private JLabel imagemCard;
 
     private int cardX;
@@ -31,9 +27,9 @@ public class CadastroView extends JFrame {
     private EntityManager em;
     private UsuarioRepository usuarioRepository;
 
-    public CadastroView() {
+    public LoginView() {
 
-        setTitle("Cadastro - LauMiau");
+        setTitle("Login - LauMiau");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
@@ -53,33 +49,26 @@ public class CadastroView extends JFrame {
             em = JPAUtil.getEntityManager();
             usuarioRepository = new UsuarioRepository(em);
         }
-
         return usuarioRepository;
     }
 
     private void calcularPosicaoCard() {
         Dimension tela = Toolkit.getDefaultToolkit().getScreenSize();
-
         cardX = (tela.width - CARD_LARGURA) / 2;
         cardY = (tela.height - CARD_ALTURA) / 2;
     }
 
     private void carregarImagemCard() {
 
-        URL url = ClassLoader.getSystemResource("teste-cadastro.png");
+        URL url = ClassLoader.getSystemResource("teste-login.png");
 
         if (url == null) {
-            JOptionPane.showMessageDialog(this, "Imagem teste-cadastro.png não encontrada.");
+            JOptionPane.showMessageDialog(this, "Imagem teste-login.png não encontrada.");
             return;
         }
 
         ImageIcon icon = new ImageIcon(url);
-
-        Image img = icon.getImage().getScaledInstance(
-                CARD_LARGURA,
-                CARD_ALTURA,
-                Image.SCALE_SMOOTH
-        );
+        Image img = icon.getImage().getScaledInstance(CARD_LARGURA, CARD_ALTURA, Image.SCALE_SMOOTH);
 
         imagemCard = new JLabel(new ImageIcon(img));
         imagemCard.setBounds(cardX, cardY, CARD_LARGURA, CARD_ALTURA);
@@ -89,40 +78,43 @@ public class CadastroView extends JFrame {
 
     private void criarCampos() {
 
-        txtNome = new JTextField();
-        txtNome.setBounds(cardX + 110, cardY + 270, 275, 35);
-        configurarCampo(txtNome);
-        add(txtNome);
-
         txtEmail = new JTextField();
-        txtEmail.setBounds(cardX + 110, cardY + 341, 275, 35);
+        txtEmail.setBounds(cardX + 125, cardY + 325, 290, 45);
         configurarCampo(txtEmail);
         add(txtEmail);
 
         txtSenha = new JPasswordField();
-        txtSenha.setBounds(cardX + 110, cardY + 409, 275, 35);
+        txtSenha.setBounds(cardX + 125, cardY + 407, 290, 45);
         configurarCampo(txtSenha);
         add(txtSenha);
 
-        txtConfirmarSenha = new JPasswordField();
-        txtConfirmarSenha.setBounds(cardX + 110, cardY + 478, 275, 35);
-        configurarCampo(txtConfirmarSenha);
-        add(txtConfirmarSenha);
-
-        btnCadastrar = new JButton("");
-        btnCadastrar.setBounds(cardX + 83, cardY + 517, 333, 35);
-        configurarBotao(btnCadastrar);
-        add(btnCadastrar);
-
         btnEntrar = new JButton("");
-        btnEntrar.setBounds(cardX + 285, cardY + 575, 85, 30);
+        btnEntrar.setBounds(cardX + 80, cardY + 460, 340, 45);
         configurarBotao(btnEntrar);
         add(btnEntrar);
 
-        btnCadastrar.addActionListener(e -> cadastrarUsuario());
+        JButton btnAdmin = new JButton("");
+        btnAdmin.setBounds(cardX + 135, cardY + 535, 140, 30);
+        configurarBotao(btnAdmin);
+        add(btnAdmin);
 
-        btnEntrar.addActionListener(e -> {
-            new LoginView();
+        JButton btnCadastrar = new JButton("");
+        btnCadastrar.setBounds(cardX + 280, cardY + 550, 150, 25);
+        configurarBotao(btnCadastrar);
+        add(btnCadastrar);
+
+        // Login usuário comum → abre AnimalView
+        btnEntrar.addActionListener(e -> fazerLoginUsuario());
+
+        // Cadastrar → abre CadastroView
+        btnCadastrar.addActionListener(e -> {
+            new CadastroView();
+            dispose();
+        });
+
+        // Admin → abre LoginAdmin
+        btnAdmin.addActionListener(e -> {
+            new LoginAdmin().setVisible(true);
             dispose();
         });
 
@@ -136,55 +128,32 @@ public class CadastroView extends JFrame {
         repaint();
     }
 
-    private void cadastrarUsuario() {
+    private void fazerLoginUsuario() {
 
-        String nome = txtNome.getText().trim();
         String email = txtEmail.getText().trim();
         String senha = new String(txtSenha.getPassword()).trim();
-        String confirmarSenha = new String(txtConfirmarSenha.getPassword()).trim();
 
-        if (nome.isEmpty() || email.isEmpty() || senha.isEmpty() || confirmarSenha.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Preencha todos os campos.");
-            return;
-        }
-
-        if (!email.contains("@") || !email.contains(".")) {
-            JOptionPane.showMessageDialog(this, "Informe um e-mail válido.");
-            return;
-        }
-
-        if (senha.length() < 4) {
-            JOptionPane.showMessageDialog(this, "A senha deve ter pelo menos 4 caracteres.");
-            return;
-        }
-
-        if (!senha.equals(confirmarSenha)) {
-            JOptionPane.showMessageDialog(this, "As senhas não coincidem.");
+        if (email.isEmpty() || senha.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Preencha o e-mail e a senha.");
             return;
         }
 
         try {
-            Usuario usuarioExistente = getUsuarioRepository().buscarPorEmail(email);
+            Usuario usuario = getUsuarioRepository().buscarPorEmail(email);
 
-            if (usuarioExistente != null) {
-                JOptionPane.showMessageDialog(this, "Já existe um usuário cadastrado com este e-mail.");
+            if (usuario == null || !usuario.autenticar(senha)) {
+                JOptionPane.showMessageDialog(this, "E-mail ou senha inválidos.");
                 return;
             }
 
-            Cliente cliente = new Cliente(null, nome, email, senha);
+            EntityManager emAnimal = JPAUtil.getEntityManager();
+            AnimalService animalService = new AnimalService(new AnimalRepository(emAnimal));
 
-            getUsuarioRepository().salvar(cliente);
-
-            JOptionPane.showMessageDialog(this, "Usuário cadastrado com sucesso!");
-
-            new LoginView();
+            new AnimalView(animalService);
             dispose();
 
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Erro ao cadastrar usuário: " + ex.getMessage()
-            );
+            JOptionPane.showMessageDialog(this, "Erro ao fazer login: " + ex.getMessage());
         }
     }
 
@@ -205,6 +174,6 @@ public class CadastroView extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(CadastroView::new);
+        SwingUtilities.invokeLater(LoginView::new);
     }
 }

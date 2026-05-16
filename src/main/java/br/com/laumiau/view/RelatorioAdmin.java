@@ -1,7 +1,9 @@
 package br.com.laumiau.view;
 
 import laumiau.model.Relatorio;
+import laumiau.service.AnimalService;
 import laumiau.service.RelatorioService;
+import laumiau.repository.AnimalRepository;
 import laumiau.infra.JPAUtil;
 
 import jakarta.persistence.EntityManager;
@@ -13,13 +15,11 @@ import java.awt.event.*;
 import javax.swing.Timer;
 import java.util.List;
 
-import laumiau.view.AnimaisCadastradosView;
-import laumiau.view.CadastroAnimalView;
-
 public class RelatorioAdmin extends JFrame {
 
     private EntityManager em = JPAUtil.getEntityManager();
     private RelatorioService relatorioService = new RelatorioService(em);
+    private AnimalService animalService = new AnimalService(new AnimalRepository(em));
 
     private JLabel lblPetsDisponiveis, lblAdocoesMes, lblTotalAdotados, lblVacinados;
     private JPanel painelListaSolicitacoes;
@@ -152,6 +152,7 @@ public class RelatorioAdmin extends JFrame {
 
             em = JPAUtil.getEntityManager();
             relatorioService = new RelatorioService(em);
+            animalService = new AnimalService(new AnimalRepository(em)); // atualiza junto
 
             Relatorio dados = relatorioService.obterRelatorioGeral();
 
@@ -196,7 +197,7 @@ public class RelatorioAdmin extends JFrame {
         animais.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                new AnimaisCadastradosView().setVisible(true);
+                new AnimaisCadastradosView(animalService).setVisible(true);
                 dispose();
             }
         });
@@ -283,13 +284,13 @@ public class RelatorioAdmin extends JFrame {
 
         OrangeButton btnCadastrar = new OrangeButton("➕  Cadastrar Novo Pet");
         btnCadastrar.addActionListener(e -> {
-            new CadastroAnimalView().setVisible(true);
+            new CadastroAnimalView(animalService).setVisible(true);
             dispose();
         });
 
         OrangeButton btnGerenciar = new OrangeButton("📊  Gerenciar Animais");
         btnGerenciar.addActionListener(e -> {
-            new AnimaisCadastradosView().setVisible(true);
+            new AnimaisCadastradosView(animalService).setVisible(true);
             dispose();
         });
 

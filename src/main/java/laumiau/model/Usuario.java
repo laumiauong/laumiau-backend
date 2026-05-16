@@ -1,10 +1,9 @@
 package laumiau.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "usuario") // Ajustado para o singular, igual ao Banco de Dados
+@Table(name = "usuario")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Usuario {
 
@@ -25,15 +24,13 @@ public abstract class Usuario {
     @Column(nullable = false)
     private TipoUsuario tipo;
 
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "endereco_id")
+    // Corrigido: o lado dono é Endereco (tem usuario_id no banco)
+    // então aqui usamos mappedBy
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
     private Endereco endereco;
 
-    public Usuario() {
-    }
+    public Usuario() {}
 
-    // Este construtor permite que o Admin e o Tutor funcionem sem erro
     public Usuario(Long id, String nome, String email, String senha) {
         this.id = id;
         this.nome = nome;
@@ -41,58 +38,31 @@ public abstract class Usuario {
         this.senha = senha;
     }
 
-
-
-
-    // Getters e Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
+    public Usuario(Long id, String nome, String email, String senha, Endereco endereco) {
         this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
         this.nome = nome;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
         this.senha = senha;
-    }
-
-    public TipoUsuario getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(TipoUsuario tipo) {
-        this.tipo = tipo;
-    }
-
-
-    public Endereco getEndereco() {
-        return endereco;
-    }
-
-    public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
     }
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getSenha() { return senha; }
+    public void setSenha(String senha) { this.senha = senha; }
+
+    public TipoUsuario getTipo() { return tipo; }
+    public void setTipo(TipoUsuario tipo) { this.tipo = tipo; }
+
+    public Endereco getEndereco() { return endereco; }
+    public void setEndereco(Endereco endereco) { this.endereco = endereco; }
 
     public boolean autenticar(String senhaDigitada) {
         return this.senha.equals(senhaDigitada);

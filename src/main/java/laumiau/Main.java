@@ -1,11 +1,12 @@
 package laumiau;
 
+import br.com.laumiau.view.SobreNosFrame;
 import jakarta.persistence.EntityManager;
 import laumiau.infra.JPAUtil;
 import laumiau.model.*;
 import laumiau.service.*;
 import laumiau.repository.*;
-import laumiau.view.AnimalView;
+import br.com.laumiau.view.AnimalView;
 import org.flywaydb.core.Flyway;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

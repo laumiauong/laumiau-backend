@@ -1,4 +1,3 @@
-
 package laumiau.model;
 
 import jakarta.persistence.*;
@@ -23,6 +22,7 @@ public class Endereco {
     @Column(nullable = false)
     private String cep;
 
+    // Lado dono do relacionamento — tem usuario_id no banco
     @OneToOne
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
@@ -36,7 +36,6 @@ public class Endereco {
         this.cep = cep;
     }
 
-    // Getters e Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
