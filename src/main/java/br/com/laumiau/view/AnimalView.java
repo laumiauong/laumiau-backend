@@ -37,32 +37,8 @@ public class AnimalView extends JFrame {
     }
 
     private JPanel criarTopo() {
-        JPanel topo = new JPanel(new BorderLayout());
-        topo.setBackground(Color.WHITE);
-        topo.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(235, 228, 220)),
-                new EmptyBorder(0, 40, 0, 40)
-        ));
-        topo.setPreferredSize(new Dimension(0, 68));
-
-        JLabel logo = new JLabel("LAU 🐾 MIAU");
-        logo.setFont(new Font("SansSerif", Font.BOLD, 26));
-        logo.setForeground(LARANJA);
-
-        JPanel menu = new JPanel(new FlowLayout(FlowLayout.CENTER, 6, 0));
-        menu.setOpaque(false);
-
-        menu.add(criarItemMenu("Home", true));
-        menu.add(criarItemMenu("Animais", false));
-        menu.add(criarItemMenu("Sobre nós", false));
-
-        JButton admin = criarBotaoAdmin();
-
-        topo.add(logo, BorderLayout.WEST);
-        topo.add(menu, BorderLayout.CENTER);
-        topo.add(admin, BorderLayout.EAST);
-
-        return topo;
+        NavbarPadrao navbar = new NavbarPadrao("Home");
+        return navbar;
     }
 
     private JButton criarBotaoAdmin() {
@@ -212,17 +188,17 @@ public class AnimalView extends JFrame {
         JPanel grid = new JPanel(new GridLayout(2, 5, 18, 18));
         grid.setOpaque(false);
 
-        grid.add(criarCard("Fofuxo", "Macho", "img/gato1.png"));
-        grid.add(criarCard("Princesa", "Fêmea", "img/gato2.png"));
-        grid.add(criarCard("Bonitão", "Macho", "img/gato3.png"));
-        grid.add(criarCard("Bebe", "Fêmea", "img/gato4.png"));
-        grid.add(criarCard("Rabinho", "Macho", "img/cachorro1.png"));
+        grid.add(criarCard("Fofuxo", "Macho", "img/imgGATO1.png"));
+        grid.add(criarCard("Princesa", "Fêmea", "img/imgGATO2.png"));
+        grid.add(criarCard("Bonitão", "Macho", "img/imgGATO3.png"));
+        grid.add(criarCard("Bebe", "Fêmea", "img/imgGATO4.png"));
+        grid.add(criarCard("Rabinho", "Macho", "img/imgCACHORRO1.png"));
 
-        grid.add(criarCard("Charmosa", "Fêmea", "img/gato6.png"));
-        grid.add(criarCard("Banguela", "Macho", "img/cachorro2.png"));
-        grid.add(criarCard("Preciosa", "Fêmea", "img/gato8.png"));
-        grid.add(criarCard("Renê", "Macho", "img/gato9.png"));
-        grid.add(criarCard("Perninha", "Macho", "img/gato10.png"));
+        grid.add(criarCard("Charmosa", "Fêmea", "img/imgGATO6.png"));
+        grid.add(criarCard("Banguela", "Macho", "img/imgCACHORRO2.png"));
+        grid.add(criarCard("Preciosa", "Fêmea", "img/imgGATO8.png"));
+        grid.add(criarCard("Renê", "Macho", "img/imgGATO9.png"));
+        grid.add(criarCard("Perninha", "Macho", "img/imgGATO10.png"));
 
         conteudo.add(cabecalho, BorderLayout.NORTH);
         conteudo.add(grid, BorderLayout.CENTER);

@@ -20,7 +20,6 @@ public class AdocaoView extends JFrame {
 
     private final String nomeAnimal;
     private final String nomeAdotante;
-
     private JCheckBox checkTermo;
 
     public AdocaoView() {
@@ -30,37 +29,32 @@ public class AdocaoView extends JFrame {
     public AdocaoView(String nomeAnimal, String nomeAdotante) {
         this.nomeAnimal = nomeAnimal;
         this.nomeAdotante = nomeAdotante;
-
         setTitle("Adoção - LauMiau");
         setSize(1000, 720);
         setMinimumSize(new Dimension(760, 650));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
         criarTela();
     }
 
     private void criarTela() {
+        setLayout(new BorderLayout());
+
+        // Navbar padrão no topo
+        add(new NavbarPadrao("Home"), BorderLayout.NORTH);
+
+        // Fundo centralizado
         JPanel fundo = new JPanel(new GridBagLayout());
         fundo.setBackground(COR_FUNDO);
-        setContentPane(fundo);
 
         JPanel card = new JPanel();
         card.setBackground(COR_CARD);
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-        card.setPreferredSize(new Dimension(430, 610));
+        card.setPreferredSize(new Dimension(430, 580));
         card.setBorder(BorderFactory.createCompoundBorder(
                 new RoundedBorder(28, new Color(0xE8E8E8)),
                 new EmptyBorder(26, 34, 24, 34)
         ));
-
-        JLabel logo = criarLogo();
-        logo.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JLabel slogan = new JLabel("Transformando vidas, espalhando amor.");
-        slogan.setFont(new Font("SansSerif", Font.BOLD, 13));
-        slogan.setForeground(COR_SUBTEXTO);
-        slogan.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel titulo = new JLabel("Confirmar adoção");
         titulo.setFont(new Font("SansSerif", Font.BOLD, 32));
@@ -72,10 +66,6 @@ public class AdocaoView extends JFrame {
         subtitulo.setForeground(COR_SUBTEXTO);
         subtitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        card.add(logo);
-        card.add(Box.createVerticalStrut(8));
-        card.add(slogan);
-        card.add(Box.createVerticalStrut(34));
         card.add(titulo);
         card.add(Box.createVerticalStrut(8));
         card.add(subtitulo);
@@ -95,8 +85,8 @@ public class AdocaoView extends JFrame {
 
         JTextArea texto = new JTextArea(
                 "Ao confirmar esta adoção, você declara que o termo foi assinado "
-                + "e que o adotante se responsabiliza pelos cuidados, segurança, "
-                + "saúde e bem-estar do animal."
+                        + "e que o adotante se responsabiliza pelos cuidados, segurança, "
+                        + "saúde e bem-estar do animal."
         );
         texto.setEditable(false);
         texto.setFocusable(false);
@@ -108,20 +98,17 @@ public class AdocaoView extends JFrame {
         texto.setForeground(COR_SUBTEXTO);
         texto.setMaximumSize(new Dimension(360, 72));
         texto.setAlignmentX(Component.CENTER_ALIGNMENT);
-
         card.add(texto);
         card.add(Box.createVerticalStrut(18));
 
         JPanel checkPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         checkPanel.setOpaque(false);
         checkPanel.setMaximumSize(new Dimension(360, 30));
-
         checkTermo = new JCheckBox("Li e confirmo que o termo foi assinado");
         checkTermo.setOpaque(false);
         checkTermo.setFont(new Font("SansSerif", Font.PLAIN, 13));
         checkTermo.setForeground(COR_TEXTO);
         checkTermo.setFocusPainted(false);
-
         checkPanel.add(checkTermo);
         card.add(checkPanel);
         card.add(Box.createVerticalStrut(18));
@@ -132,7 +119,6 @@ public class AdocaoView extends JFrame {
         btnConfirmar.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnConfirmar.addActionListener(e -> confirmarAdocao());
         card.add(btnConfirmar);
-
         card.add(Box.createVerticalStrut(14));
 
         JLabel ou = new JLabel("ou");
@@ -150,26 +136,11 @@ public class AdocaoView extends JFrame {
         btnVoltar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btnVoltar.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnVoltar.addActionListener(e -> dispose());
-
         card.add(Box.createVerticalStrut(6));
         card.add(btnVoltar);
 
         fundo.add(card);
-    }
-
-    private JLabel criarLogo() {
-        java.net.URL url = getClass().getResource("/img/logo-lau-miau.png");
-
-        if (url != null) {
-            ImageIcon icon = new ImageIcon(url);
-            Image img = icon.getImage().getScaledInstance(215, 70, Image.SCALE_SMOOTH);
-            return new JLabel(new ImageIcon(img));
-        }
-
-        JLabel logoTexto = new JLabel("LAU 🐾 MIAU");
-        logoTexto.setFont(new Font("SansSerif", Font.BOLD, 28));
-        logoTexto.setForeground(COR_LARANJA);
-        return logoTexto;
+        add(fundo, BorderLayout.CENTER);
     }
 
     private JLabel labelCampo(String texto) {
@@ -190,44 +161,27 @@ public class AdocaoView extends JFrame {
                 new RoundedBorder(10, COR_BORDA),
                 new EmptyBorder(0, 12, 0, 12)
         ));
-
         JLabel lblIcone = new JLabel(icone);
         lblIcone.setFont(new Font("SansSerif", Font.BOLD, 18));
         lblIcone.setForeground(corIcone);
-
         JLabel lblTexto = new JLabel(texto);
         lblTexto.setFont(new Font("SansSerif", Font.BOLD, 14));
         lblTexto.setForeground(corIcone == COR_VERDE ? COR_VERDE : COR_TEXTO);
-
         caixa.add(lblIcone, BorderLayout.WEST);
         caixa.add(lblTexto, BorderLayout.CENTER);
-
         return caixa;
     }
 
     private void confirmarAdocao() {
         if (!checkTermo.isSelected()) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Você precisa confirmar que o termo foi assinado.",
-                    "Atenção",
-                    JOptionPane.WARNING_MESSAGE
-            );
+            JOptionPane.showMessageDialog(this, "Você precisa confirmar que o termo foi assinado.", "Atenção", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
-        JOptionPane.showMessageDialog(
-                this,
-                "Adoção de " + nomeAnimal + " confirmada com sucesso!",
-                "Sucesso",
-                JOptionPane.INFORMATION_MESSAGE
-        );
-
+        JOptionPane.showMessageDialog(this, "Adoção de " + nomeAnimal + " confirmada com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
         dispose();
     }
 
     static class RoundedButton extends JButton {
-
         public RoundedButton(String texto) {
             super(texto);
             setFont(new Font("SansSerif", Font.BOLD, 15));
@@ -237,48 +191,29 @@ public class AdocaoView extends JFrame {
             setBorderPainted(false);
             setContentAreaFilled(false);
             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
             addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                    setBackground(COR_LARANJA_HOVER);
-                    repaint();
-                }
-
-                @Override
-                public void mouseExited(MouseEvent e) {
-                    setBackground(COR_LARANJA);
-                    repaint();
-                }
+                @Override public void mouseEntered(MouseEvent e) { setBackground(COR_LARANJA_HOVER); repaint(); }
+                @Override public void mouseExited(MouseEvent e) { setBackground(COR_LARANJA); repaint(); }
             });
         }
 
         @Override
         protected void paintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g.create();
-
-            g2.setRenderingHint(
-                    RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON
-            );
-
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2.setColor(getBackground());
             g2.fill(new RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 12, 12));
-
             FontMetrics fm = g2.getFontMetrics();
             int x = (getWidth() - fm.stringWidth(getText())) / 2;
             int y = ((getHeight() - fm.getHeight()) / 2) + fm.getAscent();
-
             g2.setColor(getForeground());
             g2.setFont(getFont());
             g2.drawString(getText(), x, y);
-
             g2.dispose();
         }
     }
 
     static class RoundedBorder extends AbstractBorder {
-
         private final int radius;
         private final Color color;
 
@@ -290,15 +225,9 @@ public class AdocaoView extends JFrame {
         @Override
         public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
             Graphics2D g2 = (Graphics2D) g.create();
-
-            g2.setRenderingHint(
-                    RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON
-            );
-
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2.setColor(color);
             g2.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
-
             g2.dispose();
         }
     }

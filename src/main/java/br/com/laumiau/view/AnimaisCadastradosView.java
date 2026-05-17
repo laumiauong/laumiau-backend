@@ -46,44 +46,8 @@ public class AnimaisCadastradosView extends JFrame {
     }
 
     private JPanel criarTopo() {
-        JPanel topo = new JPanel(new BorderLayout());
-        topo.setBackground(Color.WHITE);
-        topo.setBorder(new EmptyBorder(18, 35, 18, 35));
-
-        JLabel titulo = new JLabel("←  Animais Cadastrados");
-        titulo.setFont(new Font("SansSerif", Font.BOLD, 28));
-        titulo.setForeground(TEXTO);
-        titulo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
-        titulo.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                dispose();
-                new AnimalView(animalService);
-            }
-        });
-
-        JPanel adminPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        adminPanel.setOpaque(false);
-
-        JLabel adminTexto = new JLabel("Admin");
-        adminTexto.setFont(new Font("SansSerif", Font.PLAIN, 15));
-        adminTexto.setForeground(TEXTO);
-
-        JLabel avatar = new JLabel("A", SwingConstants.CENTER);
-        avatar.setOpaque(true);
-        avatar.setBackground(LARANJA);
-        avatar.setForeground(Color.WHITE);
-        avatar.setFont(new Font("SansSerif", Font.BOLD, 16));
-        avatar.setPreferredSize(new Dimension(38, 38));
-
-        adminPanel.add(adminTexto);
-        adminPanel.add(avatar);
-
-        topo.add(titulo, BorderLayout.WEST);
-        topo.add(adminPanel, BorderLayout.EAST);
-
-        return topo;
+        NavbarPadrao navbar = new NavbarPadrao("Animais");
+        return navbar;
     }
 
     private JScrollPane criarConteudo() {
