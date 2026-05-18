@@ -1,5 +1,6 @@
 package br.com.laumiau.view;
 
+import laumiau.service.AnimalService;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -11,9 +12,20 @@ public class NavbarPadrao extends JPanel {
 
     private static final Color LARANJA = new Color(255, 107, 43);
     private static final Color LARANJA_HOVER = new Color(255, 140, 80);
-    private static final Color TEXTO = new Color(15, 23, 42);
+
+    private final AnimalService animalService;
+
+    public NavbarPadrao(String itemAtivo, AnimalService animalService) {
+        this.animalService = animalService;
+        init(itemAtivo);
+    }
 
     public NavbarPadrao(String itemAtivo) {
+        this.animalService = null;
+        init(itemAtivo);
+    }
+
+    private void init(String itemAtivo) {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
         setBorder(BorderFactory.createCompoundBorder(
@@ -22,11 +34,8 @@ public class NavbarPadrao extends JPanel {
         ));
         setPreferredSize(new Dimension(0, 68));
 
-        // Logo
-        JLabel logo = criarLogo();
-        add(logo, BorderLayout.WEST);
+        add(criarLogo(), BorderLayout.WEST);
 
-        // Menu central
         JPanel menu = new JPanel(new FlowLayout(FlowLayout.CENTER, 6, 0));
         menu.setOpaque(false);
         menu.add(criarItemMenu("Home", itemAtivo.equals("Home")));
@@ -34,7 +43,6 @@ public class NavbarPadrao extends JPanel {
         menu.add(criarItemMenu("Sobre nós", itemAtivo.equals("Sobre nós")));
         add(menu, BorderLayout.CENTER);
 
-        // Botão Admin
         add(criarBotaoAdmin(), BorderLayout.EAST);
     }
 
@@ -42,7 +50,7 @@ public class NavbarPadrao extends JPanel {
         java.net.URL url = getClass().getResource("/img/logoLAUMIAU.png");
         if (url != null) {
             ImageIcon icon = new ImageIcon(url);
-            Image img = icon.getImage().getScaledInstance(160, 50, Image.SCALE_SMOOTH);
+            Image img = icon.getImage().getScaledInstance(140, 35, Image.SCALE_SMOOTH);
             return new JLabel(new ImageIcon(img));
         }
         JLabel logo = new JLabel("LAU 🐾 MIAU");
@@ -90,16 +98,24 @@ public class NavbarPadrao extends JPanel {
 
     private void navegarPara(String destino) {
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+
         switch (destino) {
             case "Home" -> {
-                // Navegação para AnimalView - implemente conforme necessário
+                if (animalService != null) {
+                    new AnimalView(animalService);
+                    if (frame != null) frame.dispose();
+                }
             }
             case "Animais" -> {
-                // Navegação para AnimaisCadastradosView
+                if (animalService != null) {
+                    new AnimaisCadastradosView(animalService);
+                    if (frame != null) frame.dispose();
+                }
             }
-            case "Sobre nós" -> new SobreNosFrame().setVisible(true);
+            case "Sobre nós" -> {
+                new SobreNosFrame(animalService).setVisible(true);
+            }
         }
-        if (frame != null) frame.dispose();
     }
 
     private JButton criarBotaoAdmin() {

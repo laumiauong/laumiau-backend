@@ -100,12 +100,10 @@ public class RelatorioAdmin extends JFrame {
         nav.setPreferredSize(new Dimension(1280, 68));
         nav.setBorder(new MatteBorder(0, 0, 1, 0, BORDAS_LEVES));
 
-        // Logo
         JLabel logo = criarLogo();
         logo.setBorder(new EmptyBorder(0, 40, 0, 0));
         nav.add(logo, BorderLayout.WEST);
 
-        // Menu central
         JPanel menu = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 18));
         menu.setOpaque(false);
 
@@ -118,7 +116,7 @@ public class RelatorioAdmin extends JFrame {
         animais.setCursor(new Cursor(Cursor.HAND_CURSOR));
         animais.addMouseListener(new MouseAdapter() {
             @Override public void mouseClicked(MouseEvent e) {
-                new AnimaisCadastradosView(animalService).setVisible(true);
+                new AnimaisCadastradosView(animalService);
                 dispose();
             }
             @Override public void mouseEntered(MouseEvent e) { animais.setForeground(LARANJA_BASE); }
@@ -138,7 +136,6 @@ public class RelatorioAdmin extends JFrame {
         menu.add(adotantes);
         nav.add(menu, BorderLayout.CENTER);
 
-        // Botão Sair
         JPanel sairContainer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 40, 18));
         sairContainer.setOpaque(false);
 
@@ -160,7 +157,14 @@ public class RelatorioAdmin extends JFrame {
         btnSair.setContentAreaFilled(false);
         btnSair.setBorderPainted(false);
         btnSair.setFocusPainted(false);
-        btnSair.addActionListener(e -> dispose());
+
+
+        btnSair.addActionListener(e -> {
+            EntityManager emAnimal = JPAUtil.getEntityManager();
+            AnimalService animalServiceNovo = new AnimalService(new AnimalRepository(emAnimal));
+            new AnimalView(animalServiceNovo);
+            dispose();
+        });
 
         sairContainer.add(btnSair);
         nav.add(sairContainer, BorderLayout.EAST);
@@ -253,9 +257,9 @@ public class RelatorioAdmin extends JFrame {
         JPanel botoes = new JPanel(new GridLayout(2, 1, 0, 15));
         botoes.setOpaque(false);
         OrangeButton btnCadastrar = new OrangeButton("➕  Cadastrar Novo Pet");
-        btnCadastrar.addActionListener(e -> { new CadastroAnimalView(animalService).setVisible(true); dispose(); });
+        btnCadastrar.addActionListener(e -> { new CadastroAnimalView(animalService); dispose(); });
         OrangeButton btnGerenciar = new OrangeButton("📊  Gerenciar Animais");
-        btnGerenciar.addActionListener(e -> { new AnimaisCadastradosView(animalService).setVisible(true); dispose(); });
+        btnGerenciar.addActionListener(e -> { new AnimaisCadastradosView(animalService); dispose(); });
         botoes.add(btnCadastrar);
         botoes.add(btnGerenciar);
         p.add(botoes, BorderLayout.CENTER);
@@ -295,6 +299,7 @@ public class RelatorioAdmin extends JFrame {
             setContentAreaFilled(false);
             setBorder(new EmptyBorder(15, 20, 15, 20));
             setFocusPainted(false);
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         }
 
         @Override protected void paintComponent(Graphics g) {

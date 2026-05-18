@@ -37,124 +37,7 @@ public class AnimalView extends JFrame {
     }
 
     private JPanel criarTopo() {
-        NavbarPadrao navbar = new NavbarPadrao("Home");
-        return navbar;
-    }
-
-    private JButton criarBotaoAdmin() {
-        JButton btn = new JButton("  Admin") {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                Color bg = getModel().isRollover() ? LARANJA_HOVER : LARANJA;
-                g2.setColor(bg);
-                g2.fill(new RoundRectangle2D.Float(
-                        0,
-                        0,
-                        getWidth(),
-                        getHeight(),
-                        getHeight(),
-                        getHeight()
-                ));
-
-                g2.dispose();
-                super.paintComponent(g);
-            }
-
-            @Override
-            protected void paintBorder(Graphics g) {
-            }
-        };
-
-        btn.setFont(new Font("SansSerif", Font.BOLD, 14));
-        btn.setForeground(Color.WHITE);
-        btn.setContentAreaFilled(false);
-        btn.setBorderPainted(false);
-        btn.setFocusPainted(false);
-        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btn.setBorder(new EmptyBorder(9, 20, 9, 20));
-
-        btn.setIcon(new Icon() {
-            @Override
-            public int getIconWidth() {
-                return 18;
-            }
-
-            @Override
-            public int getIconHeight() {
-                return 18;
-            }
-
-            @Override
-            public void paintIcon(Component c, Graphics g, int x, int y) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                g2.setColor(Color.WHITE);
-                g2.fillOval(x + 4, y, 10, 10);
-                g2.fillArc(x, y + 10, 18, 12, 0, 180);
-
-                g2.dispose();
-            }
-        });
-
-        return btn;
-    }
-
-    private JPanel criarItemMenu(String texto, boolean ativo) {
-        JPanel pill = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                if (ativo) {
-                    Graphics2D g2 = (Graphics2D) g.create();
-                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                    g2.setColor(LARANJA);
-                    g2.fill(new RoundRectangle2D.Float(
-                            0,
-                            0,
-                            getWidth(),
-                            getHeight(),
-                            getHeight(),
-                            getHeight()
-                    ));
-
-                    g2.dispose();
-                }
-
-                super.paintComponent(g);
-            }
-        };
-
-        pill.setOpaque(false);
-        pill.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-
-        JLabel lbl = new JLabel(texto);
-        lbl.setFont(new Font("SansSerif", Font.BOLD, 14));
-        lbl.setForeground(ativo ? Color.WHITE : new Color(90, 80, 70));
-        lbl.setBorder(new EmptyBorder(8, 18, 8, 18));
-
-        pill.add(lbl);
-
-        if (!ativo) {
-            pill.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
-            pill.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                    lbl.setForeground(LARANJA);
-                }
-
-                @Override
-                public void mouseExited(MouseEvent e) {
-                    lbl.setForeground(new Color(90, 80, 70));
-                }
-            });
-        }
-
-        return pill;
+        return new NavbarPadrao("Home", animalService);
     }
 
     private JScrollPane criarConteudo() {
@@ -178,6 +61,7 @@ public class AnimalView extends JFrame {
         verTodos.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                dispose();
                 new AnimaisCadastradosView(animalService);
             }
         });
@@ -193,7 +77,6 @@ public class AnimalView extends JFrame {
         grid.add(criarCard("Bonitão", "Macho", "img/imgGATO3.png"));
         grid.add(criarCard("Bebe", "Fêmea", "img/imgGATO4.png"));
         grid.add(criarCard("Rabinho", "Macho", "img/imgCACHORRO1.png"));
-
         grid.add(criarCard("Charmosa", "Fêmea", "img/imgGATO6.png"));
         grid.add(criarCard("Banguela", "Macho", "img/imgCACHORRO2.png"));
         grid.add(criarCard("Preciosa", "Fêmea", "img/imgGATO8.png"));
@@ -221,26 +104,11 @@ public class AnimalView extends JFrame {
 
                 for (int i = 4; i >= 1; i--) {
                     g2.setColor(new Color(0, 0, 0, 8));
-                    g2.fill(new RoundRectangle2D.Float(
-                            i,
-                            i + 2,
-                            getWidth() - i * 2,
-                            getHeight() - i * 2,
-                            20,
-                            20
-                    ));
+                    g2.fill(new RoundRectangle2D.Float(i, i + 2, getWidth() - i * 2, getHeight() - i * 2, 20, 20));
                 }
 
                 g2.setColor(CARD_BG);
-                g2.fill(new RoundRectangle2D.Float(
-                        0,
-                        0,
-                        getWidth() - 4,
-                        getHeight() - 4,
-                        20,
-                        20
-                ));
-
+                g2.fill(new RoundRectangle2D.Float(0, 0, getWidth() - 4, getHeight() - 4, 20, 20));
                 g2.dispose();
             }
         };
@@ -256,35 +124,23 @@ public class AnimalView extends JFrame {
         JLabel foto = carregarImagem(caminhoImg, 230, 200);
         foto.setBounds(0, 0, 230, 200);
 
-        JButton coracao = new JButton("♡") {
-            private boolean favoritado = false;
+        boolean[] favoritado = {false};
 
+        JButton coracao = new JButton("♡") {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
                 g2.setColor(new Color(0, 0, 0, 20));
                 g2.fillOval(1, 2, getWidth() - 1, getHeight() - 1);
-
                 g2.setColor(Color.WHITE);
                 g2.fillOval(0, 0, getWidth() - 1, getHeight() - 1);
-
                 g2.dispose();
                 super.paintComponent(g);
             }
 
             @Override
-            protected void paintBorder(Graphics g) {
-            }
-
-            {
-                addActionListener(e -> {
-                    favoritado = !favoritado;
-                    setForeground(favoritado ? LARANJA : CINZA);
-                    setText(favoritado ? "♥" : "♡");
-                });
-            }
+            protected void paintBorder(Graphics g) {}
         };
 
         coracao.setFont(new Font("SansSerif", Font.BOLD, 16));
@@ -296,6 +152,12 @@ public class AnimalView extends JFrame {
         coracao.setSize(32, 32);
         coracao.setLocation(190, 12);
 
+        coracao.addActionListener(e -> {
+            favoritado[0] = !favoritado[0];
+            coracao.setForeground(favoritado[0] ? LARANJA : CINZA);
+            coracao.setText(favoritado[0] ? "♥" : "♡");
+        });
+
         areaImg.add(foto);
         areaImg.add(coracao);
 
@@ -304,7 +166,6 @@ public class AnimalView extends JFrame {
             public void componentResized(ComponentEvent e) {
                 int w = areaImg.getWidth();
                 int h = areaImg.getHeight();
-
                 foto.setBounds(0, 0, w, h);
                 coracao.setLocation(w - 42, 12);
             }
@@ -333,12 +194,10 @@ public class AnimalView extends JFrame {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
                 g2.setColor(corSexo);
                 int sz = 10;
                 int y = (getHeight() - sz) / 2;
                 g2.fillOval(0, y, sz, sz);
-
                 g2.dispose();
             }
         };
@@ -381,21 +240,13 @@ public class AnimalView extends JFrame {
     private JLabel carregarImagem(String caminho, int largura, int altura) {
         try {
             java.net.URL url = getClass().getClassLoader().getResource(caminho);
-
             if (url != null) {
                 ImageIcon icon = new ImageIcon(url);
-                Image img = icon.getImage().getScaledInstance(
-                        largura,
-                        altura,
-                        Image.SCALE_SMOOTH
-                );
-
+                Image img = icon.getImage().getScaledInstance(largura, altura, Image.SCALE_SMOOTH);
                 JLabel lbl = new JLabel(new ImageIcon(img));
                 lbl.setHorizontalAlignment(SwingConstants.CENTER);
-
                 return lbl;
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -405,10 +256,8 @@ public class AnimalView extends JFrame {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
                 g2.setColor(new Color(240, 234, 228));
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
-
                 g2.dispose();
                 super.paintComponent(g);
             }

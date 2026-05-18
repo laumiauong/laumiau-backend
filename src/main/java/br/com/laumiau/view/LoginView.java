@@ -28,7 +28,6 @@ public class LoginView extends JFrame {
     private UsuarioRepository usuarioRepository;
 
     public LoginView() {
-
         setTitle("Login - LauMiau");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -59,25 +58,19 @@ public class LoginView extends JFrame {
     }
 
     private void carregarImagemCard() {
-
         URL url = ClassLoader.getSystemResource("teste-login.png");
-
         if (url == null) {
             JOptionPane.showMessageDialog(this, "Imagem teste-login.png não encontrada.");
             return;
         }
-
         ImageIcon icon = new ImageIcon(url);
         Image img = icon.getImage().getScaledInstance(CARD_LARGURA, CARD_ALTURA, Image.SCALE_SMOOTH);
-
         imagemCard = new JLabel(new ImageIcon(img));
         imagemCard.setBounds(cardX, cardY, CARD_LARGURA, CARD_ALTURA);
-
         add(imagemCard);
     }
 
     private void criarCampos() {
-
         txtEmail = new JTextField();
         txtEmail.setBounds(cardX + 125, cardY + 325, 290, 45);
         configurarCampo(txtEmail);
@@ -103,20 +96,15 @@ public class LoginView extends JFrame {
         configurarBotao(btnCadastrar);
         add(btnCadastrar);
 
-        // Login usuário comum → abre AnimalView
         btnEntrar.addActionListener(e -> fazerLoginUsuario());
 
-        // Cadastrar → abre CadastroView
         btnCadastrar.addActionListener(e -> {
             new CadastroView();
             dispose();
         });
 
-        // Admin → abre LoginAdmin
-        btnAdmin.addActionListener(e -> {
-            new LoginAdmin().setVisible(true);
-            dispose();
-        });
+        // ✅ CORRIGIDO: não faz dispose(), LoginView continua aberto
+        btnAdmin.addActionListener(e -> new LoginAdmin().setVisible(true));
 
         if (imagemCard != null) {
             getContentPane().setComponentZOrder(
@@ -129,7 +117,6 @@ public class LoginView extends JFrame {
     }
 
     private void fazerLoginUsuario() {
-
         String email = txtEmail.getText().trim();
         String senha = new String(txtSenha.getPassword()).trim();
 

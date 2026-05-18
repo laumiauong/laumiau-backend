@@ -1,5 +1,6 @@
 package br.com.laumiau.view;
 
+import laumiau.service.AnimalService;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
@@ -20,12 +21,30 @@ public class SobreNosFrame extends JFrame {
     private static final Color TEXTO_MEDIO  = new Color(80, 80, 90);
 
     private JPanel mainContent;
+    private final AnimalService animalService;
 
     private static final int CARD_W = 980;
     private static final int CARD_H = 510;
     private static final int CARD_Y = 88;
 
+    // ✅ Construtor com service
+    public SobreNosFrame(AnimalService animalService) {
+        this.animalService = animalService;
+        initComponents();
+        setSize(1200, 700);
+        setLocationRelativeTo(null);
+
+        getContentPane().addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                repositionAll();
+            }
+        });
+    }
+
+    // ✅ Construtor sem service para compatibilidade
     public SobreNosFrame() {
+        this.animalService = null;
         initComponents();
         setSize(1200, 700);
         setLocationRelativeTo(null);
@@ -46,9 +65,8 @@ public class SobreNosFrame extends JFrame {
     }
 
     private void initComponents() {
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Lau Miau - Sobre Nós");
-        setSize(1200, 700);
 
         JPanel backgroundPanel = new JPanel() {
             @Override protected void paintComponent(Graphics g) {
@@ -67,11 +85,12 @@ public class SobreNosFrame extends JFrame {
         backgroundPanel.setLayout(null);
         setContentPane(backgroundPanel);
 
-        // ── NAVBAR PADRÃO ──
-        NavbarPadrao navbar = new NavbarPadrao("Sobre nós");
+        // ✅ Navbar com service
+        NavbarPadrao navbar = new NavbarPadrao("Sobre nós", animalService);
         navbar.setBounds(0, 0, 1200, 68);
         backgroundPanel.add(navbar);
 
+        // ✅ Redimensiona a navbar corretamente
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -101,7 +120,6 @@ public class SobreNosFrame extends JFrame {
         };
         mainContent.setOpaque(false);
 
-        // ── IMAGEM ──
         int imgW = 310, imgH = 420;
         int imgX = CARD_W - imgW - 50;
         int imgY = (CARD_H - imgH) / 2;
@@ -148,7 +166,6 @@ public class SobreNosFrame extends JFrame {
         imagemPanel.setOpaque(false);
         mainContent.add(imagemPanel);
 
-        // ── TEXTO ──
         int txtX      = 55;
         int textAreaW = imgX - txtX - 60;
 
@@ -192,7 +209,6 @@ public class SobreNosFrame extends JFrame {
         textoLabel.setBounds(txtX, 122, textAreaW, textMaxH);
         mainContent.add(textoLabel);
 
-        // ── BOTÕES ──
         int btnY = CARD_H - 76;
 
         JButton btnConhecer = new JButton("Conhecer serviços") {
