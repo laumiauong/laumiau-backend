@@ -4,6 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
+<<<<<<< Updated upstream
     <list default="true" id="5f80c2d0-0380-4745-b251-254a12458a7d" name="Changes" comment="">
       <change afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/CadastroAnimalView.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
@@ -28,6 +29,9 @@
       <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/view/RoundedPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/RoundedPanel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/view/TutorView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/TutorView.java" afterDir="false" />
     </list>
+=======
+    <list default="true" id="5f80c2d0-0380-4745-b251-254a12458a7d" name="Changes" comment="" />
+>>>>>>> Stashed changes
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
