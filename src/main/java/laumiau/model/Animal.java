@@ -138,6 +138,10 @@ public class Animal {
     }
 
     public boolean isVacinado() { return vacinado; }
+
+    // 👇 MÉTODO ADICIONADO AQUI PARA RESOLVER O ERRO 👇
+    public void setVacinado(boolean vacinado) { this.vacinado = vacinado; }
+
     public void vacinar() { this.vacinado = true; }
 
     public Porte getPorte() { return porte; }

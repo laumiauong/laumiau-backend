@@ -3,8 +3,8 @@ package br.com.laumiau.view;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
-
 import laumiau.model.Animal;
+import laumiau.model.Porte;
 import laumiau.model.Sexo;
 import laumiau.repository.AnimalRepository;
 import laumiau.service.AnimalService;
@@ -20,9 +20,9 @@ import java.awt.event.MouseEvent;
 public class AnimaisCadastradosView extends JFrame {
 
     private final Color LARANJA = new Color(255, 107, 43);
-    private final Color FUNDO = new Color(253, 247, 242);
-    private final Color TEXTO = new Color(15, 23, 42);
-    private final Color CINZA = new Color(160, 170, 185);
+    private final Color FUNDO   = new Color(253, 247, 242);
+    private final Color TEXTO   = new Color(15, 23, 42);
+    private final Color CINZA   = new Color(160, 170, 185);
 
     private AnimalService animalService;
     private JPanel grid;
@@ -54,7 +54,6 @@ public class AnimaisCadastradosView extends JFrame {
         titulo.setFont(new Font("SansSerif", Font.BOLD, 28));
         titulo.setForeground(TEXTO);
         titulo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
         titulo.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -134,12 +133,9 @@ public class AnimaisCadastradosView extends JFrame {
         carregarAnimais("");
 
         pesquisa.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) { carregarAnimais(pesquisa.getText()); }
-            @Override
-            public void removeUpdate(DocumentEvent e) { carregarAnimais(pesquisa.getText()); }
-            @Override
-            public void changedUpdate(DocumentEvent e) { carregarAnimais(pesquisa.getText()); }
+            @Override public void insertUpdate(DocumentEvent e)  { carregarAnimais(pesquisa.getText()); }
+            @Override public void removeUpdate(DocumentEvent e)  { carregarAnimais(pesquisa.getText()); }
+            @Override public void changedUpdate(DocumentEvent e) { carregarAnimais(pesquisa.getText()); }
         });
 
         fundo.add(barra, BorderLayout.NORTH);
@@ -153,18 +149,39 @@ public class AnimaisCadastradosView extends JFrame {
         return scroll;
     }
 
+
     private void carregarAnimais(String filtro) {
         grid.removeAll();
 
         String texto = filtro.equals(PLACEHOLDER) ? "" : filtro.toLowerCase().trim();
 
-        for (Animal animal : animalService.listarTodos()) {
-            boolean correspondeNome = animal.getNome().toLowerCase().contains(texto);
-            boolean correspondeId = String.valueOf(animal.getId()).contains(texto);
+        try {
+            java.util.List<Animal> listaAnimais = animalService.listarTodos();
 
-            if (texto.isEmpty() || correspondeNome || correspondeId) {
-                grid.add(criarCard(animal));
+            if (listaAnimais == null || listaAnimais.isEmpty()) {
+                JLabel lblAviso = new JLabel("Nenhum animal cadastrado no banco de dados.", SwingConstants.CENTER);
+                lblAviso.setFont(new Font("SansSerif", Font.PLAIN, 16));
+                lblAviso.setForeground(CINZA);
+                grid.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 50));
+                grid.add(lblAviso);
+            } else {
+                grid.setLayout(new GridLayout(0, 5, 24, 24));
+
+                for (Animal animal : listaAnimais) {
+                    String nomeAnimal = animal.getNome();
+                    boolean correspondeNome = nomeAnimal != null && nomeAnimal.toLowerCase().contains(texto);
+                    boolean correspondeId   = String.valueOf(animal.getId()).contains(texto);
+
+                    if (texto.isEmpty() || correspondeNome || correspondeId) {
+                        grid.add(criarCard(animal));
+                    }
+                }
             }
+        } catch (Exception e) {
+            JLabel lblErro = new JLabel("Erro ao conectar com o banco: " + e.getMessage(), SwingConstants.CENTER);
+            lblErro.setForeground(Color.RED);
+            grid.add(lblErro);
+            e.printStackTrace();
         }
 
         grid.revalidate();
@@ -182,15 +199,7 @@ public class AnimaisCadastradosView extends JFrame {
         foto.setOpaque(true);
         foto.setBackground(new Color(245, 246, 250));
 
-        if (animal.getCaminhoFoto() != null && !animal.getCaminhoFoto().isBlank()) {
-            ImageIcon imagem = new ImageIcon(animal.getCaminhoFoto());
-            Image img = imagem.getImage().getScaledInstance(250, 200, Image.SCALE_SMOOTH);
-            foto.setIcon(new ImageIcon(img));
-        } else {
-            foto.setText("🐾");
-            foto.setFont(new Font("SansSerif", Font.PLAIN, 46));
-            foto.setForeground(CINZA);
-        }
+        carregarImagemSegura(animal.getCaminhoFoto(), foto, 250, 200);
 
         JPanel topoFoto = new JPanel(new BorderLayout());
         topoFoto.setPreferredSize(new Dimension(250, 200));
@@ -224,9 +233,12 @@ public class AnimaisCadastradosView extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 e.consume();
-                int confirmar = JOptionPane.showConfirmDialog(null,
+                int confirmar = JOptionPane.showConfirmDialog(
+                        null,
                         "Deseja excluir o animal " + animal.getNome() + "?",
-                        "Confirmar exclusão", JOptionPane.YES_NO_OPTION);
+                        "Confirmar exclusão",
+                        JOptionPane.YES_NO_OPTION
+                );
                 if (confirmar == JOptionPane.YES_OPTION) {
                     try {
                         animalService.remover(animal.getId());
@@ -258,11 +270,14 @@ public class AnimaisCadastradosView extends JFrame {
         id.setFont(new Font("SansSerif", Font.BOLD, 12));
         id.setForeground(new Color(140, 140, 150));
 
-        JLabel nome = new JLabel(animal.getNome());
+        JLabel nome = new JLabel(animal.getNome() != null ? animal.getNome() : "Sem nome");
         nome.setFont(new Font("SansSerif", Font.BOLD, 18));
         nome.setForeground(TEXTO);
 
-        Color corSexo = animal.getSexo() == Sexo.FEMEA ? new Color(236, 72, 153) : new Color(59, 130, 246);
+        Color corSexo = animal.getSexo() == Sexo.FEMEA
+                ? new Color(236, 72, 153)
+                : new Color(59, 130, 246);
+
         JLabel sexo = new JLabel("● " + (animal.getSexo() == Sexo.FEMEA ? "Fêmea" : "Macho"));
         sexo.setForeground(corSexo);
         sexo.setFont(new Font("SansSerif", Font.BOLD, 13));
@@ -292,7 +307,9 @@ public class AnimaisCadastradosView extends JFrame {
 
         MouseAdapter clique = new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) { abrirDetalhes(animal); }
+            public void mouseClicked(MouseEvent e) {
+                abrirDetalhes(animal);
+            }
         };
 
         card.addMouseListener(clique);
@@ -316,15 +333,7 @@ public class AnimaisCadastradosView extends JFrame {
         imagem.setOpaque(true);
         imagem.setBackground(Color.WHITE);
 
-        if (animal.getCaminhoFoto() != null && !animal.getCaminhoFoto().isBlank()) {
-            ImageIcon icon = new ImageIcon(animal.getCaminhoFoto());
-            Image img = icon.getImage().getScaledInstance(560, 620, Image.SCALE_SMOOTH);
-            imagem.setIcon(new ImageIcon(img));
-        } else {
-            imagem.setText("🐾");
-            imagem.setFont(new Font("SansSerif", Font.PLAIN, 80));
-            imagem.setForeground(CINZA);
-        }
+        carregarImagemSegura(animal.getCaminhoFoto(), imagem, 560, 620);
 
         JPanel direita = new JPanel();
         direita.setOpaque(false);
@@ -347,7 +356,10 @@ public class AnimaisCadastradosView extends JFrame {
         infos.add(criarBox(animal.getPorte() != null ? animal.getPorte().toString() : "Não informado", "Porte"));
         infos.add(criarBox(textoOuPadrao(animal.getPeso(), "Não informado"), "Peso"));
 
-        JPanel vacina = new RoundedPanel(18, animal.isVacinado() ? new Color(220, 255, 230) : new Color(255, 235, 235));
+        JPanel vacina = new RoundedPanel(
+                18,
+                animal.isVacinado() ? new Color(220, 255, 230) : new Color(255, 235, 235)
+        );
         vacina.setLayout(new FlowLayout(FlowLayout.LEFT));
         vacina.setMaximumSize(new Dimension(Integer.MAX_VALUE, 48));
 
@@ -368,13 +380,18 @@ public class AnimaisCadastradosView extends JFrame {
 
         String nomeResponsavel = textoOuPadrao(animal.getResponsavel(), "ONG Lau & Miau");
 
-        JLabel txtResp = new JLabel("<html><span style='color:#999999'>Com quem está:</span><br><b>" + nomeResponsavel + "</b></html>");
+        JLabel txtResp = new JLabel(
+                "<html><span style='color:#999999'>Com quem está:</span><br><b>"
+                        + nomeResponsavel + "</b></html>"
+        );
         txtResp.setFont(new Font("SansSerif", Font.PLAIN, 15));
 
         responsavel.add(avatarResp);
         responsavel.add(txtResp);
 
-        JTextArea descricao = new JTextArea(textoOuPadrao(animal.getDescricao(), "Sem descrição cadastrada."));
+        JTextArea descricao = new JTextArea(
+                textoOuPadrao(animal.getDescricao(), "Sem descrição cadastrada.")
+        );
         descricao.setEditable(false);
         descricao.setLineWrap(true);
         descricao.setWrapStyleWord(true);
@@ -385,9 +402,11 @@ public class AnimaisCadastradosView extends JFrame {
         JButton adotar = new RoundedButton("❤ Quero adotar", LARANJA, Color.WHITE);
         adotar.setFont(new Font("SansSerif", Font.BOLD, 18));
         adotar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 58));
-        adotar.addActionListener(e -> JOptionPane.showMessageDialog(tela,
-                "Solicitação enviada com sucesso!\n\nResponsável: " + nomeResponsavel,
-                "Adoção", JOptionPane.INFORMATION_MESSAGE));
+
+        adotar.addActionListener(e -> {
+            tela.dispose();
+            new AdocaoView(animalService, animal.getNome(), "Adotante Interessado").setVisible(true);
+        });
 
         direita.add(nome);
         direita.add(Box.createVerticalStrut(8));
@@ -435,6 +454,34 @@ public class AnimaisCadastradosView extends JFrame {
         return texto;
     }
 
+    private void carregarImagemSegura(String caminho, JLabel label, int largura, int altura) {
+        label.setIcon(null);
+        if (caminho != null && !caminho.isBlank()) {
+            try {
+                java.net.URL url = getClass().getClassLoader().getResource(caminho);
+                ImageIcon icon;
+                if (url != null) {
+                    icon = new ImageIcon(url);
+                } else {
+                    icon = new ImageIcon(caminho);
+                }
+
+                if (icon.getIconWidth() > 0) {
+                    Image img = icon.getImage().getScaledInstance(largura, altura, Image.SCALE_SMOOTH);
+                    label.setIcon(new ImageIcon(img));
+                    label.setText("");
+                    return;
+                }
+            } catch (Exception e) {
+                System.err.println("Aviso: Falha ao carregar a imagem do animal.");
+            }
+        }
+
+        label.setText("🐾");
+        label.setFont(new Font("SansSerif", Font.PLAIN, largura >= 250 ? 56 : 46));
+        label.setForeground(CINZA);
+    }
+
     public static void main(String[] args) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("laumiau");
         EntityManager em = emf.createEntityManager();
@@ -443,10 +490,29 @@ public class AnimaisCadastradosView extends JFrame {
         SwingUtilities.invokeLater(() -> new AnimaisCadastradosView(service));
     }
 
-    // ==================== COMPONENTES ====================
+    static class RoundedPanel extends JPanel {
+        private final int radius;
+        private final Color bg;
+
+        public RoundedPanel(int radius, Color bg) {
+            this.radius = radius;
+            this.bg = bg;
+            setOpaque(false);
+            setBackground(bg);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(bg);
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+            g2.dispose();
+        }
+    }
 
     static class RoundedButton extends JButton {
-        private Color bg;
+        private final Color bg;
 
         public RoundedButton(String text, Color bg, Color fg) {
             super(text);

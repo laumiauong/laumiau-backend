@@ -22,7 +22,7 @@ public class FormularioContatoFrame extends JFrame {
         getContentPane().setBackground(new Color(255, 245, 240));
         setLayout(null);
         
-        // Painel principal
+
         JPanel mainPanel = new JPanel();
         mainPanel.setBounds(50, 30, 500, 560);
         mainPanel.setBackground(Color.WHITE);
@@ -45,7 +45,7 @@ public class FormularioContatoFrame extends JFrame {
         subtituloLabel.setBounds(30, 70, 400, 20);
         mainPanel.add(subtituloLabel);
         
-        // Campo Nome
+
         JLabel lblNome = new JLabel("Nome completo *");
         lblNome.setFont(new Font("Arial", Font.PLAIN, 14));
         lblNome.setBounds(30, 120, 200, 20);
@@ -60,7 +60,7 @@ public class FormularioContatoFrame extends JFrame {
         ));
         mainPanel.add(txtNome);
         
-        // Campo Email
+
         JLabel lblEmail = new JLabel("E-mail *");
         lblEmail.setFont(new Font("Arial", Font.PLAIN, 14));
         lblEmail.setBounds(30, 195, 200, 20);
@@ -75,7 +75,7 @@ public class FormularioContatoFrame extends JFrame {
         ));
         mainPanel.add(txtEmail);
         
-        // Campo Telefone
+
         JLabel lblTelefone = new JLabel("Telefone *");
         lblTelefone.setFont(new Font("Arial", Font.PLAIN, 14));
         lblTelefone.setBounds(30, 270, 200, 20);
@@ -90,7 +90,7 @@ public class FormularioContatoFrame extends JFrame {
         ));
         mainPanel.add(txtTelefone);
         
-        // Campo Mensagem
+
         JLabel lblMensagem = new JLabel("Mensagem");
         lblMensagem.setFont(new Font("Arial", Font.PLAIN, 14));
         lblMensagem.setBounds(30, 345, 200, 20);
@@ -106,7 +106,7 @@ public class FormularioContatoFrame extends JFrame {
         scrollMensagem.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
         mainPanel.add(scrollMensagem);
         
-        // Botão Enviar
+
         JButton btnEnviar = new JButton("Enviar Mensagem");
         btnEnviar.setBounds(30, 490, 440, 45);
         btnEnviar.setBackground(new Color(255, 107, 38));
@@ -149,13 +149,13 @@ public class FormularioContatoFrame extends JFrame {
             return;
         }
         
-        // Aqui você pode adicionar a lógica para salvar ou enviar os dados
+
         JOptionPane.showMessageDialog(this,
             "Mensagem enviada com sucesso!\nEntraremos em contato em breve.",
             "Sucesso",
             JOptionPane.INFORMATION_MESSAGE);
         
-        // Limpar campos
+
         txtNome.setText("");
         txtEmail.setText("");
         txtTelefone.setText("");

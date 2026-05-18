@@ -5,36 +5,44 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.io.File;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
 import laumiau.model.Animal;
+import laumiau.model.Porte;
 import laumiau.model.Sexo;
 import laumiau.service.AnimalService;
 
 public class CadastroAnimalView extends JFrame {
 
-    private final Color FUNDO = new Color(255, 248, 241);
-    private final Color TEXTO = new Color(31, 42, 68);
-    private final Color CINZA = new Color(150, 160, 175);
+    private final Color FUNDO   = new Color(255, 248, 241);
+    private final Color TEXTO   = new Color(31, 42, 68);
+    private final Color CINZA   = new Color(150, 160, 175);
     private final Color LARANJA = new Color(255, 128, 0);
 
     private JLabel icon;
+
+
     private JTextField campoNome;
     private JTextField campoRaca;
     private JTextField campoIdade;
+    private JTextField campoPeso;
+    private JTextField campoCor;
+    private JTextField campoResponsavel;
+    private JTextField campoDescricao;
+    private JCheckBox checkVacinado;
 
     private JComboBox<String> comboEspecie;
     private JComboBox<String> comboSexo;
+    private JComboBox<String> comboPorte;
 
     private String caminhoFotoSelecionada;
     private AnimalService animalService;
     private Animal animalEditando;
 
     public CadastroAnimalView(AnimalService animalService, Animal animalEditando) {
-        this.animalService = animalService;
+        this.animalService  = animalService;
         this.animalEditando = animalEditando;
 
         setTitle("Editar Animal");
-        setSize(1000, 720);
+        setSize(1000, 780); // Aumentei um pouco a altura para caber os novos campos
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -48,7 +56,7 @@ public class CadastroAnimalView extends JFrame {
         this.animalService = animalService;
 
         setTitle("Cadastrar Animal");
-        setSize(1000, 720);
+        setSize(1000, 780);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -63,26 +71,42 @@ public class CadastroAnimalView extends JFrame {
             campoRaca.setText(animalEditando.getRaca());
             campoIdade.setText(String.valueOf(animalEditando.getIdade()));
             comboEspecie.setSelectedItem(animalEditando.getEspecie());
+            comboSexo.setSelectedItem(animalEditando.getSexo() == Sexo.MACHO ? "Macho" : "Fêmea");
 
-            comboSexo.setSelectedItem(
-                    animalEditando.getSexo() == Sexo.MACHO ? "Macho" : "Fêmea"
-            );
+
+            if(animalEditando.getPorte() != null) {
+                comboPorte.setSelectedItem(animalEditando.getPorte().toString());
+            }
+            campoPeso.setText(animalEditando.getPeso() != null ? animalEditando.getPeso() : "");
+            campoCor.setText(animalEditando.getCor() != null ? animalEditando.getCor() : "");
+            campoResponsavel.setText(animalEditando.getResponsavel() != null ? animalEditando.getResponsavel() : "");
+            campoDescricao.setText(animalEditando.getDescricao() != null ? animalEditando.getDescricao() : "");
+            checkVacinado.setSelected(animalEditando.isVacinado());
 
             caminhoFotoSelecionada = animalEditando.getCaminhoFoto();
 
             if (caminhoFotoSelecionada != null && !caminhoFotoSelecionada.isBlank()) {
-                ImageIcon imagem = new ImageIcon(caminhoFotoSelecionada);
-                Image img = imagem.getImage().getScaledInstance(150, 110, Image.SCALE_SMOOTH);
-                icon.setText("");
-                icon.setIcon(new ImageIcon(img));
+                try {
+                    ImageIcon imagem = new ImageIcon(caminhoFotoSelecionada);
+                    Image img = imagem.getImage().getScaledInstance(150, 110, Image.SCALE_SMOOTH);
+                    icon.setText("");
+                    icon.setIcon(new ImageIcon(img));
+                } catch (Exception e) {
+                    System.err.println("Não foi possível carregar a imagem na edição.");
+                }
             }
         }
     }
 
-    private JPanel criarTela() {
-        JPanel fundo = new JPanel(new BorderLayout());
+    private JScrollPane criarTela() {
+        JPanel fundo = new JPanel();
+        fundo.setLayout(new BoxLayout(fundo, BoxLayout.Y_AXIS));
         fundo.setBackground(FUNDO);
-        fundo.setBorder(new EmptyBorder(25, 40, 25, 40));
+        fundo.setBorder(new EmptyBorder(25, 260, 25, 260));
+
+        JPanel painelVoltar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        painelVoltar.setOpaque(false);
+        painelVoltar.setMaximumSize(new Dimension(600, 40));
 
         JLabel voltar = new JLabel("←");
         voltar.setFont(new Font("SansSerif", Font.BOLD, 28));
@@ -93,38 +117,57 @@ public class CadastroAnimalView extends JFrame {
                 dispose();
             }
         });
-
-        JPanel formulario = new JPanel();
-        formulario.setOpaque(false);
-        formulario.setLayout(new BoxLayout(formulario, BoxLayout.Y_AXIS));
-        formulario.setBorder(new EmptyBorder(10, 260, 10, 260));
+        painelVoltar.add(voltar);
 
         JLabel titulo = new JLabel(animalEditando == null ? "Cadastrar Animal" : "Editar Animal");
         titulo.setFont(new Font("SansSerif", Font.BOLD, 28));
         titulo.setForeground(TEXTO);
         titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        campoNome = new JTextField();
-        campoRaca = new JTextField();
+        campoNome  = new JTextField();
+        campoRaca  = new JTextField();
         campoIdade = new JTextField();
+        campoPeso  = new JTextField();
+        campoCor   = new JTextField();
+        campoResponsavel = new JTextField();
+        campoDescricao = new JTextField();
 
         comboEspecie = new JComboBox<>(new String[]{"Selecione...", "Gato", "Cachorro"});
-        comboSexo = new JComboBox<>(new String[]{"Selecione...", "Macho", "Fêmea"});
+        comboSexo    = new JComboBox<>(new String[]{"Selecione...", "Macho", "Fêmea"});
+        comboPorte   = new JComboBox<>(new String[]{"Selecione...", "PEQUENO", "MEDIO", "GRANDE"});
 
-        formulario.add(titulo);
-        formulario.add(Box.createVerticalStrut(35));
-        formulario.add(campoTexto("Nome do animal", campoNome, "Ex: Thor"));
-        formulario.add(combo("Espécie", comboEspecie));
-        formulario.add(campoTexto("Raça", campoRaca, "Ex: Vira-lata / SRD"));
-        formulario.add(campoTexto("Idade (em meses)", campoIdade, "Ex: 24"));
-        formulario.add(combo("Sexo", comboSexo));
+        checkVacinado = new JCheckBox("Vacinado");
+        checkVacinado.setFont(new Font("SansSerif", Font.BOLD, 14));
+        checkVacinado.setForeground(TEXTO);
+        checkVacinado.setOpaque(false);
+        checkVacinado.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        fundo.add(painelVoltar);
+        fundo.add(titulo);
+        fundo.add(Box.createVerticalStrut(25));
+
+
+        fundo.add(campoTexto("Nome do animal", campoNome, "Ex: Thor"));
+        fundo.add(combo("Espécie", comboEspecie));
+        fundo.add(campoTexto("Raça", campoRaca, "Ex: Vira-lata / SRD"));
+        fundo.add(campoTexto("Idade (em meses)", campoIdade, "Ex: 24"));
+        fundo.add(combo("Sexo", comboSexo));
+        fundo.add(combo("Porte", comboPorte));
+        fundo.add(campoTexto("Peso", campoPeso, "Ex: 5kg"));
+        fundo.add(campoTexto("Cor", campoCor, "Ex: Preto e Branco"));
+        fundo.add(campoTexto("Responsável / ONG", campoResponsavel, "Ex: ONG Lau & Miau"));
+        fundo.add(campoTexto("Breve Descrição", campoDescricao, "Ex: Muito dócil e brincalhão"));
+
+        fundo.add(Box.createVerticalStrut(10));
+        fundo.add(checkVacinado);
+        fundo.add(Box.createVerticalStrut(20));
 
         JLabel addFoto = new JLabel("Adicionar foto");
         addFoto.setFont(new Font("SansSerif", Font.BOLD, 14));
         addFoto.setForeground(TEXTO);
         addFoto.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JPanel foto = new RoundedPanel(20, Color.WHITE);
+        JPanel foto = new AnimaisCadastradosView.RoundedPanel(20, Color.WHITE);
         foto.setPreferredSize(new Dimension(150, 110));
         foto.setMaximumSize(new Dimension(150, 110));
         foto.setBorder(BorderFactory.createDashedBorder(CINZA));
@@ -155,63 +198,98 @@ public class CadastroAnimalView extends JFrame {
             }
         });
 
-        formulario.add(Box.createVerticalStrut(25));
-        formulario.add(addFoto);
-        formulario.add(Box.createVerticalStrut(10));
+        fundo.add(addFoto);
+        fundo.add(Box.createVerticalStrut(10));
         foto.setAlignmentX(Component.CENTER_ALIGNMENT);
-        formulario.add(foto);
+        fundo.add(foto);
 
-        JButton salvar = new RoundedButton("Salvar Cadastro", LARANJA, Color.WHITE);
+        JButton salvar = new AnimaisCadastradosView.RoundedButton("Salvar Cadastro", LARANJA, Color.WHITE);
         salvar.setFont(new Font("SansSerif", Font.BOLD, 16));
         salvar.setAlignmentX(Component.CENTER_ALIGNMENT);
         salvar.setMaximumSize(new Dimension(220, 45));
-        formulario.add(Box.createVerticalStrut(25));
-        formulario.add(salvar);
 
-        salvar.addActionListener(e -> {
-            try {
-                String nome = campoNome.getText().trim();
-                String especie = comboEspecie.getSelectedItem().toString();
-                String raca = campoRaca.getText().trim();
-                int idade = Integer.parseInt(campoIdade.getText().trim());
-                String sexo = comboSexo.getSelectedItem().toString();
+        fundo.add(Box.createVerticalStrut(35));
+        fundo.add(salvar);
+        fundo.add(Box.createVerticalStrut(30));
 
-                if (nome.isEmpty() || especie.equals("Selecione...") || raca.isEmpty() || sexo.equals("Selecione...")) {
-                    JOptionPane.showMessageDialog(this, "Preencha todos os campos obrigatórios.");
-                    return;
-                }
+        salvar.addActionListener(e -> salvarAnimal());
 
-                Sexo sexoEnum = sexo.equals("Macho") ? Sexo.MACHO : Sexo.FEMEA;
+        // Transformei em JScrollPane pois agora temos muitos campos e a tela precisa rolar
+        JScrollPane scroll = new JScrollPane(fundo);
+        scroll.setBorder(null);
+        scroll.getVerticalScrollBar().setUnitIncrement(16);
+        return scroll;
+    }
 
-                if (animalEditando == null) {
-                    Animal animal = new Animal(nome, especie, raca, idade, sexoEnum, false, null, caminhoFotoSelecionada);
-                    animalService.cadastrar(animal);
-                    JOptionPane.showMessageDialog(this, "Animal cadastrado com sucesso!");
-                } else {
-                    animalEditando.setNome(nome);
-                    animalEditando.setEspecie(especie);
-                    animalEditando.setRaca(raca);
-                    animalEditando.setIdade(idade);
-                    animalEditando.setSexo(sexoEnum);
-                    animalEditando.setCaminhoFoto(caminhoFotoSelecionada);
-                    animalService.atualizar(animalEditando);
-                    JOptionPane.showMessageDialog(this, "Animal atualizado com sucesso!");
-                }
+    private void salvarAnimal() {
+        try {
+            String nome    = campoNome.getText().trim();
+            String especie = comboEspecie.getSelectedItem().toString();
+            String raca    = campoRaca.getText().trim();
+            String idadeTxt= campoIdade.getText().trim();
+            String sexo    = comboSexo.getSelectedItem().toString();
 
-                dispose();
-                new AnimaisCadastradosView(animalService);
+            // Novos campos recolhidos do form
+            String porteSel = comboPorte.getSelectedItem().toString();
+            String peso     = campoPeso.getText().trim();
+            String cor      = campoCor.getText().trim();
+            String respons  = campoResponsavel.getText().trim();
+            String desc     = campoDescricao.getText().trim();
+            boolean vacina  = checkVacinado.isSelected();
 
-            } catch (NumberFormatException erro) {
-                JOptionPane.showMessageDialog(this, "Digite apenas números na idade.");
-            } catch (Exception erro) {
-                JOptionPane.showMessageDialog(this, erro.getMessage());
+            if (nome.isEmpty() || especie.equals("Selecione...") || raca.isEmpty() || sexo.equals("Selecione...") || idadeTxt.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Preencha os campos obrigatórios (Nome, Espécie, Raça, Idade, Sexo).");
+                return;
             }
-        });
 
-        fundo.add(voltar, BorderLayout.NORTH);
-        fundo.add(formulario, BorderLayout.CENTER);
+            int idade = Integer.parseInt(idadeTxt);
+            Sexo sexoEnum = sexo.equals("Macho") ? Sexo.MACHO : Sexo.FEMEA;
+            Porte porteEnum = null;
+            if (!porteSel.equals("Selecione...")) {
+                porteEnum = Porte.valueOf(porteSel);
+            }
 
-        return fundo;
+            // Removendo placeholders caso o usuário não tenha digitado nada
+            peso = peso.startsWith("Ex:") ? "" : peso;
+            cor = cor.startsWith("Ex:") ? "" : cor;
+            respons = respons.startsWith("Ex:") ? "" : respons;
+            desc = desc.startsWith("Ex:") ? "" : desc;
+
+            if (animalEditando == null) {
+                Animal animal = new Animal(nome, especie, raca, idade, sexoEnum, vacina, porteEnum, caminhoFotoSelecionada);
+                animal.setPeso(peso);
+                animal.setCor(cor);
+                animal.setResponsavel(respons);
+                animal.setDescricao(desc);
+
+                animalService.cadastrar(animal);
+                JOptionPane.showMessageDialog(this, "Animal cadastrado com sucesso!");
+            } else {
+                animalEditando.setNome(nome);
+                animalEditando.setEspecie(especie);
+                animalEditando.setRaca(raca);
+                animalEditando.setIdade(idade);
+                animalEditando.setSexo(sexoEnum);
+                animalEditando.setPorte(porteEnum);
+                animalEditando.setVacinado(vacina);
+                animalEditando.setPeso(peso);
+                animalEditando.setCor(cor);
+                animalEditando.setResponsavel(respons);
+                animalEditando.setDescricao(desc);
+                animalEditando.setCaminhoFoto(caminhoFotoSelecionada);
+
+                animalService.atualizar(animalEditando);
+                JOptionPane.showMessageDialog(this, "Animal atualizado com sucesso!");
+            }
+
+            dispose();
+            new AnimaisCadastradosView(animalService);
+
+        } catch (NumberFormatException erro) {
+            JOptionPane.showMessageDialog(this, "Digite apenas números na idade.");
+        } catch (Exception erro) {
+            JOptionPane.showMessageDialog(this, "Erro ao salvar: " + erro.getMessage());
+        }
     }
 
     private JPanel campoTexto(String label, JTextField campo, String placeholder) {
@@ -281,51 +359,5 @@ public class CadastroAnimalView extends JFrame {
         painel.add(Box.createVerticalStrut(20));
 
         return painel;
-    }
-
-    // ==================== COMPONENTES ====================
-
-    static class RoundedPanel extends JPanel {
-        private int radius;
-
-        public RoundedPanel(int radius, Color bg) {
-            this.radius = radius;
-            setOpaque(false);
-            setBackground(bg);
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(getBackground());
-            g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
-            g2.dispose();
-        }
-    }
-
-    static class RoundedButton extends JButton {
-        private Color bg;
-
-        public RoundedButton(String text, Color bg, Color fg) {
-            super(text);
-            this.bg = bg;
-            setForeground(fg);
-            setContentAreaFilled(false);
-            setFocusPainted(false);
-            setBorderPainted(false);
-            setBorder(new EmptyBorder(12, 24, 12, 24));
-            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(bg);
-            g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
-            super.paintComponent(g);
-            g2.dispose();
-        }
     }
 }

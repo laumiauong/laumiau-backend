@@ -6,28 +6,9 @@
   <component name="ChangeListManager">
 <<<<<<< Updated upstream
     <list default="true" id="5f80c2d0-0380-4745-b251-254a12458a7d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/CadastroAnimalView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/RelatorioAdmin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/RelatorioAdmin.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/FormularioContatoFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/FormularioContatoFrame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/SobreNosFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/SobreNosFrame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/UsuarioLogin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/UsuarioLogin.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Admin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Admin.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Animal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Animal.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Cliente.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Cliente.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Endereco.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Endereco.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/Usuario.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/Usuario.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/view/AdocaoView.form" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/AdocaoView.form" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/view/AdocaoView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/AdocaoView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/view/AnimaisCadastradosView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/AnimaisCadastradosView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/view/AnimalView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/AnimalView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/view/CadastroAnimalView.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/view/CadastroView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/CadastroView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/view/LoginView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/LoginView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/view/RoundedPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/RoundedPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/view/TutorView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/TutorView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/SobreNosFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/SobreNosFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/persistence.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/persistence.xml" afterDir="false" />
     </list>
 =======
     <list default="true" id="5f80c2d0-0380-4745-b251-254a12458a7d" name="Changes" comment="" />
@@ -40,8 +21,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="Enum" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -83,26 +64,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.AdocaoView.executor": "Run",
-    "Application.AnimaisCadastradosView.executor": "Run",
-    "Application.CadastroView.executor": "Run",
-    "Application.FormularioContatoFrame.executor": "Run",
-    "Application.LoginAdmin.executor": "Run",
-    "Application.LoginView.executor": "Run",
-    "Application.Main.executor": "Run",
-    "Application.RelatorioAdmin.executor": "Run",
-    "Application.UsuarioLogin.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.AdocaoView.executor&quot;: &quot;Run&quot;,
+    &quot;Application.AnimaisCadastradosView.executor&quot;: &quot;Run&quot;,
+    &quot;Application.CadastroView.executor&quot;: &quot;Run&quot;,
+    &quot;Application.FormularioContatoFrame.executor&quot;: &quot;Run&quot;,
+    &quot;Application.LoginAdmin.executor&quot;: &quot;Run&quot;,
+    &quot;Application.LoginView.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;Application.RelatorioAdmin.executor&quot;: &quot;Run&quot;,
+    &quot;Application.SobreNosFrame.executor&quot;: &quot;Run&quot;,
+    &quot;Application.TutorView.executor&quot;: &quot;Run&quot;,
+    &quot;Application.UsuarioLogin.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;develop&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/resources/img" />
       <recent name="$PROJECT_DIR$/src/main/java/br/com/laumiau/view" />
     </key>
   </component>
@@ -122,16 +106,5 @@
       <updated>1776104079942</updated>
     </task>
     <servers />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/br/com/laumiau/view/AnimalView.java</url>
-          <line>217</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
