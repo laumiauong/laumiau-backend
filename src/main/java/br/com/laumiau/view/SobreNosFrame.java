@@ -8,6 +8,8 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
+import java.awt.Desktop;
+import java.net.URI;
 
 public class SobreNosFrame extends JFrame {
 
@@ -213,25 +215,50 @@ public class SobreNosFrame extends JFrame {
 
         JButton btnConhecer = new JButton("Conhecer serviços") {
             private boolean hover = false;
-            { addMouseListener(new MouseAdapter() {
-                @Override public void mouseEntered(MouseEvent e) { hover = true; repaint(); }
-                @Override public void mouseExited(MouseEvent e)  { hover = false; repaint(); }
-            }); }
-            @Override protected void paintComponent(Graphics g) {
+
+            {
+                addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        hover = true;
+                        repaint();
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+                        hover = false;
+                        repaint();
+                    }
+                });
+            }
+
+            @Override
+            protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON);
+
                 g2.setColor(new Color(255, 107, 38, hover ? 60 : 40));
                 g2.fillRoundRect(2, 4, getWidth() - 2, getHeight() - 2, 10, 10);
-                GradientPaint gp = new GradientPaint(0, 0, hover ? LARANJA_DARK : LARANJA,
-                        0, getHeight(), hover ? new Color(200, 65, 10) : LARANJA_DARK);
+
+                GradientPaint gp = new GradientPaint(
+                        0, 0,
+                        hover ? LARANJA_DARK : LARANJA,
+                        0, getHeight(),
+                        hover ? new Color(200, 65, 10) : LARANJA_DARK
+                );
+
                 g2.setPaint(gp);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
+
                 g2.setColor(new Color(255, 255, 255, hover ? 15 : 30));
                 g2.fillRoundRect(0, 0, getWidth(), getHeight() / 2, 10, 10);
+
                 super.paintComponent(g);
                 g2.dispose();
             }
         };
+
         btnConhecer.setBounds(txtX, btnY, 190, 42);
         btnConhecer.setForeground(BRANCO);
         btnConhecer.setFont(new Font("Segoe UI", Font.BOLD, 13));
@@ -239,6 +266,17 @@ public class SobreNosFrame extends JFrame {
         btnConhecer.setBorderPainted(false);
         btnConhecer.setContentAreaFilled(false);
         btnConhecer.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        btnConhecer.addActionListener(e -> {
+            try {
+                Desktop.getDesktop().browse(
+                        new URI("https://www.instagram.com/lau.miau.catsitter")
+                );
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
         mainContent.add(btnConhecer);
 
         JButton btnContato = new JButton("Entre em contato") {
