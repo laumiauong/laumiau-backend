@@ -7,7 +7,6 @@
 
     <persistence-unit name="laumiau">
 
-        <!-- entidades registradas -->
         <class>laumiau.model.Animal</class>
         <class>laumiau.model.Usuario</class>
         <class>laumiau.model.Admin</class>
@@ -25,7 +24,7 @@
 
             <property name="hibernate.show_sql"   value="false"/>
             <property name="hibernate.format_sql" value="false"/>
-            <property name="hibernate.hbm2ddl.auto" value="none"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
         </properties>
     </persistence-unit>
 

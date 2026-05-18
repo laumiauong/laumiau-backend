@@ -24,12 +24,12 @@ public class RelatorioAdmin extends JFrame {
     private JLabel lblPetsDisponiveis, lblAdocoesMes, lblTotalAdotados, lblVacinados;
     private JPanel painelListaSolicitacoes;
 
-    private static final Color LARANJA_BASE = new Color(255, 153, 0);
-    private static final Color LARANJA_DARK = new Color(249, 115, 22);
-    private static final Color FUNDO = new Color(255, 251, 245);
-    private static final Color TEXTO_DARK = new Color(31, 41, 55);
-    private static final Color BRANCO = Color.WHITE;
-    private static final Color BORDAS_LEVES = new Color(230, 230, 230);
+    private static final Color LARANJA_BASE  = new Color(255, 153, 0);
+    private static final Color LARANJA_DARK  = new Color(249, 115, 22);
+    private static final Color FUNDO         = new Color(255, 251, 245);
+    private static final Color TEXTO_DARK    = new Color(31, 41, 55);
+    private static final Color BRANCO        = Color.WHITE;
+    private static final Color BORDAS_LEVES  = new Color(230, 230, 230);
 
     public RelatorioAdmin() {
         setTitle("LauMiau - Dashboard Administrativa");
@@ -52,7 +52,8 @@ public class RelatorioAdmin extends JFrame {
         JPanel tPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         tPanel.setOpaque(false);
         JLabel lblT = new JLabel(
-                "<html><div style='margin-bottom: 5px;'><b style='font-size: 22px;'>Dashboard Administrativo</b></div><font color='#6b7280' size='4'>Visão geral das atividades da ONG</font></html>");
+                "<html><div style='margin-bottom: 5px;'><b style='font-size: 22px;'>Dashboard Administrativo</b></div>"
+                        + "<font color='#6b7280' size='4'>Visão geral das atividades da ONG</font></html>");
         tPanel.add(lblT);
 
         gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
@@ -63,14 +64,14 @@ public class RelatorioAdmin extends JFrame {
         cardsRow.setOpaque(false);
 
         lblPetsDisponiveis = new JLabel("--");
-        lblAdocoesMes = new JLabel("--");
-        lblTotalAdotados = new JLabel("--");
-        lblVacinados = new JLabel("--");
+        lblAdocoesMes      = new JLabel("--");
+        lblTotalAdotados   = new JLabel("--");
+        lblVacinados       = new JLabel("--");
 
         cardsRow.add(new RoundedCard("Pets Disponíveis", lblPetsDisponiveis, "🧡"));
-        cardsRow.add(new RoundedCard("Pets Adotados", lblTotalAdotados, "✅"));
-        cardsRow.add(new RoundedCard("Total de Adoções", lblAdocoesMes, "📋"));
-        cardsRow.add(new RoundedCard("Pets Vacinados", lblVacinados, "💉"));
+        cardsRow.add(new RoundedCard("Pets Adotados",    lblTotalAdotados,   "✅"));
+        cardsRow.add(new RoundedCard("Total de Adoções", lblAdocoesMes,      "📋"));
+        cardsRow.add(new RoundedCard("Pets Vacinados",   lblVacinados,       "💉"));
 
         gbc.gridy = 1; gbc.insets = new Insets(0, 0, 35, 0);
         mainContent.add(cardsRow, gbc);
@@ -114,13 +115,19 @@ public class RelatorioAdmin extends JFrame {
         JLabel animais = new JLabel("Animais");
         animais.setFont(new Font("SansSerif", Font.BOLD, 14));
         animais.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        // ✅ CORREÇÃO: invokeLater adicionado aqui
         animais.addMouseListener(new MouseAdapter() {
             @Override public void mouseClicked(MouseEvent e) {
-                new AnimaisCadastradosView(animalService);
-                dispose();
+                SwingUtilities.invokeLater(() -> {
+                    EntityManager emNovo = JPAUtil.getEntityManager();
+                    AnimalService serviceFresco = new AnimalService(new AnimalRepository(emNovo));
+                    new AnimaisCadastradosView(serviceFresco).setVisible(true);
+                    dispose();
+                });
             }
             @Override public void mouseEntered(MouseEvent e) { animais.setForeground(LARANJA_BASE); }
-            @Override public void mouseExited(MouseEvent e) { animais.setForeground(Color.BLACK); }
+            @Override public void mouseExited(MouseEvent e)  { animais.setForeground(Color.BLACK); }
         });
 
         JLabel adotantes = new JLabel("Adotantes");
@@ -128,7 +135,7 @@ public class RelatorioAdmin extends JFrame {
         adotantes.setCursor(new Cursor(Cursor.HAND_CURSOR));
         adotantes.addMouseListener(new MouseAdapter() {
             @Override public void mouseEntered(MouseEvent e) { adotantes.setForeground(LARANJA_BASE); }
-            @Override public void mouseExited(MouseEvent e) { adotantes.setForeground(Color.BLACK); }
+            @Override public void mouseExited(MouseEvent e)  { adotantes.setForeground(Color.BLACK); }
         });
 
         menu.add(dashboard);
@@ -158,11 +165,10 @@ public class RelatorioAdmin extends JFrame {
         btnSair.setBorderPainted(false);
         btnSair.setFocusPainted(false);
 
-
         btnSair.addActionListener(e -> {
-            EntityManager emAnimal = JPAUtil.getEntityManager();
-            AnimalService animalServiceNovo = new AnimalService(new AnimalRepository(emAnimal));
-            new AnimalView(animalServiceNovo);
+            EntityManager emNovo = JPAUtil.getEntityManager();
+            AnimalService animalServiceNovo = new AnimalService(new AnimalRepository(emNovo));
+            new AnimalView(animalServiceNovo).setVisible(true);
             dispose();
         });
 
@@ -200,7 +206,9 @@ public class RelatorioAdmin extends JFrame {
                 } else {
                     for (laumiau.model.Adocoes a : adocoes) {
                         painelListaSolicitacoes.add(new ItemSolicitacao(
-                                a.getAnimal().getNome(), a.getStatus().toString(), a.getCliente().getNome()));
+                                a.getAnimal().getNome(),
+                                a.getStatus().toString(),
+                                a.getCliente().getNome()));
                         painelListaSolicitacoes.add(Box.createVerticalStrut(10));
                     }
                 }
@@ -215,9 +223,10 @@ public class RelatorioAdmin extends JFrame {
     public void atualizarDadosDoBanco() {
         try {
             if (em != null && em.isOpen()) em.close();
-            em = JPAUtil.getEntityManager();
+            em               = JPAUtil.getEntityManager();
             relatorioService = new RelatorioService(em);
-            animalService = new AnimalService(new AnimalRepository(em));
+            animalService    = new AnimalService(new AnimalRepository(em));
+
             Relatorio dados = relatorioService.obterRelatorioGeral();
             if (dados != null) {
                 SwingUtilities.invokeLater(() -> {
@@ -254,17 +263,39 @@ public class RelatorioAdmin extends JFrame {
         JLabel t = new JLabel("AÇÕES RÁPIDAS", SwingConstants.CENTER);
         t.setFont(new Font("SansSerif", Font.BOLD, 12));
         p.add(t, BorderLayout.NORTH);
+
         JPanel botoes = new JPanel(new GridLayout(2, 1, 0, 15));
         botoes.setOpaque(false);
+
+        // ✅ CORREÇÃO: invokeLater adicionado aqui também
         OrangeButton btnCadastrar = new OrangeButton("➕  Cadastrar Novo Pet");
-        btnCadastrar.addActionListener(e -> { new CadastroAnimalView(animalService); dispose(); });
+        btnCadastrar.addActionListener(e -> {
+            SwingUtilities.invokeLater(() -> {
+                EntityManager emNovo = JPAUtil.getEntityManager();
+                AnimalService serviceFresco = new AnimalService(new AnimalRepository(emNovo));
+                new CadastroAnimalView(serviceFresco).setVisible(true);
+                dispose();
+            });
+        });
+
+        // ✅ CORREÇÃO: invokeLater adicionado aqui também
         OrangeButton btnGerenciar = new OrangeButton("📊  Gerenciar Animais");
-        btnGerenciar.addActionListener(e -> { new AnimaisCadastradosView(animalService); dispose(); });
+        btnGerenciar.addActionListener(e -> {
+            SwingUtilities.invokeLater(() -> {
+                EntityManager emNovo = JPAUtil.getEntityManager();
+                AnimalService serviceFresco = new AnimalService(new AnimalRepository(emNovo));
+                new AnimaisCadastradosView(serviceFresco).setVisible(true);
+                dispose();
+            });
+        });
+
         botoes.add(btnCadastrar);
         botoes.add(btnGerenciar);
         p.add(botoes, BorderLayout.CENTER);
         return p;
     }
+
+    // ── Classes internas ──────────────────────────────────────────────────────
 
     class RoundedCard extends JPanel {
         public RoundedCard(String titulo, JLabel valor, String icon) {
@@ -333,14 +364,15 @@ public class RelatorioAdmin extends JFrame {
             setLayout(new BorderLayout());
             setOpaque(false);
             setBorder(new MatteBorder(0, 0, 1, 0, BORDAS_LEVES));
-            add(new JLabel("<html><b>" + nome + "</b><br><font color='gray'>Por: " + tutor + "</font></html>"), BorderLayout.CENTER);
+            add(new JLabel("<html><b>" + nome + "</b><br><font color='gray'>Por: " + tutor + "</font></html>"),
+                    BorderLayout.CENTER);
             JLabel st = new JLabel(status);
             st.setFont(new Font("SansSerif", Font.BOLD, 12));
             switch (status) {
-                case "PENDENTE" -> st.setForeground(new Color(234, 179, 8));
-                case "APROVADO" -> st.setForeground(new Color(34, 197, 94));
-                case "RECUSADO" -> st.setForeground(new Color(239, 68, 68));
-                default -> st.setForeground(Color.GRAY);
+                case "PENDENTE"  -> st.setForeground(new Color(234, 179, 8));
+                case "APROVADO"  -> st.setForeground(new Color(34, 197, 94));
+                case "RECUSADO"  -> st.setForeground(new Color(239, 68, 68));
+                default          -> st.setForeground(Color.GRAY);
             }
             add(st, BorderLayout.EAST);
         }

@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import laumiau.model.Animal;
+import laumiau.model.Porte;
 import laumiau.model.Sexo;
 import laumiau.repository.AnimalRepository;
 import laumiau.service.AnimalService;
@@ -44,7 +45,6 @@ public class AnimaisCadastradosView extends JFrame {
         setVisible(true);
     }
 
-    // ✅ TOPO RESTAURADO com botão "← Animais Cadastrados" e avatar Admin
     private JPanel criarTopo() {
         JPanel topo = new JPanel(new BorderLayout());
         topo.setBackground(Color.WHITE);
@@ -149,18 +149,39 @@ public class AnimaisCadastradosView extends JFrame {
         return scroll;
     }
 
+    // ✅ MÉTODO CORRIGIDO: Agora trata banco vazio e previne crash de JPA
     private void carregarAnimais(String filtro) {
         grid.removeAll();
 
         String texto = filtro.equals(PLACEHOLDER) ? "" : filtro.toLowerCase().trim();
 
-        for (Animal animal : animalService.listarTodos()) {
-            boolean correspondeNome = animal.getNome().toLowerCase().contains(texto);
-            boolean correspondeId   = String.valueOf(animal.getId()).contains(texto);
+        try {
+            java.util.List<Animal> listaAnimais = animalService.listarTodos();
 
-            if (texto.isEmpty() || correspondeNome || correspondeId) {
-                grid.add(criarCard(animal));
+            if (listaAnimais == null || listaAnimais.isEmpty()) {
+                JLabel lblAviso = new JLabel("Nenhum animal cadastrado no banco de dados.", SwingConstants.CENTER);
+                lblAviso.setFont(new Font("SansSerif", Font.PLAIN, 16));
+                lblAviso.setForeground(CINZA);
+                grid.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 50));
+                grid.add(lblAviso);
+            } else {
+                grid.setLayout(new GridLayout(0, 5, 24, 24));
+
+                for (Animal animal : listaAnimais) {
+                    String nomeAnimal = animal.getNome();
+                    boolean correspondeNome = nomeAnimal != null && nomeAnimal.toLowerCase().contains(texto);
+                    boolean correspondeId   = String.valueOf(animal.getId()).contains(texto);
+
+                    if (texto.isEmpty() || correspondeNome || correspondeId) {
+                        grid.add(criarCard(animal));
+                    }
+                }
             }
+        } catch (Exception e) {
+            JLabel lblErro = new JLabel("Erro ao conectar com o banco: " + e.getMessage(), SwingConstants.CENTER);
+            lblErro.setForeground(Color.RED);
+            grid.add(lblErro);
+            e.printStackTrace();
         }
 
         grid.revalidate();
@@ -178,15 +199,7 @@ public class AnimaisCadastradosView extends JFrame {
         foto.setOpaque(true);
         foto.setBackground(new Color(245, 246, 250));
 
-        if (animal.getCaminhoFoto() != null && !animal.getCaminhoFoto().isBlank()) {
-            ImageIcon imagem = new ImageIcon(animal.getCaminhoFoto());
-            Image img = imagem.getImage().getScaledInstance(250, 200, Image.SCALE_SMOOTH);
-            foto.setIcon(new ImageIcon(img));
-        } else {
-            foto.setText("🐾");
-            foto.setFont(new Font("SansSerif", Font.PLAIN, 46));
-            foto.setForeground(CINZA);
-        }
+        carregarImagemSegura(animal.getCaminhoFoto(), foto, 250, 200);
 
         JPanel topoFoto = new JPanel(new BorderLayout());
         topoFoto.setPreferredSize(new Dimension(250, 200));
@@ -257,7 +270,7 @@ public class AnimaisCadastradosView extends JFrame {
         id.setFont(new Font("SansSerif", Font.BOLD, 12));
         id.setForeground(new Color(140, 140, 150));
 
-        JLabel nome = new JLabel(animal.getNome());
+        JLabel nome = new JLabel(animal.getNome() != null ? animal.getNome() : "Sem nome");
         nome.setFont(new Font("SansSerif", Font.BOLD, 18));
         nome.setForeground(TEXTO);
 
@@ -320,15 +333,7 @@ public class AnimaisCadastradosView extends JFrame {
         imagem.setOpaque(true);
         imagem.setBackground(Color.WHITE);
 
-        if (animal.getCaminhoFoto() != null && !animal.getCaminhoFoto().isBlank()) {
-            ImageIcon icon = new ImageIcon(animal.getCaminhoFoto());
-            Image img = icon.getImage().getScaledInstance(560, 620, Image.SCALE_SMOOTH);
-            imagem.setIcon(new ImageIcon(img));
-        } else {
-            imagem.setText("🐾");
-            imagem.setFont(new Font("SansSerif", Font.PLAIN, 80));
-            imagem.setForeground(CINZA);
-        }
+        carregarImagemSegura(animal.getCaminhoFoto(), imagem, 560, 620);
 
         JPanel direita = new JPanel();
         direita.setOpaque(false);
@@ -449,6 +454,34 @@ public class AnimaisCadastradosView extends JFrame {
         return texto;
     }
 
+    private void carregarImagemSegura(String caminho, JLabel label, int largura, int altura) {
+        label.setIcon(null);
+        if (caminho != null && !caminho.isBlank()) {
+            try {
+                java.net.URL url = getClass().getClassLoader().getResource(caminho);
+                ImageIcon icon;
+                if (url != null) {
+                    icon = new ImageIcon(url);
+                } else {
+                    icon = new ImageIcon(caminho);
+                }
+
+                if (icon.getIconWidth() > 0) {
+                    Image img = icon.getImage().getScaledInstance(largura, altura, Image.SCALE_SMOOTH);
+                    label.setIcon(new ImageIcon(img));
+                    label.setText("");
+                    return;
+                }
+            } catch (Exception e) {
+                System.err.println("Aviso: Falha ao carregar a imagem do animal.");
+            }
+        }
+
+        label.setText("🐾");
+        label.setFont(new Font("SansSerif", Font.PLAIN, largura >= 250 ? 56 : 46));
+        label.setForeground(CINZA);
+    }
+
     public static void main(String[] args) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("laumiau");
         EntityManager em = emf.createEntityManager();
@@ -456,8 +489,6 @@ public class AnimaisCadastradosView extends JFrame {
         AnimalService service = new AnimalService(repository);
         SwingUtilities.invokeLater(() -> new AnimaisCadastradosView(service));
     }
-
-    // ── Classes internas de componentes ──────────────────────────────────────
 
     static class RoundedPanel extends JPanel {
         private final int radius;
