@@ -31,7 +31,7 @@ public class CadastroView extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
 
-        // Painel com tamanho exato para não desalinhar a imagem
+
         JPanel painelPrincipal = new JPanel(null);
         painelPrincipal.setPreferredSize(new Dimension(CARD_LARGURA, CARD_ALTURA));
         painelPrincipal.setBackground(AppTheme.FUNDO);
@@ -67,7 +67,7 @@ public class CadastroView extends JFrame {
     }
 
     private void criarCampos() {
-        // Posições originais ajustadas para a posição (0,0) da janela
+
         txtNome = new JTextField();
         txtNome.setBounds(110, 270, 275, 35);
         configurarCampo(txtNome);
@@ -98,7 +98,7 @@ public class CadastroView extends JFrame {
         configurarBotao(btnEntrar);
         add(btnEntrar);
 
-        // ✅ FLUXO CORRIGIDO
+
         btnCadastrar.addActionListener(e -> cadastrarUsuario());
 
         btnEntrar.addActionListener(e -> {
@@ -151,7 +151,7 @@ public class CadastroView extends JFrame {
 
             JOptionPane.showMessageDialog(this, "Usuário cadastrado com sucesso!");
 
-            // ✅ FLUXO CORRIGIDO
+
             new LoginView().setVisible(true);
             dispose();
 

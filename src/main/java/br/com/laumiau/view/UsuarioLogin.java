@@ -8,7 +8,7 @@ public class UsuarioLogin {
         // Inicia a interface gráfica na thread correta do Swing
         SwingUtilities.invokeLater(() -> {
             LoginView telaLogin = new LoginView();
-            telaLogin.setVisible(true); // É esta linha que faz a mágica acontecer!
+            telaLogin.setVisible(true);
         });
     }
 }

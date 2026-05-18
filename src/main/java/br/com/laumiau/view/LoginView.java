@@ -29,14 +29,14 @@ public class LoginView extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
 
-        // Cria um painel com o tamanho exato da sua imagem para nada sair do lugar
+
         JPanel painelPrincipal = new JPanel(null);
         painelPrincipal.setPreferredSize(new Dimension(CARD_LARGURA, CARD_ALTURA));
         painelPrincipal.setBackground(AppTheme.FUNDO); // Usando o tema
         setContentPane(painelPrincipal);
 
-        pack(); // Ajusta a janela exatamente para o tamanho do painel
-        setLocationRelativeTo(null); // Centraliza na tela
+        pack();
+        setLocationRelativeTo(null);
 
         carregarImagemCard();
         criarCampos();
@@ -60,13 +60,13 @@ public class LoginView extends JFrame {
         Image img = icon.getImage().getScaledInstance(CARD_LARGURA, CARD_ALTURA, Image.SCALE_SMOOTH);
         imagemCard = new JLabel(new ImageIcon(img));
 
-        // A imagem agora fica na posição 0,0 do painel
+
         imagemCard.setBounds(0, 0, CARD_LARGURA, CARD_ALTURA);
         add(imagemCard);
     }
 
     private void criarCampos() {
-        // As posições originais que você calculou (sem somar cardX e cardY)
+
         txtEmail = new JTextField();
         txtEmail.setBounds(125, 325, 290, 45);
         configurarCampo(txtEmail);
@@ -92,7 +92,6 @@ public class LoginView extends JFrame {
         configurarBotao(btnCadastrar);
         add(btnCadastrar);
 
-        // ✅ FLUXO CORRIGIDO: Sempre fecha a tela atual (dispose) ao abrir a próxima
         btnEntrar.addActionListener(e -> fazerLoginUsuario());
 
         btnCadastrar.addActionListener(e -> {
@@ -128,10 +127,17 @@ public class LoginView extends JFrame {
                 return;
             }
 
+            if (usuario.getTipo() == laumiau.model.TipoUsuario.admin) {
+                JOptionPane.showMessageDialog(this,
+                        "Administradores devem usar o botão 'Admin' para entrar no sistema.",
+                        "Acesso Restrito",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
             EntityManager emAnimal = JPAUtil.getEntityManager();
             AnimalService animalService = new AnimalService(new AnimalRepository(emAnimal));
 
-            // ✅ FLUXO CORRIGIDO
             new AnimalView(animalService).setVisible(true);
             dispose();
 

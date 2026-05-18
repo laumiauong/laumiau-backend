@@ -149,7 +149,7 @@ public class AnimaisCadastradosView extends JFrame {
         return scroll;
     }
 
-    // ✅ MÉTODO CORRIGIDO: Agora trata banco vazio e previne crash de JPA
+
     private void carregarAnimais(String filtro) {
         grid.removeAll();
 

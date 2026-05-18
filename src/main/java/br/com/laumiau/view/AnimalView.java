@@ -81,8 +81,7 @@ public class AnimalView extends JFrame {
         JPanel grid = new JPanel(new GridLayout(2, 5, 18, 18));
         grid.setOpaque(false);
 
-        // Construtor: (nome, especie, raca, idade, sexo, vacinado, porte, caminhoFoto)
-        // responsavel é definido via setter pois não faz parte do construtor
+
         grid.add(criarCard(criarAnimal("Fofuxo",   "Gato",     "SRD", 12, Sexo.MACHO, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO1.png")));
         grid.add(criarCard(criarAnimal("Princesa",  "Gato",     "SRD",  8, Sexo.FEMEA, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO2.png")));
         grid.add(criarCard(criarAnimal("Bonitão",   "Gato",     "SRD", 24, Sexo.MACHO, false, Porte.MEDIO,   "ONG Lau & Miau", "img/imgGATO3.png")));
@@ -106,7 +105,7 @@ public class AnimalView extends JFrame {
         return scroll;
     }
 
-    // Método auxiliar: constrói Animal e define responsavel via setter
+
     private Animal criarAnimal(String nome, String especie, String raca, int idade,
                                Sexo sexo, boolean vacinado, Porte porte,
                                String responsavel, String caminhoFoto) {

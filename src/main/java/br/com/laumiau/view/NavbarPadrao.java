@@ -86,12 +86,12 @@ public class NavbarPadrao extends JPanel {
             pill.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             lbl.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-            // ✅ Mesmo listener no pill E no lbl — clique sempre capturado
+
             MouseAdapter ma = new MouseAdapter() {
                 @Override public void mouseEntered(MouseEvent e) { lbl.setForeground(AppTheme.LARANJA); }
                 @Override public void mouseExited(MouseEvent e)  { lbl.setForeground(new Color(90, 80, 70)); }
                 @Override public void mouseClicked(MouseEvent e) {
-                    // ✅ Garante execução na EDT e pega janela antes de fechar
+
                     Window pai = SwingUtilities.getWindowAncestor(NavbarPadrao.this);
                     SwingUtilities.invokeLater(() -> {
                         switch (texto) {

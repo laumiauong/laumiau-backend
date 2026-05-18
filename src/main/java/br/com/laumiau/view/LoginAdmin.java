@@ -46,10 +46,10 @@ public class LoginAdmin extends JFrame {
         gbc.gridwidth = 1;
         gbc.weightx = 1;
 
-        // Ícone de cadeado
+
         JPanel iconeContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
         iconeContainer.setOpaque(false);
-        // Painel redondo para o ícone
+
         JPanel iconeBola = new JPanel(new BorderLayout()) {
             @Override protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
@@ -70,33 +70,33 @@ public class LoginAdmin extends JFrame {
         gbc.gridy = 0; gbc.insets = new Insets(0, 0, 20, 0);
         painel.add(iconeContainer, gbc);
 
-        // Título
+
         JLabel lblTitulo = new JLabel("Área Administrativa", SwingConstants.CENTER);
         lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 26));
         lblTitulo.setForeground(TEXTO_DARK);
         gbc.gridy = 1; gbc.insets = new Insets(0, 0, 8, 0);
         painel.add(lblTitulo, gbc);
 
-        // Subtítulo
+
         JLabel lblSub = new JLabel("<html><center>Entre com suas credenciais para acessar<br>o painel administrativo</center></html>", SwingConstants.CENTER);
         lblSub.setFont(new Font("SansSerif", Font.PLAIN, 13));
         lblSub.setForeground(CINZA_TEXTO);
         gbc.gridy = 2; gbc.insets = new Insets(0, 0, 30, 0);
         painel.add(lblSub, gbc);
 
-        // Campo Email
+
         txtEmail = criarCampoTexto("Usuário ou Email", false);
         JPanel painelEmail = criarCampoComIcone("👤", txtEmail);
         gbc.gridy = 3; gbc.insets = new Insets(0, 0, 15, 0);
         painel.add(painelEmail, gbc);
 
-        // Campo Senha
+
         txtSenha = (JPasswordField) criarCampoTexto("Senha", true);
         JPanel painelSenha = criarCampoSenhaComIcone(txtSenha);
         gbc.gridy = 4; gbc.insets = new Insets(0, 0, 5, 0);
         painel.add(painelSenha, gbc);
 
-        // Esqueceu senha
+
         JPanel painelEsqueceu = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         painelEsqueceu.setOpaque(false);
         JLabel lblEsqueceu = new JLabel("esqueceu sua senha?");
@@ -107,14 +107,14 @@ public class LoginAdmin extends JFrame {
         gbc.gridy = 5; gbc.insets = new Insets(0, 0, 20, 0);
         painel.add(painelEsqueceu, gbc);
 
-        // Label de erro
+
         lblErro = new JLabel("", SwingConstants.CENTER);
         lblErro.setForeground(new Color(239, 68, 68));
         lblErro.setFont(new Font("SansSerif", Font.PLAIN, 12));
         gbc.gridy = 6; gbc.insets = new Insets(0, 0, 10, 0);
         painel.add(lblErro, gbc);
 
-        // Botão Entrar com Degradê
+
         JButton btnEntrar = new JButton("Entrar") {
             @Override protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
@@ -134,16 +134,16 @@ public class LoginAdmin extends JFrame {
         btnEntrar.setFocusPainted(false);
         btnEntrar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        // ✅ FLUXO CORRIGIDO: O ActionListener chama o método que faz o dispose()
+
         btnEntrar.addActionListener(e -> fazerLogin());
 
-        // Enter também faz login
+
         getRootPane().setDefaultButton(btnEntrar);
 
         gbc.gridy = 7; gbc.insets = new Insets(0, 0, 25, 0);
         painel.add(btnEntrar, gbc);
 
-        // Rodapé
+
         JPanel rodape = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
         rodape.setOpaque(false);
         JLabel pol = new JLabel("Política de Privacidade");
@@ -169,7 +169,7 @@ public class LoginAdmin extends JFrame {
         campo.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 8));
         campo.setOpaque(false);
 
-        // Placeholder
+
         if (!senha) {
             campo.setText(placeholder);
             campo.setForeground(CINZA_TEXTO);
@@ -235,7 +235,7 @@ public class LoginAdmin extends JFrame {
         lblIcone.setFont(new Font("SansSerif", Font.PLAIN, 16));
         lblIcone.setBorder(new EmptyBorder(0, 0, 0, 8));
 
-        // Botão mostrar/ocultar senha original restaurado
+
         JLabel btnToggle = new JLabel("🙈");
         btnToggle.setFont(new Font("SansSerif", Font.PLAIN, 16));
         btnToggle.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -278,7 +278,7 @@ public class LoginAdmin extends JFrame {
             em.close();
             lblErro.setText("");
 
-            // ✅ FLUXO CORRIGIDO: Fecha esta janela e abre o painel Admin
+
             dispose();
             new RelatorioAdmin().setVisible(true);
 

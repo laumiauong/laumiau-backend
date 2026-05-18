@@ -180,14 +180,14 @@ public class AdocaoView extends JFrame {
         }
         JOptionPane.showMessageDialog(this, "Adoção de " + nomeAnimal + " confirmada com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
 
-        // ✅ FLUXO CORRIGIDO AQUI: Retorna ao catálogo após confirmar
+
         dispose();
         if (animalService != null) {
             new AnimalView(animalService).setVisible(true);
         }
     }
 
-    // Botão customizado que consome do AppTheme
+
     static class RoundedButton extends JButton {
         public RoundedButton(String texto) {
             super(texto);

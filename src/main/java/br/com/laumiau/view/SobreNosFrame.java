@@ -27,7 +27,7 @@ public class SobreNosFrame extends JFrame {
     private static final int CARD_H = 510;
     private static final int CARD_Y = 88;
 
-    // ✅ Construtor com service
+
     public SobreNosFrame(AnimalService animalService) {
         this.animalService = animalService;
         initComponents();
@@ -42,7 +42,7 @@ public class SobreNosFrame extends JFrame {
         });
     }
 
-    // ✅ Construtor sem service para compatibilidade
+
     public SobreNosFrame() {
         this.animalService = null;
         initComponents();
@@ -85,12 +85,12 @@ public class SobreNosFrame extends JFrame {
         backgroundPanel.setLayout(null);
         setContentPane(backgroundPanel);
 
-        // ✅ Navbar com service
+
         NavbarPadrao navbar = new NavbarPadrao("Sobre nós", animalService);
         navbar.setBounds(0, 0, 1200, 68);
         backgroundPanel.add(navbar);
 
-        // ✅ Redimensiona a navbar corretamente
+
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -98,7 +98,7 @@ public class SobreNosFrame extends JFrame {
             }
         });
 
-        // ── CARD PRINCIPAL ──
+
         mainContent = new JPanel(null) {
             @Override protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();

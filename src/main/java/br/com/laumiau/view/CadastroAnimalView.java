@@ -19,7 +19,7 @@ public class CadastroAnimalView extends JFrame {
 
     private JLabel icon;
 
-    // Campos restaurados baseados no vídeo
+
     private JTextField campoNome;
     private JTextField campoRaca;
     private JTextField campoIdade;
@@ -73,7 +73,7 @@ public class CadastroAnimalView extends JFrame {
             comboEspecie.setSelectedItem(animalEditando.getEspecie());
             comboSexo.setSelectedItem(animalEditando.getSexo() == Sexo.MACHO ? "Macho" : "Fêmea");
 
-            // Preenchendo os campos restaurados
+
             if(animalEditando.getPorte() != null) {
                 comboPorte.setSelectedItem(animalEditando.getPorte().toString());
             }
@@ -146,7 +146,7 @@ public class CadastroAnimalView extends JFrame {
         fundo.add(titulo);
         fundo.add(Box.createVerticalStrut(25));
 
-        // Adicionando TODOS os campos do vídeo
+
         fundo.add(campoTexto("Nome do animal", campoNome, "Ex: Thor"));
         fundo.add(combo("Espécie", comboEspecie));
         fundo.add(campoTexto("Raça", campoRaca, "Ex: Vira-lata / SRD"));

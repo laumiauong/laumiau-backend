@@ -116,7 +116,7 @@ public class RelatorioAdmin extends JFrame {
         animais.setFont(new Font("SansSerif", Font.BOLD, 14));
         animais.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        // ✅ CORREÇÃO: invokeLater adicionado aqui
+
         animais.addMouseListener(new MouseAdapter() {
             @Override public void mouseClicked(MouseEvent e) {
                 SwingUtilities.invokeLater(() -> {
@@ -267,7 +267,7 @@ public class RelatorioAdmin extends JFrame {
         JPanel botoes = new JPanel(new GridLayout(2, 1, 0, 15));
         botoes.setOpaque(false);
 
-        // ✅ CORREÇÃO: invokeLater adicionado aqui também
+
         OrangeButton btnCadastrar = new OrangeButton("➕  Cadastrar Novo Pet");
         btnCadastrar.addActionListener(e -> {
             SwingUtilities.invokeLater(() -> {
@@ -278,7 +278,7 @@ public class RelatorioAdmin extends JFrame {
             });
         });
 
-        // ✅ CORREÇÃO: invokeLater adicionado aqui também
+
         OrangeButton btnGerenciar = new OrangeButton("📊  Gerenciar Animais");
         btnGerenciar.addActionListener(e -> {
             SwingUtilities.invokeLater(() -> {

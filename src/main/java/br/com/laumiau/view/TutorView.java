@@ -29,10 +29,10 @@ public class TutorView extends JFrame {
     private void criarTela() {
         setLayout(new BorderLayout());
 
-        // Navbar padrão no topo
+
         add(new NavbarPadrao("Home"), BorderLayout.NORTH);
 
-        // Fundo com o card centralizado
+
         JPanel fundo = new JPanel(new GridBagLayout());
         fundo.setBackground(COR_FUNDO);
 
@@ -121,9 +121,7 @@ public class TutorView extends JFrame {
         return label;
     }
 
-    // =========================================================
-    // TELA MEUS ANIMAIS
-    // =========================================================
+
     static class AnimaisInteresseView extends JFrame {
         public AnimaisInteresseView() {
             setTitle("Meus animais de interesse");
@@ -147,9 +145,7 @@ public class TutorView extends JFrame {
         }
     }
 
-    // =========================================================
-    // TELA ACOMPANHAR ADOÇÃO
-    // =========================================================
+
     static class AcompanharAdocaoView extends JFrame {
         public AcompanharAdocaoView() {
             setTitle("Acompanhar adoção");
@@ -182,9 +178,7 @@ public class TutorView extends JFrame {
         }
     }
 
-    // =========================================================
-    // EDITAR PERFIL
-    // =========================================================
+
     static class EditarPerfilTutorView extends JFrame {
         private JTextField campoNome;
         private JTextField campoEmail;
@@ -232,9 +226,7 @@ public class TutorView extends JFrame {
         }
     }
 
-    // =========================================================
-    // HELPERS
-    // =========================================================
+
     private static JPanel basePanel() {
         JPanel fundo = new JPanel(new GridBagLayout());
         fundo.setBackground(COR_FUNDO);
@@ -261,9 +253,7 @@ public class TutorView extends JFrame {
         return label;
     }
 
-    // =========================================================
-    // BOTÃO CUSTOMIZADO
-    // =========================================================
+
     static class RoundedButton extends JButton {
         RoundedButton(String text) {
             super(text);
@@ -296,9 +286,7 @@ public class TutorView extends JFrame {
         }
     }
 
-    // =========================================================
-    // BORDA CUSTOMIZADA
-    // =========================================================
+
     static class RoundedBorder extends AbstractBorder {
         private final int radius;
         private final Color color;
