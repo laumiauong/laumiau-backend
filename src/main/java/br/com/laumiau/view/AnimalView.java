@@ -5,13 +5,14 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.RoundRectangle2D;
-
+import laumiau.model.Animal;
+import laumiau.model.Porte;
+import laumiau.model.Sexo;
 import laumiau.service.AnimalService;
 
 public class AnimalView extends JFrame {
 
     private final Color LARANJA = new Color(255, 107, 43);
-    private final Color LARANJA_HOVER = new Color(255, 140, 80);
     private final Color TEXTO = new Color(15, 23, 42);
     private final Color CINZA = new Color(160, 170, 185);
     private final Color FUNDO = new Color(253, 247, 242);
@@ -61,8 +62,16 @@ public class AnimalView extends JFrame {
         verTodos.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                dispose();
-                new AnimaisCadastradosView(animalService);
+                try {
+                    new AnimaisCadastradosView(animalService);
+                    dispose();
+                } catch (Exception erro) {
+                    JOptionPane.showMessageDialog(null,
+                            "Erro ao abrir a listagem de animais: " + erro.getMessage(),
+                            "Erro de Carregamento",
+                            JOptionPane.ERROR_MESSAGE);
+                    erro.printStackTrace();
+                }
             }
         });
 
@@ -72,16 +81,18 @@ public class AnimalView extends JFrame {
         JPanel grid = new JPanel(new GridLayout(2, 5, 18, 18));
         grid.setOpaque(false);
 
-        grid.add(criarCard("Fofuxo", "Macho", "img/imgGATO1.png"));
-        grid.add(criarCard("Princesa", "Fêmea", "img/imgGATO2.png"));
-        grid.add(criarCard("Bonitão", "Macho", "img/imgGATO3.png"));
-        grid.add(criarCard("Bebe", "Fêmea", "img/imgGATO4.png"));
-        grid.add(criarCard("Rabinho", "Macho", "img/imgCACHORRO1.png"));
-        grid.add(criarCard("Charmosa", "Fêmea", "img/imgGATO6.png"));
-        grid.add(criarCard("Banguela", "Macho", "img/imgCACHORRO2.png"));
-        grid.add(criarCard("Preciosa", "Fêmea", "img/imgGATO8.png"));
-        grid.add(criarCard("Renê", "Macho", "img/imgGATO9.png"));
-        grid.add(criarCard("Perninha", "Macho", "img/imgGATO10.png"));
+        // Construtor: (nome, especie, raca, idade, sexo, vacinado, porte, caminhoFoto)
+        // responsavel é definido via setter pois não faz parte do construtor
+        grid.add(criarCard(criarAnimal("Fofuxo",   "Gato",     "SRD", 12, Sexo.MACHO, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO1.png")));
+        grid.add(criarCard(criarAnimal("Princesa",  "Gato",     "SRD",  8, Sexo.FEMEA, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO2.png")));
+        grid.add(criarCard(criarAnimal("Bonitão",   "Gato",     "SRD", 24, Sexo.MACHO, false, Porte.MEDIO,   "ONG Lau & Miau", "img/imgGATO3.png")));
+        grid.add(criarCard(criarAnimal("Bebe",      "Gato",     "SRD",  6, Sexo.FEMEA, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO4.png")));
+        grid.add(criarCard(criarAnimal("Rabinho",   "Cachorro", "SRD", 36, Sexo.MACHO, true,  Porte.GRANDE,  "ONG Lau & Miau", "img/imgCACHORRO1.png")));
+        grid.add(criarCard(criarAnimal("Charmosa",  "Gato",     "SRD", 18, Sexo.FEMEA, false, Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO6.png")));
+        grid.add(criarCard(criarAnimal("Banguela",  "Cachorro", "SRD", 14, Sexo.MACHO, true,  Porte.MEDIO,   "ONG Lau & Miau", "img/imgCACHORRO2.png")));
+        grid.add(criarCard(criarAnimal("Preciosa",  "Gato",     "SRD", 10, Sexo.FEMEA, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO8.png")));
+        grid.add(criarCard(criarAnimal("Renê",      "Gato",     "SRD", 15, Sexo.MACHO, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO9.png")));
+        grid.add(criarCard(criarAnimal("Perninha",  "Gato",     "SRD", 20, Sexo.MACHO, false, Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO10.png")));
 
         conteudo.add(cabecalho, BorderLayout.NORTH);
         conteudo.add(grid, BorderLayout.CENTER);
@@ -95,7 +106,16 @@ public class AnimalView extends JFrame {
         return scroll;
     }
 
-    private JPanel criarCard(String nome, String sexo, String caminhoImg) {
+    // Método auxiliar: constrói Animal e define responsavel via setter
+    private Animal criarAnimal(String nome, String especie, String raca, int idade,
+                               Sexo sexo, boolean vacinado, Porte porte,
+                               String responsavel, String caminhoFoto) {
+        Animal a = new Animal(nome, especie, raca, idade, sexo, vacinado, porte, caminhoFoto);
+        a.setResponsavel(responsavel);
+        return a;
+    }
+
+    private JPanel criarCard(Animal animal) {
         JPanel sombra = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -121,7 +141,7 @@ public class AnimalView extends JFrame {
         areaImg.setOpaque(false);
         areaImg.setPreferredSize(new Dimension(0, 200));
 
-        JLabel foto = carregarImagem(caminhoImg, 230, 200);
+        JLabel foto = carregarImagem(animal.getCaminhoFoto(), 230, 200);
         foto.setBounds(0, 0, 230, 200);
 
         boolean[] favoritado = {false};
@@ -176,14 +196,13 @@ public class AnimalView extends JFrame {
         info.setLayout(new BoxLayout(info, BoxLayout.Y_AXIS));
         info.setBorder(new EmptyBorder(14, 16, 16, 16));
 
-        JLabel lblNome = new JLabel(nome);
+        JLabel lblNome = new JLabel(animal.getNome());
         lblNome.setFont(new Font("SansSerif", Font.BOLD, 17));
         lblNome.setForeground(TEXTO);
         lblNome.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        Color corSexo = sexo.equals("Fêmea")
-                ? new Color(236, 72, 153)
-                : new Color(59, 130, 246);
+        String sexoTexto = animal.getSexo() == Sexo.FEMEA ? "Fêmea" : "Macho";
+        Color corSexo = animal.getSexo() == Sexo.FEMEA ? new Color(236, 72, 153) : new Color(59, 130, 246);
 
         JPanel sexoRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         sexoRow.setOpaque(false);
@@ -201,10 +220,9 @@ public class AnimalView extends JFrame {
                 g2.dispose();
             }
         };
-
         bullet.setPreferredSize(new Dimension(16, 18));
 
-        JLabel lblSexo = new JLabel(sexo);
+        JLabel lblSexo = new JLabel(sexoTexto);
         lblSexo.setFont(new Font("SansSerif", Font.BOLD, 13));
         lblSexo.setForeground(corSexo);
 
@@ -234,7 +252,169 @@ public class AnimalView extends JFrame {
         sombra.add(areaImg, BorderLayout.NORTH);
         sombra.add(info, BorderLayout.CENTER);
 
+        MouseAdapter cliqueCard = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                abrirDetalhes(animal);
+            }
+        };
+        sombra.addMouseListener(cliqueCard);
+        foto.addMouseListener(cliqueCard);
+        info.addMouseListener(cliqueCard);
+
         return sombra;
+    }
+
+    private void abrirDetalhes(Animal animal) {
+        JFrame tela = new JFrame(animal.getNome());
+        tela.setSize(1250, 760);
+        tela.setLocationRelativeTo(null);
+        tela.setLayout(new BorderLayout());
+
+        JPanel container = new JPanel(new GridLayout(1, 2, 45, 0));
+        container.setBorder(new EmptyBorder(40, 50, 40, 50));
+        container.setBackground(new Color(250, 248, 245));
+
+        JLabel imagem = new JLabel("", SwingConstants.CENTER);
+        imagem.setOpaque(true);
+        imagem.setBackground(Color.WHITE);
+
+        try {
+            java.net.URL url = getClass().getClassLoader().getResource(animal.getCaminhoFoto());
+            if (url != null) {
+                ImageIcon iconImg = new ImageIcon(url);
+                Image img = iconImg.getImage().getScaledInstance(560, 620, Image.SCALE_SMOOTH);
+                imagem.setIcon(new ImageIcon(img));
+            } else {
+                imagem.setText("🐾");
+                imagem.setFont(new Font("SansSerif", Font.PLAIN, 80));
+                imagem.setForeground(CINZA);
+            }
+        } catch (Exception e) {
+            imagem.setText("🐾");
+            imagem.setFont(new Font("SansSerif", Font.PLAIN, 80));
+            imagem.setForeground(CINZA);
+        }
+
+        JPanel direita = new JPanel();
+        direita.setOpaque(false);
+        direita.setLayout(new BoxLayout(direita, BoxLayout.Y_AXIS));
+
+        JLabel nome = new JLabel(animal.getNome());
+        nome.setFont(new Font("SansSerif", Font.BOLD, 40));
+        nome.setForeground(Color.BLACK);
+
+        JLabel cidade = new JLabel("📍 Foz do Iguaçu, Centro");
+        cidade.setForeground(Color.GRAY);
+        cidade.setFont(new Font("SansSerif", Font.PLAIN, 15));
+
+        JPanel infos = new JPanel(new GridLayout(1, 4, 12, 0));
+        infos.setOpaque(false);
+        infos.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
+
+        infos.add(criarBox(animal.getSexo() == Sexo.FEMEA ? "Fêmea" : "Macho", "Sexo"));
+        infos.add(criarBox(animal.getRaca(), "Raça"));
+        infos.add(criarBox(animal.getEspecie(), "Espécie"));
+        infos.add(criarBox(animal.getIdade() + " meses", "Idade"));
+
+        JPanel vacina = new AnimaisCadastradosView.RoundedPanel(
+                18,
+                animal.isVacinado() ? new Color(220, 255, 230) : new Color(255, 235, 235)
+        );
+        vacina.setLayout(new FlowLayout(FlowLayout.LEFT));
+        vacina.setMaximumSize(new Dimension(Integer.MAX_VALUE, 48));
+
+        JLabel vacinado = new JLabel(animal.isVacinado() ? "✔ Vacinado" : "✖ Não vacinado");
+        vacinado.setFont(new Font("SansSerif", Font.BOLD, 14));
+        vacina.add(vacinado);
+
+        JPanel responsavel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
+        responsavel.setOpaque(false);
+        responsavel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
+
+        JLabel avatarResp = new JLabel("ONG", SwingConstants.CENTER);
+        avatarResp.setOpaque(true);
+        avatarResp.setBackground(new Color(238, 238, 238));
+        avatarResp.setForeground(Color.BLACK);
+        avatarResp.setFont(new Font("SansSerif", Font.BOLD, 13));
+        avatarResp.setPreferredSize(new Dimension(52, 52));
+
+        String nomeResponsavel = textoOuPadrao(animal.getResponsavel(), "ONG Lau & Miau");
+
+        JLabel txtResp = new JLabel(
+                "<html><span style='color:#999999'>Com quem está:</span><br><b>"
+                        + nomeResponsavel + "</b></html>"
+        );
+        txtResp.setFont(new Font("SansSerif", Font.PLAIN, 15));
+
+        responsavel.add(avatarResp);
+        responsavel.add(txtResp);
+
+        JTextArea descricao = new JTextArea(
+                "Conheça o " + animal.getNome() + "! Esse lindo pet está aguardando "
+                        + "uma adoção responsável na " + nomeResponsavel + "."
+        );
+        descricao.setEditable(false);
+        descricao.setLineWrap(true);
+        descricao.setWrapStyleWord(true);
+        descricao.setOpaque(false);
+        descricao.setFont(new Font("SansSerif", Font.PLAIN, 17));
+        descricao.setForeground(new Color(70, 70, 80));
+
+        JButton adotar = new AnimaisCadastradosView.RoundedButton("❤ Quero adotar", LARANJA, Color.WHITE);
+        adotar.setFont(new Font("SansSerif", Font.BOLD, 18));
+        adotar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 58));
+
+        adotar.addActionListener(e -> {
+            tela.dispose();
+            dispose();
+            new AdocaoView(animalService, animal.getNome(), "Adotante Interessado").setVisible(true);
+        });
+
+        direita.add(nome);
+        direita.add(Box.createVerticalStrut(8));
+        direita.add(cidade);
+        direita.add(Box.createVerticalStrut(30));
+        direita.add(infos);
+        direita.add(Box.createVerticalStrut(20));
+        direita.add(vacina);
+        direita.add(Box.createVerticalStrut(25));
+        direita.add(responsavel);
+        direita.add(Box.createVerticalStrut(25));
+        direita.add(descricao);
+        direita.add(Box.createVerticalGlue());
+        direita.add(adotar);
+
+        container.add(imagem);
+        container.add(direita);
+
+        tela.add(container, BorderLayout.CENTER);
+        tela.setVisible(true);
+    }
+
+    private JPanel criarBox(String valor, String titulo) {
+        JPanel box = new AnimaisCadastradosView.RoundedPanel(18, Color.WHITE);
+        box.setLayout(new BoxLayout(box, BoxLayout.Y_AXIS));
+        box.setBorder(new EmptyBorder(14, 16, 14, 16));
+
+        JLabel v = new JLabel(valor);
+        v.setFont(new Font("SansSerif", Font.BOLD, 15));
+        v.setForeground(Color.BLACK);
+
+        JLabel t = new JLabel(titulo);
+        t.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        t.setForeground(Color.GRAY);
+
+        box.add(v);
+        box.add(Box.createVerticalStrut(4));
+        box.add(t);
+
+        return box;
+    }
+
+    private String textoOuPadrao(String texto, String padrao) {
+        if (texto == null || texto.trim().isEmpty()) return padrao;
+        return texto;
     }
 
     private JLabel carregarImagem(String caminho, int largura, int altura) {

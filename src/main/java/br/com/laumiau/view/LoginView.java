@@ -21,26 +21,25 @@ public class LoginView extends JFrame {
     private JButton btnEntrar;
     private JLabel imagemCard;
 
-    private int cardX;
-    private int cardY;
-
     private EntityManager em;
     private UsuarioRepository usuarioRepository;
 
     public LoginView() {
         setTitle("Login - LauMiau");
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
-        setLayout(null);
 
-        getContentPane().setBackground(new Color(242, 242, 242));
+        // Cria um painel com o tamanho exato da sua imagem para nada sair do lugar
+        JPanel painelPrincipal = new JPanel(null);
+        painelPrincipal.setPreferredSize(new Dimension(CARD_LARGURA, CARD_ALTURA));
+        painelPrincipal.setBackground(AppTheme.FUNDO); // Usando o tema
+        setContentPane(painelPrincipal);
 
-        calcularPosicaoCard();
+        pack(); // Ajusta a janela exatamente para o tamanho do painel
+        setLocationRelativeTo(null); // Centraliza na tela
+
         carregarImagemCard();
         criarCampos();
-
-        setVisible(true);
     }
 
     private UsuarioRepository getUsuarioRepository() {
@@ -49,12 +48,6 @@ public class LoginView extends JFrame {
             usuarioRepository = new UsuarioRepository(em);
         }
         return usuarioRepository;
-    }
-
-    private void calcularPosicaoCard() {
-        Dimension tela = Toolkit.getDefaultToolkit().getScreenSize();
-        cardX = (tela.width - CARD_LARGURA) / 2;
-        cardY = (tela.height - CARD_ALTURA) / 2;
     }
 
     private void carregarImagemCard() {
@@ -66,53 +59,55 @@ public class LoginView extends JFrame {
         ImageIcon icon = new ImageIcon(url);
         Image img = icon.getImage().getScaledInstance(CARD_LARGURA, CARD_ALTURA, Image.SCALE_SMOOTH);
         imagemCard = new JLabel(new ImageIcon(img));
-        imagemCard.setBounds(cardX, cardY, CARD_LARGURA, CARD_ALTURA);
+
+        // A imagem agora fica na posição 0,0 do painel
+        imagemCard.setBounds(0, 0, CARD_LARGURA, CARD_ALTURA);
         add(imagemCard);
     }
 
     private void criarCampos() {
+        // As posições originais que você calculou (sem somar cardX e cardY)
         txtEmail = new JTextField();
-        txtEmail.setBounds(cardX + 125, cardY + 325, 290, 45);
+        txtEmail.setBounds(125, 325, 290, 45);
         configurarCampo(txtEmail);
         add(txtEmail);
 
         txtSenha = new JPasswordField();
-        txtSenha.setBounds(cardX + 125, cardY + 407, 290, 45);
+        txtSenha.setBounds(125, 407, 290, 45);
         configurarCampo(txtSenha);
         add(txtSenha);
 
         btnEntrar = new JButton("");
-        btnEntrar.setBounds(cardX + 80, cardY + 460, 340, 45);
+        btnEntrar.setBounds(80, 460, 340, 45);
         configurarBotao(btnEntrar);
         add(btnEntrar);
 
         JButton btnAdmin = new JButton("");
-        btnAdmin.setBounds(cardX + 135, cardY + 535, 140, 30);
+        btnAdmin.setBounds(135, 535, 140, 30);
         configurarBotao(btnAdmin);
         add(btnAdmin);
 
         JButton btnCadastrar = new JButton("");
-        btnCadastrar.setBounds(cardX + 280, cardY + 550, 150, 25);
+        btnCadastrar.setBounds(280, 550, 150, 25);
         configurarBotao(btnCadastrar);
         add(btnCadastrar);
 
+        // ✅ FLUXO CORRIGIDO: Sempre fecha a tela atual (dispose) ao abrir a próxima
         btnEntrar.addActionListener(e -> fazerLoginUsuario());
 
         btnCadastrar.addActionListener(e -> {
-            new CadastroView();
+            new CadastroView().setVisible(true);
             dispose();
         });
 
-        // ✅ CORRIGIDO: não faz dispose(), LoginView continua aberto
-        btnAdmin.addActionListener(e -> new LoginAdmin().setVisible(true));
+        btnAdmin.addActionListener(e -> {
+            new LoginAdmin().setVisible(true);
+            dispose();
+        });
 
         if (imagemCard != null) {
-            getContentPane().setComponentZOrder(
-                    imagemCard,
-                    getContentPane().getComponentCount() - 1
-            );
+            getContentPane().setComponentZOrder(imagemCard, getContentPane().getComponentCount() - 1);
         }
-
         repaint();
     }
 
@@ -136,7 +131,8 @@ public class LoginView extends JFrame {
             EntityManager emAnimal = JPAUtil.getEntityManager();
             AnimalService animalService = new AnimalService(new AnimalRepository(emAnimal));
 
-            new AnimalView(animalService);
+            // ✅ FLUXO CORRIGIDO
+            new AnimalView(animalService).setVisible(true);
             dispose();
 
         } catch (Exception ex) {
@@ -147,9 +143,9 @@ public class LoginView extends JFrame {
     private void configurarCampo(JTextField campo) {
         campo.setBorder(null);
         campo.setOpaque(false);
-        campo.setForeground(Color.BLACK);
-        campo.setCaretColor(Color.BLACK);
-        campo.setFont(new Font("Arial", Font.PLAIN, 16));
+        campo.setForeground(AppTheme.TEXTO_DARK); // Usando o tema
+        campo.setCaretColor(AppTheme.TEXTO_DARK);
+        campo.setFont(AppTheme.FONTE_TEXTO);      // Usando o tema
     }
 
     private void configurarBotao(JButton botao) {
@@ -158,9 +154,5 @@ public class LoginView extends JFrame {
         botao.setBorderPainted(false);
         botao.setFocusPainted(false);
         botao.setCursor(new Cursor(Cursor.HAND_CURSOR));
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(LoginView::new);
     }
 }

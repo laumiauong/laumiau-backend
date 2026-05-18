@@ -3,9 +3,12 @@ package br.com.laumiau.view;
 import javax.swing.SwingUtilities;
 
 public class UsuarioLogin {
-    //teste
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(LoginView::new);
+        // Inicia a interface gráfica na thread correta do Swing
+        SwingUtilities.invokeLater(() -> {
+            LoginView telaLogin = new LoginView();
+            telaLogin.setVisible(true); // É esta linha que faz a mágica acontecer!
+        });
     }
 }

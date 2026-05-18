@@ -5,16 +5,15 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.io.File;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
 import laumiau.model.Animal;
 import laumiau.model.Sexo;
 import laumiau.service.AnimalService;
 
 public class CadastroAnimalView extends JFrame {
 
-    private final Color FUNDO = new Color(255, 248, 241);
-    private final Color TEXTO = new Color(31, 42, 68);
-    private final Color CINZA = new Color(150, 160, 175);
+    private final Color FUNDO  = new Color(255, 248, 241);
+    private final Color TEXTO  = new Color(31, 42, 68);
+    private final Color CINZA  = new Color(150, 160, 175);
     private final Color LARANJA = new Color(255, 128, 0);
 
     private JLabel icon;
@@ -30,7 +29,7 @@ public class CadastroAnimalView extends JFrame {
     private Animal animalEditando;
 
     public CadastroAnimalView(AnimalService animalService, Animal animalEditando) {
-        this.animalService = animalService;
+        this.animalService  = animalService;
         this.animalEditando = animalEditando;
 
         setTitle("Editar Animal");
@@ -63,11 +62,7 @@ public class CadastroAnimalView extends JFrame {
             campoRaca.setText(animalEditando.getRaca());
             campoIdade.setText(String.valueOf(animalEditando.getIdade()));
             comboEspecie.setSelectedItem(animalEditando.getEspecie());
-
-            comboSexo.setSelectedItem(
-                    animalEditando.getSexo() == Sexo.MACHO ? "Macho" : "Fêmea"
-            );
-
+            comboSexo.setSelectedItem(animalEditando.getSexo() == Sexo.MACHO ? "Macho" : "Fêmea");
             caminhoFotoSelecionada = animalEditando.getCaminhoFoto();
 
             if (caminhoFotoSelecionada != null && !caminhoFotoSelecionada.isBlank()) {
@@ -104,12 +99,12 @@ public class CadastroAnimalView extends JFrame {
         titulo.setForeground(TEXTO);
         titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        campoNome = new JTextField();
-        campoRaca = new JTextField();
+        campoNome  = new JTextField();
+        campoRaca  = new JTextField();
         campoIdade = new JTextField();
 
         comboEspecie = new JComboBox<>(new String[]{"Selecione...", "Gato", "Cachorro"});
-        comboSexo = new JComboBox<>(new String[]{"Selecione...", "Macho", "Fêmea"});
+        comboSexo    = new JComboBox<>(new String[]{"Selecione...", "Macho", "Fêmea"});
 
         formulario.add(titulo);
         formulario.add(Box.createVerticalStrut(35));
@@ -165,16 +160,17 @@ public class CadastroAnimalView extends JFrame {
         salvar.setFont(new Font("SansSerif", Font.BOLD, 16));
         salvar.setAlignmentX(Component.CENTER_ALIGNMENT);
         salvar.setMaximumSize(new Dimension(220, 45));
+
         formulario.add(Box.createVerticalStrut(25));
         formulario.add(salvar);
 
         salvar.addActionListener(e -> {
             try {
-                String nome = campoNome.getText().trim();
+                String nome    = campoNome.getText().trim();
                 String especie = comboEspecie.getSelectedItem().toString();
-                String raca = campoRaca.getText().trim();
-                int idade = Integer.parseInt(campoIdade.getText().trim());
-                String sexo = comboSexo.getSelectedItem().toString();
+                String raca    = campoRaca.getText().trim();
+                int    idade   = Integer.parseInt(campoIdade.getText().trim());
+                String sexo    = comboSexo.getSelectedItem().toString();
 
                 if (nome.isEmpty() || especie.equals("Selecione...") || raca.isEmpty() || sexo.equals("Selecione...")) {
                     JOptionPane.showMessageDialog(this, "Preencha todos os campos obrigatórios.");
@@ -195,6 +191,7 @@ public class CadastroAnimalView extends JFrame {
                     animalEditando.setSexo(sexoEnum);
                     animalEditando.setCaminhoFoto(caminhoFotoSelecionada);
                     animalService.atualizar(animalEditando);
+                    // ✅ CORRIGIDO: mensagem em português
                     JOptionPane.showMessageDialog(this, "Animal atualizado com sucesso!");
                 }
 
@@ -283,10 +280,8 @@ public class CadastroAnimalView extends JFrame {
         return painel;
     }
 
-    // ==================== COMPONENTES ====================
-
     static class RoundedPanel extends JPanel {
-        private int radius;
+        private final int radius;
 
         public RoundedPanel(int radius, Color bg) {
             this.radius = radius;
@@ -305,7 +300,7 @@ public class CadastroAnimalView extends JFrame {
     }
 
     static class RoundedButton extends JButton {
-        private Color bg;
+        private final Color bg;
 
         public RoundedButton(String text, Color bg, Color fg) {
             super(text);

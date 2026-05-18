@@ -10,26 +10,26 @@ import java.awt.geom.RoundRectangle2D;
 
 public class NavbarPadrao extends JPanel {
 
-    private static final Color LARANJA = new Color(255, 107, 43);
-    private static final Color LARANJA_HOVER = new Color(255, 140, 80);
-
     private final AnimalService animalService;
+    private final String itemAtivo;
 
     public NavbarPadrao(String itemAtivo, AnimalService animalService) {
         this.animalService = animalService;
-        init(itemAtivo);
+        this.itemAtivo = itemAtivo;
+        init();
     }
 
     public NavbarPadrao(String itemAtivo) {
         this.animalService = null;
-        init(itemAtivo);
+        this.itemAtivo = itemAtivo;
+        init();
     }
 
-    private void init(String itemAtivo) {
+    private void init() {
         setLayout(new BorderLayout());
-        setBackground(Color.WHITE);
+        setBackground(AppTheme.BRANCO);
         setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(235, 228, 220)),
+                BorderFactory.createMatteBorder(0, 0, 1, 0, AppTheme.BORDA),
                 new EmptyBorder(0, 40, 0, 40)
         ));
         setPreferredSize(new Dimension(0, 68));
@@ -38,8 +38,8 @@ public class NavbarPadrao extends JPanel {
 
         JPanel menu = new JPanel(new FlowLayout(FlowLayout.CENTER, 6, 0));
         menu.setOpaque(false);
-        menu.add(criarItemMenu("Home", itemAtivo.equals("Home")));
-        menu.add(criarItemMenu("Animais", itemAtivo.equals("Animais")));
+        menu.add(criarItemMenu("Home",      itemAtivo.equals("Home")));
+        menu.add(criarItemMenu("Animais",   itemAtivo.equals("Animais")));
         menu.add(criarItemMenu("Sobre nós", itemAtivo.equals("Sobre nós")));
         add(menu, BorderLayout.CENTER);
 
@@ -55,7 +55,7 @@ public class NavbarPadrao extends JPanel {
         }
         JLabel logo = new JLabel("LAU 🐾 MIAU");
         logo.setFont(new Font("SansSerif", Font.BOLD, 26));
-        logo.setForeground(LARANJA);
+        logo.setForeground(AppTheme.LARANJA);
         return logo;
     }
 
@@ -66,7 +66,7 @@ public class NavbarPadrao extends JPanel {
                 if (ativo) {
                     Graphics2D g2 = (Graphics2D) g.create();
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                    g2.setColor(LARANJA);
+                    g2.setColor(AppTheme.LARANJA);
                     g2.fill(new RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), getHeight(), getHeight()));
                     g2.dispose();
                 }
@@ -77,45 +77,62 @@ public class NavbarPadrao extends JPanel {
         pill.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
 
         JLabel lbl = new JLabel(texto);
-        lbl.setFont(new Font("SansSerif", Font.BOLD, 14));
-        lbl.setForeground(ativo ? Color.WHITE : new Color(90, 80, 70));
+        lbl.setFont(AppTheme.FONTE_LABEL);
+        lbl.setForeground(ativo ? AppTheme.BRANCO : new Color(90, 80, 70));
         lbl.setBorder(new EmptyBorder(8, 18, 8, 18));
         pill.add(lbl);
 
         if (!ativo) {
             pill.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            pill.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseEntered(MouseEvent e) { lbl.setForeground(LARANJA); }
-                @Override
-                public void mouseExited(MouseEvent e) { lbl.setForeground(new Color(90, 80, 70)); }
-                @Override
-                public void mouseClicked(MouseEvent e) { navegarPara(texto); }
-            });
+            lbl.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+            // ✅ Mesmo listener no pill E no lbl — clique sempre capturado
+            MouseAdapter ma = new MouseAdapter() {
+                @Override public void mouseEntered(MouseEvent e) { lbl.setForeground(AppTheme.LARANJA); }
+                @Override public void mouseExited(MouseEvent e)  { lbl.setForeground(new Color(90, 80, 70)); }
+                @Override public void mouseClicked(MouseEvent e) {
+                    // ✅ Garante execução na EDT e pega janela antes de fechar
+                    Window pai = SwingUtilities.getWindowAncestor(NavbarPadrao.this);
+                    SwingUtilities.invokeLater(() -> {
+                        switch (texto) {
+                            case "Home" -> {
+                                if (animalService != null) {
+                                    try {
+                                        new AnimalView(animalService);
+                                        if (pai != null) pai.dispose();
+                                    } catch (Exception erro) {
+                                        JOptionPane.showMessageDialog(null, "Erro ao carregar a Home: " + erro.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                                    }
+                                }
+                            }
+                            case "Animais" -> {
+                                if (animalService != null) {
+                                    try {
+                                        new AnimaisCadastradosView(animalService);
+                                        if (pai != null) pai.dispose();
+                                    } catch (Exception erro) {
+                                        JOptionPane.showMessageDialog(null, "Erro ao carregar o painel de animais: " + erro.getMessage(), "Erro de Banco de Dados", JOptionPane.ERROR_MESSAGE);
+                                        erro.printStackTrace();
+                                    }
+                                } else {
+                                    JOptionPane.showMessageDialog(null, "O serviço de animais não foi inicializado corretamente.");
+                                }
+                            }
+                            case "Sobre nós" -> {
+                                try {
+                                    new SobreNosFrame(animalService).setVisible(true);
+                                } catch (Exception erro) {
+                                    JOptionPane.showMessageDialog(null, "Erro ao abrir Sobre Nós: " + erro.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                                }
+                            }
+                        }
+                    });
+                }
+            };
+            pill.addMouseListener(ma);
+            lbl.addMouseListener(ma);
         }
         return pill;
-    }
-
-    private void navegarPara(String destino) {
-        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-
-        switch (destino) {
-            case "Home" -> {
-                if (animalService != null) {
-                    new AnimalView(animalService);
-                    if (frame != null) frame.dispose();
-                }
-            }
-            case "Animais" -> {
-                if (animalService != null) {
-                    new AnimaisCadastradosView(animalService);
-                    if (frame != null) frame.dispose();
-                }
-            }
-            case "Sobre nós" -> {
-                new SobreNosFrame(animalService).setVisible(true);
-            }
-        }
     }
 
     private JButton criarBotaoAdmin() {
@@ -124,16 +141,15 @@ public class NavbarPadrao extends JPanel {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(getModel().isRollover() ? LARANJA_HOVER : LARANJA);
+                g2.setColor(getModel().isRollover() ? AppTheme.LARANJA_HOVER : AppTheme.LARANJA);
                 g2.fill(new RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), getHeight(), getHeight()));
                 g2.dispose();
                 super.paintComponent(g);
             }
-            @Override
-            protected void paintBorder(Graphics g) {}
+            @Override protected void paintBorder(Graphics g) {}
         };
-        btn.setFont(new Font("SansSerif", Font.BOLD, 14));
-        btn.setForeground(Color.WHITE);
+        btn.setFont(AppTheme.FONTE_LABEL);
+        btn.setForeground(AppTheme.BRANCO);
         btn.setContentAreaFilled(false);
         btn.setBorderPainted(false);
         btn.setFocusPainted(false);

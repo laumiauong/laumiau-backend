@@ -19,33 +19,29 @@ public class CadastroView extends JFrame {
     private JTextField txtEmail;
     private JPasswordField txtSenha;
     private JPasswordField txtConfirmarSenha;
-
     private JButton btnCadastrar;
     private JButton btnEntrar;
-
     private JLabel imagemCard;
-
-    private int cardX;
-    private int cardY;
 
     private EntityManager em;
     private UsuarioRepository usuarioRepository;
 
     public CadastroView() {
-
         setTitle("Cadastro - LauMiau");
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
-        setLayout(null);
 
-        getContentPane().setBackground(new Color(242, 242, 242));
+        // Painel com tamanho exato para não desalinhar a imagem
+        JPanel painelPrincipal = new JPanel(null);
+        painelPrincipal.setPreferredSize(new Dimension(CARD_LARGURA, CARD_ALTURA));
+        painelPrincipal.setBackground(AppTheme.FUNDO);
+        setContentPane(painelPrincipal);
 
-        calcularPosicaoCard();
+        pack();
+        setLocationRelativeTo(null);
+
         carregarImagemCard();
         criarCampos();
-
-        setVisible(true);
     }
 
     private UsuarioRepository getUsuarioRepository() {
@@ -53,91 +49,70 @@ public class CadastroView extends JFrame {
             em = JPAUtil.getEntityManager();
             usuarioRepository = new UsuarioRepository(em);
         }
-
         return usuarioRepository;
     }
 
-    private void calcularPosicaoCard() {
-        Dimension tela = Toolkit.getDefaultToolkit().getScreenSize();
-
-        cardX = (tela.width - CARD_LARGURA) / 2;
-        cardY = (tela.height - CARD_ALTURA) / 2;
-    }
-
     private void carregarImagemCard() {
-
         URL url = ClassLoader.getSystemResource("teste-cadastro.png");
-
         if (url == null) {
             JOptionPane.showMessageDialog(this, "Imagem teste-cadastro.png não encontrada.");
             return;
         }
-
         ImageIcon icon = new ImageIcon(url);
-
-        Image img = icon.getImage().getScaledInstance(
-                CARD_LARGURA,
-                CARD_ALTURA,
-                Image.SCALE_SMOOTH
-        );
-
+        Image img = icon.getImage().getScaledInstance(CARD_LARGURA, CARD_ALTURA, Image.SCALE_SMOOTH);
         imagemCard = new JLabel(new ImageIcon(img));
-        imagemCard.setBounds(cardX, cardY, CARD_LARGURA, CARD_ALTURA);
 
+        imagemCard.setBounds(0, 0, CARD_LARGURA, CARD_ALTURA);
         add(imagemCard);
     }
 
     private void criarCampos() {
-
+        // Posições originais ajustadas para a posição (0,0) da janela
         txtNome = new JTextField();
-        txtNome.setBounds(cardX + 110, cardY + 270, 275, 35);
+        txtNome.setBounds(110, 270, 275, 35);
         configurarCampo(txtNome);
         add(txtNome);
 
         txtEmail = new JTextField();
-        txtEmail.setBounds(cardX + 110, cardY + 341, 275, 35);
+        txtEmail.setBounds(110, 341, 275, 35);
         configurarCampo(txtEmail);
         add(txtEmail);
 
         txtSenha = new JPasswordField();
-        txtSenha.setBounds(cardX + 110, cardY + 409, 275, 35);
+        txtSenha.setBounds(110, 409, 275, 35);
         configurarCampo(txtSenha);
         add(txtSenha);
 
         txtConfirmarSenha = new JPasswordField();
-        txtConfirmarSenha.setBounds(cardX + 110, cardY + 478, 275, 35);
+        txtConfirmarSenha.setBounds(110, 478, 275, 35);
         configurarCampo(txtConfirmarSenha);
         add(txtConfirmarSenha);
 
         btnCadastrar = new JButton("");
-        btnCadastrar.setBounds(cardX + 83, cardY + 517, 333, 35);
+        btnCadastrar.setBounds(83, 517, 333, 35);
         configurarBotao(btnCadastrar);
         add(btnCadastrar);
 
         btnEntrar = new JButton("");
-        btnEntrar.setBounds(cardX + 285, cardY + 575, 85, 30);
+        btnEntrar.setBounds(285, 575, 85, 30);
         configurarBotao(btnEntrar);
         add(btnEntrar);
 
+        // ✅ FLUXO CORRIGIDO
         btnCadastrar.addActionListener(e -> cadastrarUsuario());
 
         btnEntrar.addActionListener(e -> {
-            new LoginView();
+            new LoginView().setVisible(true);
             dispose();
         });
 
         if (imagemCard != null) {
-            getContentPane().setComponentZOrder(
-                    imagemCard,
-                    getContentPane().getComponentCount() - 1
-            );
+            getContentPane().setComponentZOrder(imagemCard, getContentPane().getComponentCount() - 1);
         }
-
         repaint();
     }
 
     private void cadastrarUsuario() {
-
         String nome = txtNome.getText().trim();
         String email = txtEmail.getText().trim();
         String senha = new String(txtSenha.getPassword()).trim();
@@ -172,28 +147,25 @@ public class CadastroView extends JFrame {
             }
 
             Cliente cliente = new Cliente(null, nome, email, senha);
-
             getUsuarioRepository().salvar(cliente);
 
             JOptionPane.showMessageDialog(this, "Usuário cadastrado com sucesso!");
 
-            new LoginView();
+            // ✅ FLUXO CORRIGIDO
+            new LoginView().setVisible(true);
             dispose();
 
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Erro ao cadastrar usuário: " + ex.getMessage()
-            );
+            JOptionPane.showMessageDialog(this, "Erro ao cadastrar usuário: " + ex.getMessage());
         }
     }
 
     private void configurarCampo(JTextField campo) {
         campo.setBorder(null);
         campo.setOpaque(false);
-        campo.setForeground(Color.BLACK);
-        campo.setCaretColor(Color.BLACK);
-        campo.setFont(new Font("Arial", Font.PLAIN, 16));
+        campo.setForeground(AppTheme.TEXTO_DARK);
+        campo.setCaretColor(AppTheme.TEXTO_DARK);
+        campo.setFont(AppTheme.FONTE_TEXTO);
     }
 
     private void configurarBotao(JButton botao) {
@@ -202,9 +174,5 @@ public class CadastroView extends JFrame {
         botao.setBorderPainted(false);
         botao.setFocusPainted(false);
         botao.setCursor(new Cursor(Cursor.HAND_CURSOR));
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(CadastroView::new);
     }
 }

@@ -1,14 +1,12 @@
 package br.com.laumiau.view;
 
 import laumiau.infra.JPAUtil;
-import laumiau.model.TipoUsuario;
 import laumiau.model.Usuario;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -49,13 +47,6 @@ public class LoginAdmin extends JFrame {
         gbc.weightx = 1;
 
         // Ícone de cadeado
-        JLabel icone = new JLabel("🔐", SwingConstants.CENTER);
-        icone.setFont(new Font("SansSerif", Font.PLAIN, 48));
-        icone.setOpaque(true);
-        icone.setBackground(LARANJA_BASE);
-        icone.setPreferredSize(new Dimension(80, 80));
-        icone.setBorder(new EmptyBorder(10, 10, 10, 10));
-
         JPanel iconeContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
         iconeContainer.setOpaque(false);
         // Painel redondo para o ícone
@@ -123,7 +114,7 @@ public class LoginAdmin extends JFrame {
         gbc.gridy = 6; gbc.insets = new Insets(0, 0, 10, 0);
         painel.add(lblErro, gbc);
 
-        // Botão Entrar
+        // Botão Entrar com Degradê
         JButton btnEntrar = new JButton("Entrar") {
             @Override protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
@@ -142,6 +133,8 @@ public class LoginAdmin extends JFrame {
         btnEntrar.setBorderPainted(false);
         btnEntrar.setFocusPainted(false);
         btnEntrar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        // ✅ FLUXO CORRIGIDO: O ActionListener chama o método que faz o dispose()
         btnEntrar.addActionListener(e -> fazerLogin());
 
         // Enter também faz login
@@ -242,7 +235,7 @@ public class LoginAdmin extends JFrame {
         lblIcone.setFont(new Font("SansSerif", Font.PLAIN, 16));
         lblIcone.setBorder(new EmptyBorder(0, 0, 0, 8));
 
-        // Botão mostrar/ocultar senha
+        // Botão mostrar/ocultar senha original restaurado
         JLabel btnToggle = new JLabel("🙈");
         btnToggle.setFont(new Font("SansSerif", Font.PLAIN, 16));
         btnToggle.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -275,15 +268,17 @@ public class LoginAdmin extends JFrame {
         try {
             EntityManager em = JPAUtil.getEntityManager();
             Usuario usuario = em.createQuery(
-                "SELECT u FROM Usuario u WHERE u.email = :email AND u.senha = :senha AND u.tipo = :tipo",
-                Usuario.class)
-                .setParameter("email", email)
-                .setParameter("senha", senha)
-                .setParameter("tipo", laumiau.model.TipoUsuario.admin)
-                .getSingleResult();
+                            "SELECT u FROM Usuario u WHERE u.email = :email AND u.senha = :senha AND u.tipo = :tipo",
+                            Usuario.class)
+                    .setParameter("email", email)
+                    .setParameter("senha", senha)
+                    .setParameter("tipo", laumiau.model.TipoUsuario.admin)
+                    .getSingleResult();
 
             em.close();
             lblErro.setText("");
+
+            // ✅ FLUXO CORRIGIDO: Fecha esta janela e abre o painel Admin
             dispose();
             new RelatorioAdmin().setVisible(true);
 
@@ -293,9 +288,5 @@ public class LoginAdmin extends JFrame {
             lblErro.setText("Erro ao conectar. Tente novamente.");
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new LoginAdmin().setVisible(true));
     }
 }
