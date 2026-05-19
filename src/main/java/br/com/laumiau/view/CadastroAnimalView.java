@@ -19,7 +19,6 @@ public class CadastroAnimalView extends JFrame {
 
     private JLabel icon;
 
-
     private JTextField campoNome;
     private JTextField campoRaca;
     private JTextField campoIdade;
@@ -42,7 +41,7 @@ public class CadastroAnimalView extends JFrame {
         this.animalEditando = animalEditando;
 
         setTitle("Editar Animal");
-        setSize(1000, 780); // Aumentei um pouco a altura para caber os novos campos
+        setSize(1000, 780);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -72,7 +71,6 @@ public class CadastroAnimalView extends JFrame {
             campoIdade.setText(String.valueOf(animalEditando.getIdade()));
             comboEspecie.setSelectedItem(animalEditando.getEspecie());
             comboSexo.setSelectedItem(animalEditando.getSexo() == Sexo.MACHO ? "Macho" : "Fêmea");
-
 
             if(animalEditando.getPorte() != null) {
                 comboPorte.setSelectedItem(animalEditando.getPorte().toString());
@@ -112,9 +110,11 @@ public class CadastroAnimalView extends JFrame {
         voltar.setFont(new Font("SansSerif", Font.BOLD, 28));
         voltar.setForeground(TEXTO);
         voltar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
         voltar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent e) {
                 dispose();
+                new AnimaisCadastradosView(animalService).setVisible(true);
             }
         });
         painelVoltar.add(voltar);
@@ -145,7 +145,6 @@ public class CadastroAnimalView extends JFrame {
         fundo.add(painelVoltar);
         fundo.add(titulo);
         fundo.add(Box.createVerticalStrut(25));
-
 
         fundo.add(campoTexto("Nome do animal", campoNome, "Ex: Thor"));
         fundo.add(combo("Espécie", comboEspecie));
@@ -214,7 +213,6 @@ public class CadastroAnimalView extends JFrame {
 
         salvar.addActionListener(e -> salvarAnimal());
 
-        // Transformei em JScrollPane pois agora temos muitos campos e a tela precisa rolar
         JScrollPane scroll = new JScrollPane(fundo);
         scroll.setBorder(null);
         scroll.getVerticalScrollBar().setUnitIncrement(16);
@@ -229,11 +227,10 @@ public class CadastroAnimalView extends JFrame {
             String idadeTxt= campoIdade.getText().trim();
             String sexo    = comboSexo.getSelectedItem().toString();
 
-            // Novos campos recolhidos do form
             String porteSel = comboPorte.getSelectedItem().toString();
             String peso     = campoPeso.getText().trim();
             String cor      = campoCor.getText().trim();
-            String respons  = campoResponsavel.getText().trim();
+            String respons  = campoResponsavel.getText().trim(); // Mapeado como respons
             String desc     = campoDescricao.getText().trim();
             boolean vacina  = checkVacinado.isSelected();
 
@@ -249,7 +246,6 @@ public class CadastroAnimalView extends JFrame {
                 porteEnum = Porte.valueOf(porteSel);
             }
 
-            // Removendo placeholders caso o usuário não tenha digitado nada
             peso = peso.startsWith("Ex:") ? "" : peso;
             cor = cor.startsWith("Ex:") ? "" : cor;
             respons = respons.startsWith("Ex:") ? "" : respons;
@@ -283,7 +279,7 @@ public class CadastroAnimalView extends JFrame {
             }
 
             dispose();
-            new AnimaisCadastradosView(animalService);
+            new AnimaisCadastradosView(animalService).setVisible(true);
 
         } catch (NumberFormatException erro) {
             JOptionPane.showMessageDialog(this, "Digite apenas números na idade.");

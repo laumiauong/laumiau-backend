@@ -5,22 +5,81 @@ import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.RoundRectangle2D;
+import laumiau.infra.JPAUtil;
+import laumiau.model.Animal;
+import laumiau.model.Cliente;
+import laumiau.model.Adocoes;
+import laumiau.repository.AdocoesRepository;
+import laumiau.repository.AnimalRepository;
+import laumiau.repository.ClienteRepository;
+import laumiau.service.AdocoesService;
 import laumiau.service.AnimalService;
+import jakarta.persistence.EntityManager;
 
 public class AdocaoView extends JFrame {
 
-    private final String nomeAnimal;
+    private Animal animalAdotando;
+    private Cliente clienteLogado;
     private final String nomeAdotante;
     private JCheckBox checkTermo;
     private AnimalService animalService;
+    private String nomeAnimalAuxiliar;
 
-    // Construtor principal
+
+    public AdocaoView(AnimalService animalService, Animal animalAdotando, Cliente clienteLogado) {
+        this.animalService = animalService;
+        this.animalAdotando = animalAdotando;
+        this.clienteLogado = clienteLogado;
+        this.nomeAdotante = clienteLogado != null ? clienteLogado.getNome() : "Adotante";
+        this.nomeAnimalAuxiliar = animalAdotando != null ? animalAdotando.getNome() : "";
+
+        setTitle("Adoção - LauMiau");
+        setSize(1000, 750);
+        setMinimumSize(new Dimension(760, 650));
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        criarTela();
+    }
+
+
+    public AdocaoView(AnimalService animalService, Animal animalAdotando, String nomeAdotante) {
+        this.animalService = animalService;
+        this.animalAdotando = animalAdotando;
+        this.nomeAdotante = nomeAdotante;
+        this.clienteLogado = null;
+        this.nomeAnimalAuxiliar = animalAdotando != null ? animalAdotando.getNome() : "";
+
+        setTitle("Adoção - LauMiau");
+        setSize(1000, 750);
+        setMinimumSize(new Dimension(760, 650));
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        criarTela();
+    }
+
+
     public AdocaoView(AnimalService animalService, String nomeAnimal, String nomeAdotante) {
         this.animalService = animalService;
-        this.nomeAnimal = nomeAnimal;
+        this.nomeAnimalAuxiliar = nomeAnimal;
         this.nomeAdotante = nomeAdotante;
+        this.clienteLogado = null;
+
+        try {
+            if (animalService != null && nomeAnimal != null) {
+                this.animalAdotando = animalService.listarTodos().stream()
+                        .filter(a -> a.getNome() != null && a.getNome().equalsIgnoreCase(nomeAnimal))
+                        .findFirst()
+                        .orElse(null);
+                if (this.animalAdotando != null) {
+                    this.nomeAnimalAuxiliar = this.animalAdotando.getNome();
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Aviso: Não foi possível carregar o objeto Animal pelo nome: " + e.getMessage());
+        }
+
         setTitle("Adoção - LauMiau");
-        setSize(1000, 720);
+        setSize(1000, 750);
         setMinimumSize(new Dimension(760, 650));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -29,19 +88,17 @@ public class AdocaoView extends JFrame {
 
     private void criarTela() {
         setLayout(new BorderLayout());
-
-        // Navbar conectada ao service
         add(new NavbarPadrao("Home", animalService), BorderLayout.NORTH);
 
         JPanel fundo = new JPanel(new GridBagLayout());
-        fundo.setBackground(AppTheme.FUNDO); // Tema atualizado
+        fundo.setBackground(AppTheme.FUNDO);
 
         JPanel card = new JPanel();
-        card.setBackground(AppTheme.BRANCO); // Tema atualizado
+        card.setBackground(AppTheme.BRANCO);
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-        card.setPreferredSize(new Dimension(430, 580));
+        card.setPreferredSize(new Dimension(450, 620));
         card.setBorder(BorderFactory.createCompoundBorder(
-                new AppTheme.RoundedBorder(28, AppTheme.BORDA), // Tema atualizado
+                new AppTheme.RoundedBorder(28, AppTheme.BORDA),
                 new EmptyBorder(26, 34, 24, 34)
         ));
 
@@ -61,24 +118,41 @@ public class AdocaoView extends JFrame {
         card.add(Box.createVerticalStrut(24));
 
         card.add(labelCampo("Animal"));
-        card.add(caixaInfoEmoji("🐱", nomeAnimal, AppTheme.LARANJA, Color.WHITE));
+        card.add(caixaInfoEmoji("🐱", nomeAnimalAuxiliar, AppTheme.LARANJA, Color.WHITE));
         card.add(Box.createVerticalStrut(14));
 
         card.add(labelCampo("Adotante"));
         card.add(caixaInfoEmoji("👤", nomeAdotante, AppTheme.LARANJA, Color.WHITE));
         card.add(Box.createVerticalStrut(14));
 
-        // Cores específicas de Status (Mantidas)
         Color COR_VERDE = new Color(0x22C55E);
         Color COR_VERDE_FUNDO = new Color(0xEAFBF1);
 
-        card.add(labelCampo("Status"));
+        card.add(labelCampo("Status Atual"));
         card.add(caixaInfoEmoji("●", "Disponível para adoção", COR_VERDE, COR_VERDE_FUNDO));
         card.add(Box.createVerticalStrut(20));
 
+        JButton btnLinkForms = new JButton("🔗 Abrir Formulário de Adoção (Google Forms)");
+        btnLinkForms.setFont(new Font("SansSerif", Font.BOLD, 12));
+        btnLinkForms.setForeground(AppTheme.LARANJA);
+        btnLinkForms.setContentAreaFilled(false);
+        btnLinkForms.setBorderPainted(false);
+        btnLinkForms.setFocusPainted(false);
+        btnLinkForms.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnLinkForms.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnLinkForms.addActionListener(e -> {
+            try {
+                Desktop.getDesktop().browse(new java.net.URI("https://docs.google.com/forms/d/e/1FAIpQLScBtBRVicxq4TFRQNfS0BoXHNV7O59H78_GOFFHiYd_u7RCtA/viewform"));
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Não foi possível abrir o link automaticamente.");
+            }
+        });
+        card.add(btnLinkForms);
+        card.add(Box.createVerticalStrut(10));
+
         JTextArea texto = new JTextArea(
-                "Ao confirmar esta adoção, você declara que o termo foi assinado "
-                        + "e que o adotante se responsabiliza pelos cuidados, segurança, "
+                "Ao confirmar esta adoção, você declara que o formulário do Google Forms foi respondido, "
+                        + "o termo foi assinado e que o adotante se responsabiliza pelos cuidados, segurança, "
                         + "saúde e bem-estar do animal."
         );
         texto.setEditable(false);
@@ -87,17 +161,17 @@ public class AdocaoView extends JFrame {
         texto.setBorder(null);
         texto.setLineWrap(true);
         texto.setWrapStyleWord(true);
-        texto.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        texto.setFont(new Font("SansSerif", Font.PLAIN, 13));
         texto.setForeground(AppTheme.CINZA_TEXTO);
         texto.setMaximumSize(new Dimension(360, 72));
         texto.setAlignmentX(Component.CENTER_ALIGNMENT);
         card.add(texto);
-        card.add(Box.createVerticalStrut(18));
+        card.add(Box.createVerticalStrut(14));
 
         JPanel checkPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         checkPanel.setOpaque(false);
         checkPanel.setMaximumSize(new Dimension(360, 30));
-        checkTermo = new JCheckBox("Li e confirmo que o termo foi assinado");
+        checkTermo = new JCheckBox("Confirmo que o formulário foi respondido e assinado");
         checkTermo.setOpaque(false);
         checkTermo.setFont(new Font("SansSerif", Font.PLAIN, 13));
         checkTermo.setForeground(AppTheme.TEXTO_DARK);
@@ -128,12 +202,10 @@ public class AdocaoView extends JFrame {
         btnVoltar.setFont(new Font("SansSerif", Font.BOLD, 13));
         btnVoltar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btnVoltar.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        // ✅ FLUXO CORRIGIDO AQUI: Volta para o catálogo de animais
         btnVoltar.addActionListener(e -> {
             dispose();
             if (animalService != null) {
-                new AnimalView(animalService).setVisible(true);
+                new AnimalView(animalService, clienteLogado).setVisible(true);
             }
         });
 
@@ -167,7 +239,7 @@ public class AdocaoView extends JFrame {
         lblIcone.setForeground(corIcone);
         JLabel lblTexto = new JLabel(texto);
         lblTexto.setFont(new Font("SansSerif", Font.BOLD, 14));
-        lblTexto.setForeground(corIcone.equals(new Color(0x22C55E)) ? corIcone : AppTheme.TEXTO_DARK);
+        lblTexto.setForeground(AppTheme.TEXTO_DARK);
         caixa.add(lblIcone, BorderLayout.WEST);
         caixa.add(lblTexto, BorderLayout.CENTER);
         return caixa;
@@ -175,18 +247,55 @@ public class AdocaoView extends JFrame {
 
     private void confirmarAdocao() {
         if (!checkTermo.isSelected()) {
-            JOptionPane.showMessageDialog(this, "Você precisa confirmar que o termo foi assinado.", "Atenção", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Você precisa preencher o formulário e marcar a caixa de confirmação.",
+                    "Atenção", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        JOptionPane.showMessageDialog(this, "Adoção de " + nomeAnimal + " confirmada com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
 
+        if (animalAdotando == null || animalAdotando.getId() == null) {
+            JOptionPane.showMessageDialog(this,
+                    "Erro: animal sem ID válido. Volte e tente novamente pela lista.",
+                    "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-        dispose();
-        if (animalService != null) {
-            new AnimalView(animalService).setVisible(true);
+        try {
+            EntityManager emAdocao = JPAUtil.getEntityManager();
+            AdocoesRepository adocoesRepo = new AdocoesRepository(emAdocao);
+            AnimalRepository animalRepo = new AnimalRepository(emAdocao);
+            ClienteRepository clienteRepo = new ClienteRepository(emAdocao);
+            AdocoesService adocoesService = new AdocoesService(adocoesRepo, animalRepo, clienteRepo);
+
+            if (clienteLogado != null) {
+
+                adocoesService.registrarAdocao(
+                        animalAdotando.getId(),
+                        clienteLogado.getId(),
+                        true
+                );
+            } else {
+                // Fallback sem cliente logado: só atualiza status do animal
+                animalService.adotar(animalAdotando.getId());
+            }
+
+            emAdocao.close();
+
+            JOptionPane.showMessageDialog(this,
+                    "Vamos analisar sua solicitação e enviaremos o retorno.",
+                    "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+
+            dispose();
+            if (animalService != null) {
+                new AnimalView(animalService, clienteLogado).setVisible(true);
+            }
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Erro ao processar a adoção: " + ex.getMessage(),
+                    "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
-
 
     static class RoundedButton extends JButton {
         public RoundedButton(String texto) {
@@ -200,7 +309,7 @@ public class AdocaoView extends JFrame {
             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             addMouseListener(new MouseAdapter() {
                 @Override public void mouseEntered(MouseEvent e) { setBackground(AppTheme.LARANJA_HOVER); repaint(); }
-                @Override public void mouseExited(MouseEvent e) { setBackground(AppTheme.LARANJA); repaint(); }
+                @Override public void mouseExited(MouseEvent e)  { setBackground(AppTheme.LARANJA); repaint(); }
             });
         }
 

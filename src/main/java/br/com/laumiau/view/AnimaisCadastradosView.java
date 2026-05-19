@@ -4,7 +4,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import laumiau.model.Animal;
-import laumiau.model.Porte;
 import laumiau.model.Sexo;
 import laumiau.repository.AnimalRepository;
 import laumiau.service.AnimalService;
@@ -148,7 +147,6 @@ public class AnimaisCadastradosView extends JFrame {
 
         return scroll;
     }
-
 
     private void carregarAnimais(String filtro) {
         grid.removeAll();
@@ -381,7 +379,7 @@ public class AnimaisCadastradosView extends JFrame {
         String nomeResponsavel = textoOuPadrao(animal.getResponsavel(), "ONG Lau & Miau");
 
         JLabel txtResp = new JLabel(
-                "<html><span style='color:#999999'>Com quem está:</span><br><b>"
+                "<html><span style='color:#999999'>Com whom está:</span><br><b>"
                         + nomeResponsavel + "</b></html>"
         );
         txtResp.setFont(new Font("SansSerif", Font.PLAIN, 15));
@@ -403,9 +401,11 @@ public class AnimaisCadastradosView extends JFrame {
         adotar.setFont(new Font("SansSerif", Font.BOLD, 18));
         adotar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 58));
 
+
         adotar.addActionListener(e -> {
             tela.dispose();
-            new AdocaoView(animalService, animal.getNome(), "Adotante Interessado").setVisible(true);
+            dispose();
+            new AdocaoView(animalService, animal, "Adotante Interessado").setVisible(true);
         });
 
         direita.add(nome);

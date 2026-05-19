@@ -198,7 +198,7 @@ public class SobreNosFrame extends JFrame {
                 + "moderna e interativa!</p><br>"
                 + "<p>Aqui, quem deseja adotar encontra um guia fácil e divertido de "
                 + "localizar cães e gatos que estão prontos para dar e receber carinho.</p><br>"
-                + "<p>À frente do projeto está a <b>Dra. Lavanda Lara</b>, médica "
+                + "<p>À frente do projeto está a <b>Dra. Lauanda Lara</b>, médica "
                 + "veterinária e pet sitter, dedicada ao bem-estar animal.</p><br>"
                 + "<p>Para saber mais sobre os serviços veterinários ou de pet sitter, "
                 + "basta entrar em contato!</p>"

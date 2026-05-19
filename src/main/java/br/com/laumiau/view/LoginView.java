@@ -2,6 +2,7 @@ package br.com.laumiau.view;
 
 import jakarta.persistence.EntityManager;
 import laumiau.infra.JPAUtil;
+import laumiau.model.Cliente;
 import laumiau.model.Usuario;
 import laumiau.repository.AnimalRepository;
 import laumiau.repository.UsuarioRepository;
@@ -29,10 +30,9 @@ public class LoginView extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
 
-
         JPanel painelPrincipal = new JPanel(null);
         painelPrincipal.setPreferredSize(new Dimension(CARD_LARGURA, CARD_ALTURA));
-        painelPrincipal.setBackground(AppTheme.FUNDO); // Usando o tema
+        painelPrincipal.setBackground(AppTheme.FUNDO);
         setContentPane(painelPrincipal);
 
         pack();
@@ -59,14 +59,11 @@ public class LoginView extends JFrame {
         ImageIcon icon = new ImageIcon(url);
         Image img = icon.getImage().getScaledInstance(CARD_LARGURA, CARD_ALTURA, Image.SCALE_SMOOTH);
         imagemCard = new JLabel(new ImageIcon(img));
-
-
         imagemCard.setBounds(0, 0, CARD_LARGURA, CARD_ALTURA);
         add(imagemCard);
     }
 
     private void criarCampos() {
-
         txtEmail = new JTextField();
         txtEmail.setBounds(125, 325, 290, 45);
         configurarCampo(txtEmail);
@@ -93,12 +90,10 @@ public class LoginView extends JFrame {
         add(btnCadastrar);
 
         btnEntrar.addActionListener(e -> fazerLoginUsuario());
-
         btnCadastrar.addActionListener(e -> {
             new CadastroView().setVisible(true);
             dispose();
         });
-
         btnAdmin.addActionListener(e -> {
             new LoginAdmin().setVisible(true);
             dispose();
@@ -135,10 +130,19 @@ public class LoginView extends JFrame {
                 return;
             }
 
+
+            if (!(usuario instanceof Cliente)) {
+                JOptionPane.showMessageDialog(this, "Tipo de usuário não reconhecido.");
+                return;
+            }
+
+            Cliente clienteLogado = (Cliente) usuario;
+
             EntityManager emAnimal = JPAUtil.getEntityManager();
             AnimalService animalService = new AnimalService(new AnimalRepository(emAnimal));
 
-            new AnimalView(animalService).setVisible(true);
+
+            new AnimalView(animalService, clienteLogado).setVisible(true);
             dispose();
 
         } catch (Exception ex) {
@@ -149,9 +153,9 @@ public class LoginView extends JFrame {
     private void configurarCampo(JTextField campo) {
         campo.setBorder(null);
         campo.setOpaque(false);
-        campo.setForeground(AppTheme.TEXTO_DARK); // Usando o tema
+        campo.setForeground(AppTheme.TEXTO_DARK);
         campo.setCaretColor(AppTheme.TEXTO_DARK);
-        campo.setFont(AppTheme.FONTE_TEXTO);      // Usando o tema
+        campo.setFont(AppTheme.FONTE_TEXTO);
     }
 
     private void configurarBotao(JButton botao) {

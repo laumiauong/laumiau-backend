@@ -6,9 +6,12 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.RoundRectangle2D;
 import laumiau.model.Animal;
+import laumiau.model.Cliente;
 import laumiau.model.Porte;
 import laumiau.model.Sexo;
+import laumiau.model.StatusAnimal;
 import laumiau.service.AnimalService;
+import java.util.List;
 
 public class AnimalView extends JFrame {
 
@@ -20,8 +23,18 @@ public class AnimalView extends JFrame {
 
     private AnimalService animalService;
 
+
+    private Cliente clienteLogado;
+
+
     public AnimalView(AnimalService animalService) {
+        this(animalService, null);
+    }
+
+
+    public AnimalView(AnimalService animalService, Cliente clienteLogado) {
         this.animalService = animalService;
+        this.clienteLogado = clienteLogado;
 
         setTitle("LAU & MIAU - Animais");
         setSize(1280, 780);
@@ -39,6 +52,42 @@ public class AnimalView extends JFrame {
 
     private JPanel criarTopo() {
         return new NavbarPadrao("Home", animalService);
+    }
+
+
+    private void popularBancoSeVazio() {
+        try {
+            List<Animal> existentes = animalService.listarTodos();
+            List<String> nomesExistentes = new java.util.ArrayList<>();
+            if (existentes != null) {
+                for (Animal a : existentes) {
+                    nomesExistentes.add(a.getNome().toLowerCase());
+                }
+            }
+
+            Animal[] animaisPadrao = {
+                    criarAnimal("Fofuxo",   "Gato",     "SRD", 12, Sexo.MACHO, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO1.png"),
+                    criarAnimal("Princesa",  "Gato",     "SRD",  8, Sexo.FEMEA, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO2.png"),
+                    criarAnimal("Bonitão",   "Gato",     "SRD", 24, Sexo.MACHO, false, Porte.MEDIO,   "ONG Lau & Miau", "img/imgGATO3.png"),
+                    criarAnimal("Bebe",      "Gato",     "SRD",  6, Sexo.FEMEA, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO4.png"),
+                    criarAnimal("Rabinho",   "Cachorro", "SRD", 36, Sexo.MACHO, true,  Porte.GRANDE,  "ONG Lau & Miau", "img/imgCACHORRO1.png"),
+                    criarAnimal("Charmosa",  "Gato",     "SRD", 18, Sexo.FEMEA, false, Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO6.png"),
+                    criarAnimal("Banguela",  "Cachorro", "SRD", 14, Sexo.MACHO, true,  Porte.MEDIO,   "ONG Lau & Miau", "img/imgCACHORRO2.png"),
+                    criarAnimal("Preciosa",  "Gato",     "SRD", 10, Sexo.FEMEA, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO8.png"),
+                    criarAnimal("Renê",      "Gato",     "SRD", 15, Sexo.MACHO, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO9.png"),
+                    criarAnimal("Perninha",  "Gato",     "SRD", 20, Sexo.MACHO, false, Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO10.png")
+            };
+
+            for (Animal a : animaisPadrao) {
+                if (!nomesExistentes.contains(a.getNome().toLowerCase())) {
+                    animalService.cadastrar(a);
+                    System.out.println("✅ Cadastrado: " + a.getNome());
+                }
+            }
+
+        } catch (Exception e) {
+            System.err.println("Aviso: Não foi possível popular o banco: " + e.getMessage());
+        }
     }
 
     private JScrollPane criarConteudo() {
@@ -78,20 +127,27 @@ public class AnimalView extends JFrame {
         cabecalho.add(titulo, BorderLayout.WEST);
         cabecalho.add(verTodos, BorderLayout.EAST);
 
-        JPanel grid = new JPanel(new GridLayout(2, 5, 18, 18));
+        JPanel grid = new JPanel(new GridLayout(0, 5, 18, 18));
         grid.setOpaque(false);
 
 
-        grid.add(criarCard(criarAnimal("Fofuxo",   "Gato",     "SRD", 12, Sexo.MACHO, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO1.png")));
-        grid.add(criarCard(criarAnimal("Princesa",  "Gato",     "SRD",  8, Sexo.FEMEA, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO2.png")));
-        grid.add(criarCard(criarAnimal("Bonitão",   "Gato",     "SRD", 24, Sexo.MACHO, false, Porte.MEDIO,   "ONG Lau & Miau", "img/imgGATO3.png")));
-        grid.add(criarCard(criarAnimal("Bebe",      "Gato",     "SRD",  6, Sexo.FEMEA, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO4.png")));
-        grid.add(criarCard(criarAnimal("Rabinho",   "Cachorro", "SRD", 36, Sexo.MACHO, true,  Porte.GRANDE,  "ONG Lau & Miau", "img/imgCACHORRO1.png")));
-        grid.add(criarCard(criarAnimal("Charmosa",  "Gato",     "SRD", 18, Sexo.FEMEA, false, Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO6.png")));
-        grid.add(criarCard(criarAnimal("Banguela",  "Cachorro", "SRD", 14, Sexo.MACHO, true,  Porte.MEDIO,   "ONG Lau & Miau", "img/imgCACHORRO2.png")));
-        grid.add(criarCard(criarAnimal("Preciosa",  "Gato",     "SRD", 10, Sexo.FEMEA, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO8.png")));
-        grid.add(criarCard(criarAnimal("Renê",      "Gato",     "SRD", 15, Sexo.MACHO, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO9.png")));
-        grid.add(criarCard(criarAnimal("Perninha",  "Gato",     "SRD", 20, Sexo.MACHO, false, Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO10.png")));
+        popularBancoSeVazio();
+
+        try {
+            List<Animal> animaisDoBanco = animalService.listarTodos();
+            if (animaisDoBanco != null) {
+                for (Animal animal : animaisDoBanco) {
+                    if (animal.getStatus() == StatusAnimal.DISPONIVEL) {
+                        grid.add(criarCard(animal));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            JLabel lblErro = new JLabel("Erro ao carregar animais: " + e.getMessage(), SwingConstants.CENTER);
+            lblErro.setForeground(Color.RED);
+            grid.add(lblErro);
+            e.printStackTrace();
+        }
 
         conteudo.add(cabecalho, BorderLayout.NORTH);
         conteudo.add(grid, BorderLayout.CENTER);
@@ -104,7 +160,6 @@ public class AnimalView extends JFrame {
 
         return scroll;
     }
-
 
     private Animal criarAnimal(String nome, String especie, String raca, int idade,
                                Sexo sexo, boolean vacinado, Porte porte,
@@ -364,10 +419,17 @@ public class AnimalView extends JFrame {
         adotar.setFont(new Font("SansSerif", Font.BOLD, 18));
         adotar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 58));
 
+
         adotar.addActionListener(e -> {
             tela.dispose();
             dispose();
-            new AdocaoView(animalService, animal.getNome(), "Adotante Interessado").setVisible(true);
+            if (clienteLogado != null) {
+
+                new AdocaoView(animalService, animal, clienteLogado).setVisible(true);
+            } else {
+                // Fallback para quando acessa sem login (ex: admin visualizando)
+                new AdocaoView(animalService, animal, "Adotante Interessado").setVisible(true);
+            }
         });
 
         direita.add(nome);
