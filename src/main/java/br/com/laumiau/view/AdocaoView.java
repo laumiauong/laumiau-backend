@@ -25,7 +25,6 @@ public class AdocaoView extends JFrame {
     private AnimalService animalService;
     private String nomeAnimalAuxiliar;
 
-
     public AdocaoView(AnimalService animalService, Animal animalAdotando, Cliente clienteLogado) {
         this.animalService = animalService;
         this.animalAdotando = animalAdotando;
@@ -41,7 +40,6 @@ public class AdocaoView extends JFrame {
         criarTela();
     }
 
-
     public AdocaoView(AnimalService animalService, Animal animalAdotando, String nomeAdotante) {
         this.animalService = animalService;
         this.animalAdotando = animalAdotando;
@@ -56,7 +54,6 @@ public class AdocaoView extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         criarTela();
     }
-
 
     public AdocaoView(AnimalService animalService, String nomeAnimal, String nomeAdotante) {
         this.animalService = animalService;
@@ -260,26 +257,34 @@ public class AdocaoView extends JFrame {
             return;
         }
 
+        EntityManager emAdocao = null;
         try {
-            EntityManager emAdocao = JPAUtil.getEntityManager();
+            emAdocao = JPAUtil.getEntityManager();
             AdocoesRepository adocoesRepo = new AdocoesRepository(emAdocao);
             AnimalRepository animalRepo = new AnimalRepository(emAdocao);
             ClienteRepository clienteRepo = new ClienteRepository(emAdocao);
             AdocoesService adocoesService = new AdocoesService(adocoesRepo, animalRepo, clienteRepo);
 
-            if (clienteLogado != null) {
-
-                adocoesService.registrarAdocao(
-                        animalAdotando.getId(),
-                        clienteLogado.getId(),
-                        true
-                );
-            } else {
-                // Fallback sem cliente logado: só atualiza status do animal
-                animalService.adotar(animalAdotando.getId());
+            if (clienteLogado == null) {
+                try {
+                    clienteLogado = emAdocao.createQuery("SELECT c FROM Cliente c", Cliente.class)
+                            .setMaxResults(1)
+                            .getSingleResult();
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this,
+                            "Erro: Precisas de cadastrar pelo menos 1 Cliente no sistema antes de testar a adoção.",
+                            "Banco de Dados Vazio", JOptionPane.WARNING_MESSAGE);
+                    if (emAdocao.isOpen()) emAdocao.close();
+                    return;
+                }
             }
 
-            emAdocao.close();
+            // O service/repository já gere as transações internamente, chamamos diretamente o método
+            adocoesService.registrarAdocao(
+                    animalAdotando.getId(),
+                    clienteLogado.getId(),
+                    true
+            );
 
             JOptionPane.showMessageDialog(this,
                     "Vamos analisar sua solicitação e enviaremos o retorno.",
@@ -287,13 +292,20 @@ public class AdocaoView extends JFrame {
 
             dispose();
             if (animalService != null) {
-                new AnimalView(animalService, clienteLogado).setVisible(true);
+                EntityManager emNovo = JPAUtil.getEntityManager();
+                AnimalService novoAnimalService = new AnimalService(new AnimalRepository(emNovo));
+                new AnimalView(novoAnimalService, clienteLogado).setVisible(true);
             }
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
                     "Erro ao processar a adoção: " + ex.getMessage(),
                     "Erro", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        } finally {
+            if (emAdocao != null && emAdocao.isOpen()) {
+                emAdocao.close();
+            }
         }
     }
 

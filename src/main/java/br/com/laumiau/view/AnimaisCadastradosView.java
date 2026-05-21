@@ -3,8 +3,11 @@ package br.com.laumiau.view;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+import laumiau.infra.JPAUtil;
 import laumiau.model.Animal;
+import laumiau.model.Cliente;
 import laumiau.model.Sexo;
+import laumiau.model.StatusAnimal;
 import laumiau.repository.AnimalRepository;
 import laumiau.service.AnimalService;
 
@@ -24,13 +27,22 @@ public class AnimaisCadastradosView extends JFrame {
     private final Color CINZA   = new Color(160, 170, 185);
 
     private AnimalService animalService;
+    private Cliente clienteLogado;
+    private boolean isAdmin; // Controla o que será exibido
+
     private JPanel grid;
     private JTextField pesquisa;
 
     private final String PLACEHOLDER = "Buscar por nome ou ID";
 
     public AnimaisCadastradosView(AnimalService animalService) {
+        this(animalService, null, false);
+    }
+
+    public AnimaisCadastradosView(AnimalService animalService, Cliente clienteLogado, boolean isAdmin) {
         this.animalService = animalService;
+        this.clienteLogado = clienteLogado;
+        this.isAdmin = isAdmin;
 
         setTitle("Animais Cadastrados");
         setSize(1280, 780);
@@ -53,34 +65,40 @@ public class AnimaisCadastradosView extends JFrame {
         titulo.setFont(new Font("SansSerif", Font.BOLD, 28));
         titulo.setForeground(TEXTO);
         titulo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        // 🔹 ISSO FAZ O BANCO ATUALIZAR AO VOLTAR
         titulo.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 dispose();
-                new AnimalView(animalService);
+                // Cria uma nova conexão forçando a limpeza do cache antigo
+                EntityManager emNovo = JPAUtil.getEntityManager();
+                AnimalService novoService = new AnimalService(new AnimalRepository(emNovo));
+                new AnimalView(novoService, clienteLogado);
             }
         });
 
-        JPanel adminPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        adminPanel.setOpaque(false);
+        if (isAdmin) {
+            JPanel adminPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+            adminPanel.setOpaque(false);
 
-        JLabel adminTexto = new JLabel("Admin");
-        adminTexto.setFont(new Font("SansSerif", Font.PLAIN, 15));
-        adminTexto.setForeground(TEXTO);
+            JLabel adminTexto = new JLabel("Admin");
+            adminTexto.setFont(new Font("SansSerif", Font.PLAIN, 15));
+            adminTexto.setForeground(TEXTO);
 
-        JLabel avatar = new JLabel("A", SwingConstants.CENTER);
-        avatar.setOpaque(true);
-        avatar.setBackground(LARANJA);
-        avatar.setForeground(Color.WHITE);
-        avatar.setFont(new Font("SansSerif", Font.BOLD, 16));
-        avatar.setPreferredSize(new Dimension(38, 38));
+            JLabel avatar = new JLabel("A", SwingConstants.CENTER);
+            avatar.setOpaque(true);
+            avatar.setBackground(LARANJA);
+            avatar.setForeground(Color.WHITE);
+            avatar.setFont(new Font("SansSerif", Font.BOLD, 16));
+            avatar.setPreferredSize(new Dimension(38, 38));
 
-        adminPanel.add(adminTexto);
-        adminPanel.add(avatar);
+            adminPanel.add(adminTexto);
+            adminPanel.add(avatar);
+            topo.add(adminPanel, BorderLayout.EAST);
+        }
 
         topo.add(titulo, BorderLayout.WEST);
-        topo.add(adminPanel, BorderLayout.EAST);
-
         return topo;
     }
 
@@ -118,12 +136,15 @@ public class AnimaisCadastradosView extends JFrame {
             }
         });
 
-        JButton btnNovo = new RoundedButton("+  Novo Cadastro", LARANJA, Color.WHITE);
-        btnNovo.setFont(new Font("SansSerif", Font.BOLD, 16));
-        btnNovo.addActionListener(e -> new CadastroAnimalView(animalService));
-
         barra.add(pesquisa, BorderLayout.WEST);
-        barra.add(btnNovo, BorderLayout.EAST);
+
+        // 🔹 MOSTRA O BOTÃO "NOVO CADASTRO" APENAS PARA ADMIN
+        if (isAdmin) {
+            JButton btnNovo = new RoundedButton("+  Novo Cadastro", LARANJA, Color.WHITE);
+            btnNovo.setFont(new Font("SansSerif", Font.BOLD, 16));
+            btnNovo.addActionListener(e -> new CadastroAnimalView(animalService));
+            barra.add(btnNovo, BorderLayout.EAST);
+        }
 
         grid = new JPanel(new GridLayout(0, 5, 24, 24));
         grid.setOpaque(false);
@@ -150,7 +171,6 @@ public class AnimaisCadastradosView extends JFrame {
 
     private void carregarAnimais(String filtro) {
         grid.removeAll();
-
         String texto = filtro.equals(PLACEHOLDER) ? "" : filtro.toLowerCase().trim();
 
         try {
@@ -208,48 +228,87 @@ public class AnimaisCadastradosView extends JFrame {
         acoes.setLayout(new BoxLayout(acoes, BoxLayout.Y_AXIS));
         acoes.setBorder(new EmptyBorder(10, 0, 10, 10));
 
-        JLabel editar = new JLabel("✎");
-        editar.setFont(new Font("SansSerif", Font.BOLD, 22));
-        editar.setForeground(LARANJA);
-        editar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        editar.setAlignmentX(Component.CENTER_ALIGNMENT);
-        editar.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                e.consume();
-                dispose();
-                new CadastroAnimalView(animalService, animal);
-            }
-        });
+        JPanel linhaExcluir = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        linhaExcluir.setOpaque(false);
 
-        JLabel excluir = new JLabel("🗑");
-        excluir.setFont(new Font("SansSerif", Font.BOLD, 18));
-        excluir.setForeground(new Color(255, 90, 100));
-        excluir.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        excluir.setAlignmentX(Component.CENTER_ALIGNMENT);
-        excluir.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                e.consume();
-                int confirmar = JOptionPane.showConfirmDialog(
-                        null,
-                        "Deseja excluir o animal " + animal.getNome() + "?",
-                        "Confirmar exclusão",
-                        JOptionPane.YES_NO_OPTION
-                );
-                if (confirmar == JOptionPane.YES_OPTION) {
-                    try {
-                        animalService.remover(animal.getId());
-                        carregarAnimais(pesquisa.getText());
-                        JOptionPane.showMessageDialog(null, "Animal excluído com sucesso!");
-                    } catch (Exception erro) {
-                        JOptionPane.showMessageDialog(null, erro.getMessage());
+        if (isAdmin) {
+            JLabel editar = new JLabel("✎");
+            editar.setFont(new Font("SansSerif", Font.BOLD, 22));
+            editar.setForeground(LARANJA);
+            editar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            editar.setAlignmentX(Component.CENTER_ALIGNMENT);
+            editar.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    e.consume();
+                    dispose();
+                    new CadastroAnimalView(animalService, animal);
+                }
+            });
+
+            JLabel excluir = new JLabel("🗑");
+            excluir.setFont(new Font("SansSerif", Font.BOLD, 18));
+            excluir.setForeground(new Color(255, 90, 100));
+            excluir.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            excluir.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            excluir.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    e.consume();
+
+                    Object[] options = {"Cancelar Adoção", "Excluir Animal", "Voltar"};
+                    int escolha = JOptionPane.showOptionDialog(null,
+                            "O que deseja fazer com " + animal.getNome() + "?\n(Cancelar a adoção faz o pet voltar para a aba de adoções)",
+                            "Gerenciar Pet",
+                            JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null, options, options[0]);
+
+                    if (escolha == 0) {
+                        EntityManager emLocal = null;
+                        try {
+                            emLocal = JPAUtil.getEntityManager();
+                            emLocal.getTransaction().begin();
+
+                            Animal animalBd = emLocal.find(Animal.class, animal.getId());
+                            if(animalBd != null) {
+                                animalBd.setStatus(StatusAnimal.DISPONIVEL);
+                                emLocal.createQuery("DELETE FROM Adocoes a WHERE a.animal.id = :animalId")
+                                        .setParameter("animalId", animal.getId())
+                                        .executeUpdate();
+                            }
+
+                            emLocal.getTransaction().commit();
+
+
+                            animal.setStatus(StatusAnimal.DISPONIVEL);
+
+                            carregarAnimais(pesquisa.getText());
+                            JOptionPane.showMessageDialog(null, "Adoção cancelada! O pet já está de volta à lista principal.");
+                        } catch (Exception erro) {
+                            if (emLocal != null && emLocal.getTransaction().isActive()) emLocal.getTransaction().rollback();
+                            JOptionPane.showMessageDialog(null, "Erro ao cancelar adoção: " + erro.getMessage());
+                        } finally {
+                            if (emLocal != null && emLocal.isOpen()) emLocal.close();
+                        }
+
+                    } else if (escolha == 1) {
+                        try {
+                            animalService.remover(animal.getId());
+                            carregarAnimais(pesquisa.getText());
+                            JOptionPane.showMessageDialog(null, "Animal excluído com sucesso!");
+                        } catch (Exception erro) {
+                            JOptionPane.showMessageDialog(null, "Não foi possível excluir. Verifique se ele possui dependências.");
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        acoes.add(editar);
+            acoes.add(editar);
+            excluir.setFont(new Font("SansSerif", Font.BOLD, 17));
+            linhaExcluir.add(excluir);
+        }
 
         JLayeredPane camada = new JLayeredPane();
         camada.setPreferredSize(new Dimension(250, 200));
@@ -283,11 +342,6 @@ public class AnimaisCadastradosView extends JFrame {
         JLabel local = new JLabel("📍 Foz do Iguaçu, Centro");
         local.setForeground(CINZA);
         local.setFont(new Font("SansSerif", Font.PLAIN, 12));
-
-        JPanel linhaExcluir = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        linhaExcluir.setOpaque(false);
-        excluir.setFont(new Font("SansSerif", Font.BOLD, 17));
-        linhaExcluir.add(excluir);
 
         info.add(id);
         info.add(Box.createVerticalStrut(4));
@@ -400,7 +454,6 @@ public class AnimaisCadastradosView extends JFrame {
         JButton adotar = new RoundedButton("❤ Quero adotar", LARANJA, Color.WHITE);
         adotar.setFont(new Font("SansSerif", Font.BOLD, 18));
         adotar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 58));
-
 
         adotar.addActionListener(e -> {
             tela.dispose();

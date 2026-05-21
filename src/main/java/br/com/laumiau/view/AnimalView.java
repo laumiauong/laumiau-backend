@@ -22,15 +22,11 @@ public class AnimalView extends JFrame {
     private final Color CARD_BG = Color.WHITE;
 
     private AnimalService animalService;
-
-
     private Cliente clienteLogado;
-
 
     public AnimalView(AnimalService animalService) {
         this(animalService, null);
     }
-
 
     public AnimalView(AnimalService animalService, Cliente clienteLogado) {
         this.animalService = animalService;
@@ -53,7 +49,6 @@ public class AnimalView extends JFrame {
     private JPanel criarTopo() {
         return new NavbarPadrao("Home", animalService);
     }
-
 
     private void popularBancoSeVazio() {
         try {
@@ -112,7 +107,12 @@ public class AnimalView extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
-                    new AnimaisCadastradosView(animalService);
+
+                    boolean isAdmin = (clienteLogado != null &&
+                            clienteLogado.getNome() != null &&
+                            clienteLogado.getNome().toLowerCase().contains("admin"));
+
+                    new AnimaisCadastradosView(animalService, clienteLogado, isAdmin);
                     dispose();
                 } catch (Exception erro) {
                     JOptionPane.showMessageDialog(null,
@@ -129,7 +129,6 @@ public class AnimalView extends JFrame {
 
         JPanel grid = new JPanel(new GridLayout(0, 5, 18, 18));
         grid.setOpaque(false);
-
 
         popularBancoSeVazio();
 
@@ -424,10 +423,8 @@ public class AnimalView extends JFrame {
             tela.dispose();
             dispose();
             if (clienteLogado != null) {
-
                 new AdocaoView(animalService, animal, clienteLogado).setVisible(true);
             } else {
-                // Fallback para quando acessa sem login (ex: admin visualizando)
                 new AdocaoView(animalService, animal, "Adotante Interessado").setVisible(true);
             }
         });

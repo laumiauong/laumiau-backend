@@ -32,7 +32,7 @@ public class NavbarPadrao extends JPanel {
                 BorderFactory.createMatteBorder(0, 0, 1, 0, AppTheme.BORDA),
                 new EmptyBorder(0, 40, 0, 40)
         ));
-        setPreferredSize(new Dimension(0, 68));
+        setPreferredSize(new Dimension(0, 52));
 
         add(criarLogo(), BorderLayout.WEST);
 
@@ -79,19 +79,17 @@ public class NavbarPadrao extends JPanel {
         JLabel lbl = new JLabel(texto);
         lbl.setFont(AppTheme.FONTE_LABEL);
         lbl.setForeground(ativo ? AppTheme.BRANCO : new Color(90, 80, 70));
-        lbl.setBorder(new EmptyBorder(8, 18, 8, 18));
+        lbl.setBorder(new EmptyBorder(5, 18, 5, 18));
         pill.add(lbl);
 
         if (!ativo) {
             pill.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             lbl.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-
             MouseAdapter ma = new MouseAdapter() {
                 @Override public void mouseEntered(MouseEvent e) { lbl.setForeground(AppTheme.LARANJA); }
                 @Override public void mouseExited(MouseEvent e)  { lbl.setForeground(new Color(90, 80, 70)); }
                 @Override public void mouseClicked(MouseEvent e) {
-
                     Window pai = SwingUtilities.getWindowAncestor(NavbarPadrao.this);
                     SwingUtilities.invokeLater(() -> {
                         switch (texto) {
@@ -154,7 +152,7 @@ public class NavbarPadrao extends JPanel {
         btn.setBorderPainted(false);
         btn.setFocusPainted(false);
         btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btn.setBorder(new EmptyBorder(9, 20, 9, 20));
+        btn.setBorder(new EmptyBorder(6, 20, 6, 20));
         btn.addActionListener(e -> new LoginAdmin().setVisible(true));
         return btn;
     }

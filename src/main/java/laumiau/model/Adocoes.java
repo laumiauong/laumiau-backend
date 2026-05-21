@@ -12,11 +12,11 @@ public class Adocoes {
     @Column(name = "id")
     private Long idAdocao;
 
-    @ManyToOne                          // muitas adoções podem ter um animal
+    @ManyToOne
     @JoinColumn(name = "animal_id", nullable = false)
     private Animal animal;
 
-    @ManyToOne                          // muitas adoções podem ter um cliente
+    @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
 
@@ -33,24 +33,13 @@ public class Adocoes {
     public Adocoes() {}
 
     public Adocoes(Animal animal, Cliente cliente, boolean termoAssinado) {
-            if(animal == null){
-                throw new IllegalArgumentException("Animal não pode ser nulo!");
-            }
+        if(animal == null) throw new IllegalArgumentException("Animal não pode ser nulo!");
+        if(cliente == null) throw new IllegalArgumentException("Cliente não pode ser nulo!");
+        if(!termoAssinado) throw new IllegalStateException("Adoção só pode ocorrer com termo assinado!");
 
-            if(cliente == null){
-                throw new IllegalArgumentException("Cliente não pode ser nulo!");
-            }
-
-            if(!termoAssinado){
-                throw new IllegalStateException("Adoção só pode ocorrer com termo assinado!");
-            }
-            if(animal.isAdotado()){
-                throw new IllegalStateException("Animal já está adotado!");
-            }
-
-            this.animal = animal;
-            this.cliente = cliente;
-            this.dataAdocao = LocalDate.now();
+        this.animal = animal;
+        this.cliente = cliente;
+        this.dataAdocao = LocalDate.now();
         this.termoAssinado = termoAssinado;
         this.status = StatusAdocao.PENDENTE;
     }
@@ -58,38 +47,27 @@ public class Adocoes {
     public Long getIdAdocao() { return idAdocao; }
     public Animal getAnimal() { return animal; }
     public Cliente getCliente() { return cliente; }
-    public void setCliente(Cliente cliente) {
-        if(cliente == null){
-            throw new IllegalArgumentException("Cliente inválido!");
-        }
-        this.cliente = cliente;
-    }
-    public LocalDate getDataAdocao() { return dataAdocao; }
-
-    public boolean isTermoAssinado() { return termoAssinado; }
-    public void setTermoAssinado(boolean termoAssinado) {
-        if(!termoAssinado){
-            throw new IllegalStateException("Não é permitido remover o termo assinado!");
-        }
-        this.termoAssinado = termoAssinado;
-    }
     public StatusAdocao getStatus() { return status; }
 
     public void aprovar() {
         if (!this.termoAssinado) throw new IllegalStateException("Termo não assinado!");
         this.status = StatusAdocao.APROVADO;
-        this.animal.adotar();
+        if (this.animal != null) {
+            this.animal.setStatus(StatusAnimal.ADOTADO);
+        }
     }
 
     public void recusar() {
         this.status = StatusAdocao.RECUSADO;
-    }
-    public String gerarResumo() {
-
-        if(animal == null || cliente == null){
-            throw new IllegalStateException("Dados da adoção incompletos!");
+        if (this.animal != null) {
+            this.animal.setStatus(StatusAnimal.DISPONIVEL);
         }
+    }
 
+    public String gerarResumo() {
+        if(animal == null || cliente == null){
+            return "Dados da adoção incompletos!";
+        }
         return "\nRegistro de Adoção" +
                 "\nID Adoção: " + idAdocao +
                 "\nAnimal: " + animal.getNome() +

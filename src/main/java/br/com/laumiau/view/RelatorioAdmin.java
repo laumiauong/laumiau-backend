@@ -6,7 +6,6 @@ import laumiau.model.StatusAdocao;
 import laumiau.service.AnimalService;
 import laumiau.service.RelatorioService;
 import laumiau.repository.AnimalRepository;
-import laumiau.repository.AdocoesRepository;
 import laumiau.infra.JPAUtil;
 
 import jakarta.persistence.EntityManager;
@@ -17,12 +16,9 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.Timer;
 import java.util.List;
+import java.util.ArrayList;
 
 public class RelatorioAdmin extends JFrame {
-
-    private EntityManager em = JPAUtil.getEntityManager();
-    private RelatorioService relatorioService = new RelatorioService(em);
-    private AnimalService animalService = new AnimalService(new AnimalRepository(em));
 
     private JLabel lblPetsDisponiveis, lblAdocoesMes, lblTotalAdotados, lblVacinados;
     private JPanel painelListaSolicitacoes;
@@ -55,7 +51,7 @@ public class RelatorioAdmin extends JFrame {
         JPanel tPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         tPanel.setOpaque(false);
         JLabel lblT = new JLabel(
-                "<html><div style='margin-bottom: 5px;'><b style='font-size: 22px;'>Dashboard Administrativo</b></div>"
+                "<html><div style='margin-bottom:5px;'><b style='font-size:22px;'>Dashboard Administrativo</b></div>"
                         + "<font color='#6b7280' size='4'>Visão geral das atividades da ONG</font></html>");
         tPanel.add(lblT);
 
@@ -71,10 +67,10 @@ public class RelatorioAdmin extends JFrame {
         lblTotalAdotados   = new JLabel("--");
         lblVacinados       = new JLabel("--");
 
-        cardsRow.add(new RoundedCard("Pets Disponíveis", lblPetsDisponiveis, "🧡"));
-        cardsRow.add(new RoundedCard("Pets Adotados",    lblTotalAdotados,   "✅"));
-        cardsRow.add(new RoundedCard("Total de Adoções", lblAdocoesMes,      "📋"));
-        cardsRow.add(new RoundedCard("Pets Vacinados",   lblVacinados,       "💉"));
+        cardsRow.add(new RoundedCard("Pets Disponíveis",      lblPetsDisponiveis, "🧡"));
+        cardsRow.add(new RoundedCard("Pets Adotados",         lblTotalAdotados,   "✅"));
+        cardsRow.add(new RoundedCard("Total de Solicitações", lblAdocoesMes,      "📋"));
+        cardsRow.add(new RoundedCard("Pets Vacinados",        lblVacinados,       "💉"));
 
         gbc.gridy = 1; gbc.insets = new Insets(0, 0, 35, 0);
         mainContent.add(cardsRow, gbc);
@@ -87,15 +83,13 @@ public class RelatorioAdmin extends JFrame {
         gbc.insets = new Insets(0, 0, 0, 0);
         mainContent.add(criarAcoesRapidas(), gbc);
 
-        add(new JScrollPane(mainContent) {{
-            setBorder(null);
-            getViewport().setBackground(FUNDO);
-        }}, BorderLayout.CENTER);
+        JScrollPane scroll = new JScrollPane(mainContent);
+        scroll.setBorder(null);
+        scroll.getViewport().setBackground(FUNDO);
+        add(scroll, BorderLayout.CENTER);
 
         atualizarDadosDoBanco();
-
-        Timer timer = new Timer(10000, e -> atualizarDadosDoBanco());
-        timer.start();
+        new Timer(10_000, e -> atualizarDadosDoBanco()).start();
     }
 
     private JPanel criarNavbarAdmin() {
@@ -117,26 +111,28 @@ public class RelatorioAdmin extends JFrame {
 
         JLabel animais = new JLabel("Animais");
         animais.setFont(new Font("SansSerif", Font.BOLD, 14));
-        animais.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        animais.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         animais.addMouseListener(new MouseAdapter() {
             @Override public void mouseClicked(MouseEvent e) {
                 SwingUtilities.invokeLater(() -> {
                     EntityManager emNovo = JPAUtil.getEntityManager();
-                    AnimalService serviceFresco = new AnimalService(new AnimalRepository(emNovo));
-                    new AnimaisCadastradosView(serviceFresco).setVisible(true);
+                    new AnimaisCadastradosView(new AnimalService(new AnimalRepository(emNovo)), null, true).setVisible(true);
                     dispose();
                 });
             }
             @Override public void mouseEntered(MouseEvent e) { animais.setForeground(LARANJA_BASE); }
-            @Override public void mouseExited(MouseEvent e)  { animais.setForeground(Color.BLACK); }
+            @Override public void mouseExited(MouseEvent e)  { animais.setForeground(Color.BLACK);  }
         });
 
         JLabel adotantes = new JLabel("Adotantes");
         adotantes.setFont(new Font("SansSerif", Font.BOLD, 14));
-        adotantes.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        adotantes.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         adotantes.addMouseListener(new MouseAdapter() {
+            @Override public void mouseClicked(MouseEvent e) {
+                SwingUtilities.invokeLater(() -> { new TutorView().setVisible(true); dispose(); });
+            }
             @Override public void mouseEntered(MouseEvent e) { adotantes.setForeground(LARANJA_BASE); }
-            @Override public void mouseExited(MouseEvent e)  { adotantes.setForeground(Color.BLACK); }
+            @Override public void mouseExited(MouseEvent e)  { adotantes.setForeground(Color.BLACK);  }
         });
 
         menu.add(dashboard);
@@ -167,14 +163,12 @@ public class RelatorioAdmin extends JFrame {
         btnSair.setFocusPainted(false);
         btnSair.addActionListener(e -> {
             EntityManager emNovo = JPAUtil.getEntityManager();
-            AnimalService animalServiceNovo = new AnimalService(new AnimalRepository(emNovo));
-            new AnimalView(animalServiceNovo).setVisible(true);
+            new AnimalView(new AnimalService(new AnimalRepository(emNovo))).setVisible(true);
             dispose();
         });
 
         sairContainer.add(btnSair);
         nav.add(sairContainer, BorderLayout.EAST);
-
         return nav;
     }
 
@@ -191,81 +185,89 @@ public class RelatorioAdmin extends JFrame {
         return logo;
     }
 
-
-    private void carregarSolicitacoes() {
+    public void atualizarDadosDoBanco() {
+        EntityManager emLocal = null;
         try {
-            EntityManager emLocal = JPAUtil.getEntityManager();
-            List<Adocoes> adocoes = emLocal.createQuery(
-                            "FROM Adocoes WHERE status = :status ORDER BY dataAdocao DESC",
+            emLocal = JPAUtil.getEntityManager();
+
+            RelatorioService rs = new RelatorioService(emLocal);
+            Relatorio dados = rs.obterRelatorioGeral();
+            if (dados != null) {
+                final Relatorio d = dados;
+                SwingUtilities.invokeLater(() -> {
+                    lblPetsDisponiveis.setText(String.valueOf(d.getTotalAnimaisDisponiveis()));
+                    lblTotalAdotados  .setText(String.valueOf(d.getTotalAnimaisAdotados()));
+                    lblAdocoesMes     .setText(String.valueOf(d.getTotalAdocoes()));
+                    lblVacinados      .setText(String.valueOf(d.getTotalAnimaisVacinados()));
+                });
+            }
+
+            final List<Adocoes> pendentes = emLocal
+                    .createQuery(
+                            "SELECT a FROM Adocoes a " +
+                                    "LEFT JOIN FETCH a.animal " +
+                                    "LEFT JOIN FETCH a.cliente " +
+                                    "WHERE a.status = :s " +
+                                    "ORDER BY a.idAdocao DESC",
                             Adocoes.class)
-                    .setParameter("status", StatusAdocao.PENDENTE)
-                    .setMaxResults(10)
+                    .setParameter("s", StatusAdocao.PENDENTE)
+                    .setMaxResults(20)
                     .getResultList();
 
-            SwingUtilities.invokeLater(() -> {
-                painelListaSolicitacoes.removeAll();
-
-                if (adocoes.isEmpty()) {
-                    JLabel vazio = new JLabel("Nenhuma solicitação pendente.");
-                    vazio.setForeground(Color.GRAY);
-                    vazio.setFont(new Font("SansSerif", Font.PLAIN, 14));
-                    painelListaSolicitacoes.add(vazio);
-                } else {
-                    for (Adocoes a : adocoes) {
-                        painelListaSolicitacoes.add(criarItemSolicitacao(a, emLocal));
-                        painelListaSolicitacoes.add(Box.createVerticalStrut(10));
-                    }
-                }
-
-                painelListaSolicitacoes.revalidate();
-                painelListaSolicitacoes.repaint();
-            });
+            SwingUtilities.invokeLater(() -> renderizarSolicitacoes(pendentes));
 
         } catch (Exception e) {
-            System.err.println("Erro ao carregar solicitações: " + e.getMessage());
+            System.err.println("Erro ao atualizar dashboard: " + e.getMessage());
+            e.printStackTrace();
+            SwingUtilities.invokeLater(() -> renderizarSolicitacoes(new ArrayList<>()));
+        } finally {
+            if (emLocal != null && emLocal.isOpen()) emLocal.close();
         }
     }
 
+    private void renderizarSolicitacoes(List<Adocoes> lista) {
+        painelListaSolicitacoes.removeAll();
 
-    private JPanel criarItemSolicitacao(Adocoes adocao, EntityManager emLocal) {
+        if (lista.isEmpty()) {
+            JLabel vazio = new JLabel("Nenhuma solicitação pendente.");
+            vazio.setForeground(Color.GRAY);
+            vazio.setFont(new Font("SansSerif", Font.PLAIN, 14));
+            painelListaSolicitacoes.add(vazio);
+        } else {
+            for (Adocoes a : lista) {
+                painelListaSolicitacoes.add(criarItemSolicitacao(a));
+                painelListaSolicitacoes.add(Box.createVerticalStrut(10));
+            }
+        }
+
+        painelListaSolicitacoes.revalidate();
+        painelListaSolicitacoes.repaint();
+    }
+
+    private JPanel criarItemSolicitacao(Adocoes adocao) {
         JPanel item = new JPanel(new BorderLayout(10, 0));
         item.setOpaque(false);
         item.setBorder(new CompoundBorder(
                 new MatteBorder(0, 0, 1, 0, BORDAS_LEVES),
-                new EmptyBorder(10, 0, 10, 0)
+                new EmptyBorder(12, 0, 12, 0)
         ));
 
-        String nomeAnimal  = adocao.getAnimal() != null  ? adocao.getAnimal().getNome()   : "Animal";
-        String nomeCliente = adocao.getCliente() != null ? adocao.getCliente().getNome()  : "Adotante";
-        String data        = adocao.getDataAdocao() != null ? adocao.getDataAdocao().toString() : "";
+        String nomeAnimal  = adocao.getAnimal()  != null ? adocao.getAnimal().getNome()  : "Animal";
+        String nomeCliente = adocao.getCliente() != null ? adocao.getCliente().getNome() : "Adotante";
 
         JLabel info = new JLabel(
-                "<html><b>" + nomeAnimal + "</b>"
-                        + "<br><font color='gray'>Por: " + nomeCliente + "</font>"
-                        + "<br><font color='#aaaaaa' size='2'>" + data + "</font></html>"
+                "<html><b style='font-size:13px;'>" + nomeAnimal + "</b>"
+                        + "<br><font color='gray'>Por: " + nomeCliente + "</font></html>"
         );
-        info.setFont(new Font("SansSerif", Font.PLAIN, 13));
         item.add(info, BorderLayout.CENTER);
 
-        JPanel botoes = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 0));
+        JPanel botoes = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         botoes.setOpaque(false);
 
-        JButton btnAprovar = new JButton("✔ Aprovar");
-        btnAprovar.setFont(new Font("SansSerif", Font.BOLD, 11));
-        btnAprovar.setForeground(Color.WHITE);
-        btnAprovar.setBackground(new Color(34, 197, 94));
-        btnAprovar.setFocusPainted(false);
-        btnAprovar.setBorderPainted(false);
-        btnAprovar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        JButton btnAprovar = botaoAcao("✔  Aprovar", new Color(34, 197, 94));
         btnAprovar.addActionListener(e -> processarAdocao(adocao.getIdAdocao(), true));
 
-        JButton btnRecusar = new JButton("✖ Recusar");
-        btnRecusar.setFont(new Font("SansSerif", Font.BOLD, 11));
-        btnRecusar.setForeground(Color.WHITE);
-        btnRecusar.setBackground(new Color(239, 68, 68));
-        btnRecusar.setFocusPainted(false);
-        btnRecusar.setBorderPainted(false);
-        btnRecusar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        JButton btnRecusar = botaoAcao("✖  Recusar", new Color(239, 68, 68));
         btnRecusar.addActionListener(e -> processarAdocao(adocao.getIdAdocao(), false));
 
         botoes.add(btnAprovar);
@@ -275,10 +277,32 @@ public class RelatorioAdmin extends JFrame {
         return item;
     }
 
+    private JButton botaoAcao(String texto, Color cor) {
+        JButton btn = new JButton(texto) {
+            @Override protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(getBackground());
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
+                super.paintComponent(g);
+                g2.dispose();
+            }
+        };
+        btn.setFont(new Font("SansSerif", Font.BOLD, 11));
+        btn.setForeground(Color.WHITE);
+        btn.setBackground(cor);
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setContentAreaFilled(false);
+        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btn.setPreferredSize(new Dimension(100, 30));
+        return btn;
+    }
 
     private void processarAdocao(Long idAdocao, boolean aprovar) {
+        EntityManager emLocal = null;
         try {
-            EntityManager emLocal = JPAUtil.getEntityManager();
+            emLocal = JPAUtil.getEntityManager();
             Adocoes adocao = emLocal.find(Adocoes.class, idAdocao);
 
             if (adocao == null) {
@@ -286,51 +310,49 @@ public class RelatorioAdmin extends JFrame {
                 return;
             }
 
-            emLocal.getTransaction().begin();
-            if (aprovar) {
-                adocao.aprovar(); // muda adoção para APROVADO e animal para ADOTADO
-            } else {
-                adocao.recusar(); // muda adoção para RECUSADO
+            if (adocao.getStatus() != StatusAdocao.PENDENTE) {
+                atualizarDadosDoBanco();
+                return;
             }
+
+            emLocal.getTransaction().begin();
+
+            if (aprovar) {
+                try {
+                    adocao.aprovar();
+                } catch (IllegalStateException e) {
+                    JOptionPane.showMessageDialog(this,
+                            "Não foi possível aprovar esta solicitação.\nMotivo: " + e.getMessage() +
+                                    "\n\n(Este pet já foi adotado por outra pessoa ou a página foi atualizada).",
+                            "Aviso", JOptionPane.WARNING_MESSAGE);
+                    emLocal.getTransaction().rollback();
+                    atualizarDadosDoBanco();
+                    return;
+                }
+            } else {
+                adocao.recusar();
+            }
+
             emLocal.merge(adocao);
             emLocal.merge(adocao.getAnimal());
             emLocal.getTransaction().commit();
-            emLocal.close();
 
             JOptionPane.showMessageDialog(this,
                     aprovar ? "Adoção aprovada com sucesso!" : "Solicitação recusada.",
                     aprovar ? "Aprovado" : "Recusado",
                     JOptionPane.INFORMATION_MESSAGE);
 
-
             atualizarDadosDoBanco();
 
         } catch (Exception ex) {
+            if (emLocal != null && emLocal.getTransaction().isActive())
+                emLocal.getTransaction().rollback();
             JOptionPane.showMessageDialog(this,
                     "Erro ao processar: " + ex.getMessage(),
                     "Erro", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    public void atualizarDadosDoBanco() {
-        try {
-            if (em != null && em.isOpen()) em.close();
-            em               = JPAUtil.getEntityManager();
-            relatorioService = new RelatorioService(em);
-            animalService    = new AnimalService(new AnimalRepository(em));
-
-            Relatorio dados = relatorioService.obterRelatorioGeral();
-            if (dados != null) {
-                SwingUtilities.invokeLater(() -> {
-                    lblPetsDisponiveis.setText(String.valueOf(dados.getTotalAnimaisDisponiveis()));
-                    lblAdocoesMes.setText(String.valueOf(dados.getTotalAdocoes()));
-                    lblTotalAdotados.setText(String.valueOf(dados.getTotalAnimaisAdotados()));
-                    lblVacinados.setText(String.valueOf(dados.getTotalAnimaisVacinados()));
-                });
-            }
-            carregarSolicitacoes();
-        } catch (Exception e) {
-            System.err.println("Erro ao atualizar dashboard: " + e.getMessage());
+            ex.printStackTrace();
+        } finally {
+            if (emLocal != null && emLocal.isOpen()) emLocal.close();
         }
     }
 
@@ -355,6 +377,7 @@ public class RelatorioAdmin extends JFrame {
     private JPanel criarAcoesRapidas() {
         JPanel p = new JPanel(new BorderLayout(0, 20));
         p.setOpaque(false);
+
         JLabel t = new JLabel("AÇÕES RÁPIDAS", SwingConstants.CENTER);
         t.setFont(new Font("SansSerif", Font.BOLD, 12));
         p.add(t, BorderLayout.NORTH);
@@ -365,16 +388,14 @@ public class RelatorioAdmin extends JFrame {
         OrangeButton btnCadastrar = new OrangeButton("➕  Cadastrar Novo Pet");
         btnCadastrar.addActionListener(e -> SwingUtilities.invokeLater(() -> {
             EntityManager emNovo = JPAUtil.getEntityManager();
-            AnimalService serviceFresco = new AnimalService(new AnimalRepository(emNovo));
-            new CadastroAnimalView(serviceFresco).setVisible(true);
+            new CadastroAnimalView(new AnimalService(new AnimalRepository(emNovo))).setVisible(true);
             dispose();
         }));
 
         OrangeButton btnGerenciar = new OrangeButton("📊  Gerenciar Animais");
         btnGerenciar.addActionListener(e -> SwingUtilities.invokeLater(() -> {
             EntityManager emNovo = JPAUtil.getEntityManager();
-            AnimalService serviceFresco = new AnimalService(new AnimalRepository(emNovo));
-            new AnimaisCadastradosView(serviceFresco).setVisible(true);
+            new AnimaisCadastradosView(new AnimalService(new AnimalRepository(emNovo)), null, true).setVisible(true);
             dispose();
         }));
 
@@ -383,8 +404,6 @@ public class RelatorioAdmin extends JFrame {
         p.add(botoes, BorderLayout.CENTER);
         return p;
     }
-
-    // ── Classes internas ──────────────────────────────────────────────────────
 
     class RoundedCard extends JPanel {
         public RoundedCard(String titulo, JLabel valor, String icon) {
@@ -395,11 +414,10 @@ public class RelatorioAdmin extends JFrame {
             JLabel t = new JLabel(titulo);
             t.setForeground(new Color(150, 150, 150));
             valor.setFont(new Font("SansSerif", Font.BOLD, 32));
-            add(t, BorderLayout.NORTH);
-            add(valor, BorderLayout.CENTER);
+            add(t,             BorderLayout.NORTH);
+            add(valor,         BorderLayout.CENTER);
             add(new JLabel(icon), BorderLayout.EAST);
         }
-
         @Override protected void paintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -421,12 +439,10 @@ public class RelatorioAdmin extends JFrame {
             setFocusPainted(false);
             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         }
-
         @Override protected void paintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            GradientPaint grad = new GradientPaint(0, 0, LARANJA_BASE, getWidth(), 0, LARANJA_DARK);
-            g2.setPaint(grad);
+            g2.setPaint(new GradientPaint(0, 0, LARANJA_BASE, getWidth(), 0, LARANJA_DARK));
             g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
             super.paintComponent(g);
             g2.dispose();
@@ -434,9 +450,8 @@ public class RelatorioAdmin extends JFrame {
     }
 
     class RoundedPanel extends JPanel {
-        private int r;
+        private final int r;
         public RoundedPanel(int radius) { this.r = radius; setOpaque(false); setBackground(BRANCO); }
-
         @Override protected void paintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
