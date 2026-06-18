@@ -8,7 +8,9 @@ import laumiau.model.Animal;
 import laumiau.model.Cliente;
 import laumiau.model.Sexo;
 import laumiau.model.StatusAnimal;
+import laumiau.model.SolicitacaoAdocao;
 import laumiau.repository.AnimalRepository;
+import laumiau.repository.SolicitacaoAdocaoRepository;
 import laumiau.service.AnimalService;
 
 import javax.swing.*;
@@ -28,7 +30,7 @@ public class AnimaisCadastradosView extends JFrame {
 
     private AnimalService animalService;
     private Cliente clienteLogado;
-    private boolean isAdmin; // Controla o que será exibido
+    private boolean isAdmin;
 
     private JPanel grid;
     private JTextField pesquisa;
@@ -71,7 +73,7 @@ public class AnimaisCadastradosView extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 dispose();
                 EntityManager emNovo = JPAUtil.getEntityManager();
-                AnimalService novoService = new AnimalService(new AnimalRepository(emNovo));
+                AnimalService novoService = new AnimalService(new AnimalRepository(emNovo), new SolicitacaoAdocaoRepository(emNovo));
                 new AnimalView(novoService, clienteLogado);
             }
         });
@@ -242,6 +244,32 @@ public class AnimaisCadastradosView extends JFrame {
                     new CadastroAnimalView(animalService, animal);
                 }
             });
+
+            JLabel verForm = new JLabel("👁");
+            verForm.setFont(new Font("SansSerif", Font.BOLD, 20));
+            verForm.setForeground(LARANJA);
+            verForm.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            verForm.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    e.consume();
+                    SolicitacaoAdocao sol = animalService.buscarSolicitacaoDoAnimal(animal.getId());
+                    if (sol != null) {
+                        JOptionPane.showMessageDialog(null,
+                                "CPF: " + sol.getCpf() + "\n" +
+                                        "Profissão: " + sol.getProfissao() + "\n" +
+                                        "Moradia: " + sol.getTipoMoradia() + "\n" +
+                                        "Possui Quintal: " + sol.getPossuiQuintal() + "\n" +
+                                        "Já teve pets: " + sol.getTevePetsAntes() + "\n" +
+                                        "Outros pets: " + sol.getOutrosPets() + "\n" +
+                                        "Motivo: " + sol.getMotivoAdocao(),
+                                "Formulário de Adoção", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Nenhum formulário vinculado.");
+                    }
+                }
+            });
+            linhaExcluir.add(verForm);
 
             JLabel excluir = new JLabel("🗑");
             excluir.setFont(new Font("SansSerif", Font.BOLD, 18));
@@ -452,7 +480,6 @@ public class AnimaisCadastradosView extends JFrame {
         adotar.setFont(new Font("SansSerif", Font.BOLD, 18));
         adotar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 58));
 
-        // CORREÇÃO FEITA AQUI: Verificando login em vez de enviar a String direto!
         adotar.addActionListener(e -> {
             if (clienteLogado != null) {
                 tela.dispose();
@@ -547,7 +574,7 @@ public class AnimaisCadastradosView extends JFrame {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("laumiau");
         EntityManager em = emf.createEntityManager();
         AnimalRepository repository = new AnimalRepository(em);
-        AnimalService service = new AnimalService(repository);
+        AnimalService service = new AnimalService(repository, new SolicitacaoAdocaoRepository(em));
         SwingUtilities.invokeLater(() -> new AnimaisCadastradosView(service));
     }
 

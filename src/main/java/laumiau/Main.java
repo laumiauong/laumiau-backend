@@ -71,7 +71,7 @@ public class Main {
         solicitacaoAdocaoRepository = new SolicitacaoAdocaoRepository(em);
 
         vacinaService = new VacinaService(vacinaRepository, animalRepository);
-        animalService = new AnimalService(animalRepository);
+        animalService = new AnimalService(animalRepository, solicitacaoAdocaoRepository);
         clienteService = new ClienteService(clienteRepository, usuarioRepository);
         adminService = new AdminService(usuarioRepository);
         adocoesService = new AdocoesService(adocoesRepository, animalRepository, clienteRepository, solicitacaoAdocaoRepository);
@@ -320,7 +320,7 @@ public class Main {
             Long animalId = lerLong("ID do animal: ");
             Long clienteId = lerLong("ID do cliente: ");
             boolean termo = lerBoolean("Termo assinado? (s/n): ");
-            // Passando valores vazios para os parâmetros extras do formulário exigidos pelo Service
+
             adocoesService.registrarAdocao(animalId, clienteId, termo, "", "", "", "", "", "", "", "", "");
         } catch (Exception e) {
             System.out.println("Erro: " + e.getMessage());
@@ -332,7 +332,14 @@ public class Main {
         try {
             List<Adocoes> adocoes = adocoesService.listarTodos();
             if (adocoes.isEmpty()) { System.out.println("Nenhuma adoção registrada."); return; }
-            for (Adocoes a : adocoes) { System.out.println(a.gerarResumo()); System.out.println("---------------------------------"); }
+            for (Adocoes a : adocoes) {
+                System.out.println(a.gerarResumo());
+                SolicitacaoAdocao sol = adocoesService.buscarSolicitacaoPorAdocao(a.getIdAdocao());
+                if (sol != null) {
+                    System.out.println("   [Formulário] CPF: " + sol.getCpf() + " | Motivo: " + sol.getMotivoAdocao());
+                }
+                System.out.println("---------------------------------");
+            }
         } catch (Exception e) {
             System.out.println("Erro: " + e.getMessage());
         }

@@ -3,9 +3,12 @@ package br.com.laumiau.view;
 import laumiau.model.Adocoes;
 import laumiau.model.Relatorio;
 import laumiau.model.StatusAdocao;
+import laumiau.model.StatusAnimal;
+import laumiau.model.SolicitacaoAdocao;
 import laumiau.service.AnimalService;
 import laumiau.service.RelatorioService;
 import laumiau.repository.AnimalRepository;
+import laumiau.repository.SolicitacaoAdocaoRepository;
 import laumiau.infra.JPAUtil;
 
 import jakarta.persistence.EntityManager;
@@ -116,7 +119,7 @@ public class RelatorioAdmin extends JFrame {
             @Override public void mouseClicked(MouseEvent e) {
                 SwingUtilities.invokeLater(() -> {
                     EntityManager emNovo = JPAUtil.getEntityManager();
-                    new AnimaisCadastradosView(new AnimalService(new AnimalRepository(emNovo)), null, true).setVisible(true);
+                    new AnimaisCadastradosView(new AnimalService(new AnimalRepository(emNovo), new SolicitacaoAdocaoRepository(emNovo)), null, true).setVisible(true);
                     dispose();
                 });
             }
@@ -124,20 +127,21 @@ public class RelatorioAdmin extends JFrame {
             @Override public void mouseExited(MouseEvent e)  { animais.setForeground(Color.BLACK);  }
         });
 
-        JLabel adotantes = new JLabel("Adotantes");
-        adotantes.setFont(new Font("SansSerif", Font.BOLD, 14));
-        adotantes.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        adotantes.addMouseListener(new MouseAdapter() {
+        // AQUI ESTÁ A MUDANÇA: Agora o menu aponta para a página de Solicitações nova!
+        JLabel solicitacoes = new JLabel("Solicitações");
+        solicitacoes.setFont(new Font("SansSerif", Font.BOLD, 14));
+        solicitacoes.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        solicitacoes.addMouseListener(new MouseAdapter() {
             @Override public void mouseClicked(MouseEvent e) {
-                SwingUtilities.invokeLater(() -> { new TutorView().setVisible(true); dispose(); });
+                SwingUtilities.invokeLater(() -> { new SolicitacoesView().setVisible(true); dispose(); });
             }
-            @Override public void mouseEntered(MouseEvent e) { adotantes.setForeground(LARANJA_BASE); }
-            @Override public void mouseExited(MouseEvent e)  { adotantes.setForeground(Color.BLACK);  }
+            @Override public void mouseEntered(MouseEvent e) { solicitacoes.setForeground(LARANJA_BASE); }
+            @Override public void mouseExited(MouseEvent e)  { solicitacoes.setForeground(Color.BLACK);  }
         });
 
         menu.add(dashboard);
         menu.add(animais);
-        menu.add(adotantes);
+        menu.add(solicitacoes);
         nav.add(menu, BorderLayout.CENTER);
 
         JPanel sairContainer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 40, 18));
@@ -163,7 +167,7 @@ public class RelatorioAdmin extends JFrame {
         btnSair.setFocusPainted(false);
         btnSair.addActionListener(e -> {
             EntityManager emNovo = JPAUtil.getEntityManager();
-            new AnimalView(new AnimalService(new AnimalRepository(emNovo))).setVisible(true);
+            new AnimalView(new AnimalService(new AnimalRepository(emNovo), new SolicitacaoAdocaoRepository(emNovo))).setVisible(true);
             dispose();
         });
 
@@ -217,7 +221,6 @@ public class RelatorioAdmin extends JFrame {
             SwingUtilities.invokeLater(() -> renderizarSolicitacoes(pendentes));
 
         } catch (Exception e) {
-            System.err.println("Erro ao atualizar dashboard: " + e.getMessage());
             e.printStackTrace();
             SwingUtilities.invokeLater(() -> renderizarSolicitacoes(new ArrayList<>()));
         } finally {
@@ -264,14 +267,11 @@ public class RelatorioAdmin extends JFrame {
         JPanel botoes = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         botoes.setOpaque(false);
 
-        JButton btnAprovar = botaoAcao("✔  Aprovar", new Color(34, 197, 94));
-        btnAprovar.addActionListener(e -> processarAdocao(adocao.getIdAdocao(), true));
+        // AQUI ESTÁ A MUDANÇA: Um botão único de "Analisar" no painel principal
+        JButton btnAnalisar = botaoAcao("👁  Analisar", LARANJA_BASE);
+        btnAnalisar.addActionListener(e -> analisarAdocao(adocao.getIdAdocao()));
 
-        JButton btnRecusar = botaoAcao("✖  Recusar", new Color(239, 68, 68));
-        btnRecusar.addActionListener(e -> processarAdocao(adocao.getIdAdocao(), false));
-
-        botoes.add(btnAprovar);
-        botoes.add(btnRecusar);
+        botoes.add(btnAnalisar);
         item.add(botoes, BorderLayout.EAST);
 
         return item;
@@ -299,60 +299,82 @@ public class RelatorioAdmin extends JFrame {
         return btn;
     }
 
+    // AQUI ESTÁ A MUDANÇA: Método que abre o formulário antes de aprovar
+    private void analisarAdocao(Long idAdocao) {
+        EntityManager emLocal = null;
+        try {
+            emLocal = JPAUtil.getEntityManager();
+            Adocoes adocao = emLocal.find(Adocoes.class, idAdocao);
+            SolicitacaoAdocao sol = new SolicitacaoAdocaoRepository(emLocal).buscarPorAdocaoId(idAdocao);
+
+            if (adocao == null || sol == null) {
+                JOptionPane.showMessageDialog(this, "Respostas do formulário não encontradas para esta solicitação.");
+                return;
+            }
+
+            JPanel painel = new JPanel(new GridLayout(0, 2, 10, 10));
+            painel.add(new JLabel("<html><b>Animal:</b> " + adocao.getAnimal().getNome() + "</html>"));
+            painel.add(new JLabel("<html><b>Adotante:</b> " + adocao.getCliente().getNome() + "</html>"));
+            painel.add(new JLabel("<html><b>CPF:</b> " + sol.getCpf() + "</html>"));
+            painel.add(new JLabel("<html><b>Telefone:</b> " + sol.getTelefone() + "</html>"));
+            painel.add(new JLabel("<html><b>Profissão:</b> " + sol.getProfissao() + "</html>"));
+            painel.add(new JLabel("<html><b>Moradia:</b> " + sol.getTipoMoradia() + " (" + sol.getPossuiQuintal() + " quintal)</html>"));
+            painel.add(new JLabel("<html><b>Teve Pets antes:</b> " + sol.getTevePetsAntes() + "</html>"));
+            painel.add(new JLabel("<html><b>Outros Pets:</b> " + sol.getOutrosPets() + "</html>"));
+
+            JLabel lblMotivo = new JLabel("<html><br><b>Motivo da Adoção:</b><br><p style='width:350px;'>" + sol.getMotivoAdocao() + "</p></html>");
+
+            JPanel container = new JPanel(new BorderLayout());
+            container.add(painel, BorderLayout.CENTER);
+            container.add(lblMotivo, BorderLayout.SOUTH);
+
+            Object[] options = {"✔ Aprovar Adoção", "✖ Recusar Adoção", "Voltar"};
+            int escolha = JOptionPane.showOptionDialog(this, container, "Análise do Formulário",
+                    JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+
+            if (escolha == 0) {
+                processarAdocao(idAdocao, true);
+            } else if (escolha == 1) {
+                processarAdocao(idAdocao, false);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (emLocal != null) emLocal.close();
+        }
+    }
+
     private void processarAdocao(Long idAdocao, boolean aprovar) {
         EntityManager emLocal = null;
         try {
             emLocal = JPAUtil.getEntityManager();
             Adocoes adocao = emLocal.find(Adocoes.class, idAdocao);
 
-            if (adocao == null) {
-                JOptionPane.showMessageDialog(this, "Solicitação não encontrada.");
-                return;
-            }
-
-            if (adocao.getStatus() != StatusAdocao.PENDENTE) {
-                atualizarDadosDoBanco();
-                return;
-            }
-
             emLocal.getTransaction().begin();
 
             if (aprovar) {
-                try {
-                    adocao.aprovar();
-                } catch (IllegalStateException e) {
-                    JOptionPane.showMessageDialog(this,
-                            "Não foi possível aprovar esta solicitação.\nMotivo: " + e.getMessage() +
-                                    "\n\n(Este pet já foi adotado por outra pessoa ou a página foi atualizada).",
-                            "Aviso", JOptionPane.WARNING_MESSAGE);
-                    emLocal.getTransaction().rollback();
-                    atualizarDadosDoBanco();
-                    return;
-                }
+                adocao.aprovar();
+                adocao.getAnimal().setStatus(StatusAnimal.ADOTADO);
+                emLocal.merge(adocao.getAnimal());
             } else {
                 adocao.recusar();
             }
 
             emLocal.merge(adocao);
-            emLocal.merge(adocao.getAnimal());
             emLocal.getTransaction().commit();
 
             JOptionPane.showMessageDialog(this,
                     aprovar ? "Adoção aprovada com sucesso!" : "Solicitação recusada.",
-                    aprovar ? "Aprovado" : "Recusado",
-                    JOptionPane.INFORMATION_MESSAGE);
+                    "Sucesso", JOptionPane.INFORMATION_MESSAGE);
 
             atualizarDadosDoBanco();
 
         } catch (Exception ex) {
-            if (emLocal != null && emLocal.getTransaction().isActive())
-                emLocal.getTransaction().rollback();
-            JOptionPane.showMessageDialog(this,
-                    "Erro ao processar: " + ex.getMessage(),
-                    "Erro", JOptionPane.ERROR_MESSAGE);
-            ex.printStackTrace();
+            if (emLocal != null && emLocal.getTransaction().isActive()) emLocal.getTransaction().rollback();
+            JOptionPane.showMessageDialog(this, "Erro ao processar: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         } finally {
-            if (emLocal != null && emLocal.isOpen()) emLocal.close();
+            if (emLocal != null) emLocal.close();
         }
     }
 
@@ -388,14 +410,14 @@ public class RelatorioAdmin extends JFrame {
         OrangeButton btnCadastrar = new OrangeButton("➕  Cadastrar Novo Pet");
         btnCadastrar.addActionListener(e -> SwingUtilities.invokeLater(() -> {
             EntityManager emNovo = JPAUtil.getEntityManager();
-            new CadastroAnimalView(new AnimalService(new AnimalRepository(emNovo))).setVisible(true);
+            new CadastroAnimalView(new AnimalService(new AnimalRepository(emNovo), new SolicitacaoAdocaoRepository(emNovo))).setVisible(true);
             dispose();
         }));
 
         OrangeButton btnGerenciar = new OrangeButton("📊  Gerenciar Animais");
         btnGerenciar.addActionListener(e -> SwingUtilities.invokeLater(() -> {
             EntityManager emNovo = JPAUtil.getEntityManager();
-            new AnimaisCadastradosView(new AnimalService(new AnimalRepository(emNovo)), null, true).setVisible(true);
+            new AnimaisCadastradosView(new AnimalService(new AnimalRepository(emNovo), new SolicitacaoAdocaoRepository(emNovo)), null, true).setVisible(true);
             dispose();
         }));
 

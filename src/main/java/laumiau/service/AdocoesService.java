@@ -22,10 +22,6 @@ public class AdocoesService {
         this.solicitacaoRepository = solicitacaoRepository;
     }
 
-    /**
-     * Registra a solicitação de adoção (status PENDENTE) e persiste
-     * os dados extras do formulário em SolicitacaoAdocao.
-     */
     public void registrarAdocao(Long animalId, Long clienteId,
                                 boolean termoAssinado,
                                 String telefone, String cpf,
@@ -47,11 +43,9 @@ public class AdocoesService {
         if (!termoAssinado)
             throw new RuntimeException("É necessário aceitar os termos de adoção.");
 
-        // 1. Salva a adoção principal (status PENDENTE)
         Adocoes adocao = new Adocoes(animal, cliente, true);
         adocoesRepository.salvar(adocao);
 
-        // 2. Salva os dados extras do formulário
         SolicitacaoAdocao solicitacao = new SolicitacaoAdocao(
                 adocao, telefone, cpf, dataNascimento, profissao,
                 tipoMoradia, possuiQuintal, tevePetsAntes, outrosPets, motivoAdocao
@@ -59,23 +53,19 @@ public class AdocoesService {
         solicitacaoRepository.salvar(solicitacao);
     }
 
-    /**
-     * Admin aprova: muda status da adoção para APROVADO
-     * e marca o animal como ADOTADO.
-     */
     public void aprovarAdocao(Long idAdocao) {
         Adocoes adocao = adocoesRepository.buscarPorId(idAdocao);
         if (adocao == null)
             throw new RuntimeException("Adoção não encontrada!");
 
         adocao.aprovar();
+        Animal animal = adocao.getAnimal();
+        animal.setStatus(StatusAnimal.ADOTADO);
+
         adocoesRepository.atualizar(adocao);
-        animalRepository.atualizar(adocao.getAnimal());
+        animalRepository.atualizar(animal);
     }
 
-    /**
-     * Admin recusa: animal volta a ficar DISPONIVEL.
-     */
     public void recusarAdocao(Long idAdocao) {
         Adocoes adocao = adocoesRepository.buscarPorId(idAdocao);
         if (adocao == null)

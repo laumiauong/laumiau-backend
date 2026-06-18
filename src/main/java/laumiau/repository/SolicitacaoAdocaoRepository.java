@@ -35,6 +35,20 @@ public class SolicitacaoAdocaoRepository {
         }
     }
 
+    // NOVO MÉTODO: Busca o formulário diretamente pelo ID do pet
+    public SolicitacaoAdocao buscarPorAnimalId(Long animalId) {
+        try {
+            return em.createQuery(
+                            "FROM SolicitacaoAdocao s WHERE s.adocao.animal.id = :animalId ORDER BY s.id DESC",
+                            SolicitacaoAdocao.class)
+                    .setParameter("animalId", animalId)
+                    .setMaxResults(1)
+                    .getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public List<SolicitacaoAdocao> listarTodos() {
         return em.createQuery(
                         "FROM SolicitacaoAdocao s ORDER BY s.dataEnvio DESC",

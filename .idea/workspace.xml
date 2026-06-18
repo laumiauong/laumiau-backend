@@ -5,13 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="09e53e87-688a-4143-8033-8ae5673e1b41" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/SolicitacaoAdocao.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/laumiau/repository/SolicitacaoAdocaoRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/SolicitacoesView.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/AdocaoView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/AdocaoView.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/AnimaisCadastradosView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/AnimaisCadastradosView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/AnimalView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/AnimalView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/RelatorioAdmin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/RelatorioAdmin.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/TutorView.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/model/SolicitacaoAdocao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/model/SolicitacaoAdocao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/repository/SolicitacaoAdocaoRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/repository/SolicitacaoAdocaoRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/service/AdocoesService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/service/AdocoesService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/service/AnimalService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/service/AnimalService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

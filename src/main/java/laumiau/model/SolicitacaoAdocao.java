@@ -3,10 +3,7 @@ package laumiau.model;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
-/**
- * Armazena as respostas extras do formulário de adoção.
- * Vinculada 1-para-1 com Adocoes.
- */
+
 @Entity
 @Table(name = "solicitacao_adocao")
 public class SolicitacaoAdocao {
@@ -19,7 +16,6 @@ public class SolicitacaoAdocao {
     @JoinColumn(name = "adocao_id", nullable = false)
     private Adocoes adocao;
 
-    // ── Dados pessoais extras (não existem em Usuario) ────────────
     @Column(name = "telefone")
     private String telefone;
 
@@ -32,14 +28,14 @@ public class SolicitacaoAdocao {
     @Column(name = "profissao")
     private String profissao;
 
-    // ── Moradia ───────────────────────────────────────────────────
+
     @Column(name = "tipo_moradia")
     private String tipoMoradia;
 
     @Column(name = "possui_quintal")
     private String possuiQuintal;
 
-    // ── Histórico com pets ────────────────────────────────────────
+
     @Column(name = "teve_pets_antes")
     private String tevePetsAntes;
 

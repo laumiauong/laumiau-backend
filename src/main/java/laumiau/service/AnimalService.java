@@ -2,16 +2,32 @@ package laumiau.service;
 
 import laumiau.model.Animal;
 import laumiau.model.StatusAnimal;
+import laumiau.model.SolicitacaoAdocao;
 import laumiau.repository.AnimalRepository;
+import laumiau.repository.SolicitacaoAdocaoRepository;
 
 import java.util.List;
 
 public class AnimalService {
 
     private final AnimalRepository repository;
+    private SolicitacaoAdocaoRepository solicitacaoRepository;
 
     public AnimalService(AnimalRepository repository) {
         this.repository = repository;
+    }
+
+    public AnimalService(AnimalRepository repository, SolicitacaoAdocaoRepository solicitacaoRepository) {
+        this.repository = repository;
+        this.solicitacaoRepository = solicitacaoRepository;
+    }
+
+    public SolicitacaoAdocao buscarSolicitacaoDoAnimal(Long animalId) {
+        if (solicitacaoRepository == null) {
+            return null;
+        }
+        // CORRIGIDO: Agora usa o método certo para buscar pelo ID do animal
+        return solicitacaoRepository.buscarPorAnimalId(animalId);
     }
 
     public void cadastrar(Animal animal) {
