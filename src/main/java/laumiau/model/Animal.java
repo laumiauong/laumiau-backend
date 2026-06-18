@@ -56,9 +56,6 @@ public class Animal {
     @OneToMany(mappedBy = "animal")
     private List<Vacina> vacinas = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "animaisInteresse")
-    private List<Tutor> tutoresInteressados = new ArrayList<>();
-
     public Animal() {}
 
     // Construtor sem caminhoFoto
