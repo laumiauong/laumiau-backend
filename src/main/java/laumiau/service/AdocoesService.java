@@ -1,52 +1,95 @@
 package laumiau.service;
 
-import laumiau.model.Adocoes;
-import laumiau.model.Animal;
-import laumiau.model.Cliente;
-import laumiau.model.StatusAnimal;
-import laumiau.repository.AdocoesRepository;
-import laumiau.repository.AnimalRepository;
-import laumiau.repository.ClienteRepository;
+import laumiau.model.*;
+import laumiau.repository.*;
+
 import java.util.List;
 
 public class AdocoesService {
 
-    private final AdocoesRepository adocoesRepository;
-    private final AnimalRepository animalRepository;
-    private final ClienteRepository clienteRepository;
+    private final AdocoesRepository            adocoesRepository;
+    private final AnimalRepository             animalRepository;
+    private final ClienteRepository            clienteRepository;
+    private final SolicitacaoAdocaoRepository  solicitacaoRepository;
 
-    public AdocoesService(AdocoesRepository adocoesRepository, AnimalRepository animalRepository, ClienteRepository clienteRepository) {
-        this.adocoesRepository = adocoesRepository;
-        this.animalRepository = animalRepository;
-        this.clienteRepository = clienteRepository;
+    public AdocoesService(AdocoesRepository adocoesRepository,
+                          AnimalRepository animalRepository,
+                          ClienteRepository clienteRepository,
+                          SolicitacaoAdocaoRepository solicitacaoRepository) {
+        this.adocoesRepository    = adocoesRepository;
+        this.animalRepository     = animalRepository;
+        this.clienteRepository    = clienteRepository;
+        this.solicitacaoRepository = solicitacaoRepository;
     }
 
-    public void registrarAdocao(Long animalId, Long clienteId, boolean termoAssinado) {
+    /**
+     * Registra a solicitação de adoção (status PENDENTE) e persiste
+     * os dados extras do formulário em SolicitacaoAdocao.
+     */
+    public void registrarAdocao(Long animalId, Long clienteId,
+                                boolean termoAssinado,
+                                String telefone, String cpf,
+                                String dataNascimento, String profissao,
+                                String tipoMoradia, String possuiQuintal,
+                                String tevePetsAntes, String outrosPets,
+                                String motivoAdocao) {
+
         Animal animal = animalRepository.buscarPorId(animalId);
-        if (animal == null) {
+        if (animal == null)
             throw new RuntimeException("Animal não encontrado!");
-        }
-        if (animal.getStatus() == StatusAnimal.ADOTADO) {
+        if (animal.getStatus() == StatusAnimal.ADOTADO)
             throw new RuntimeException("Esse animal já foi adotado!");
-        }
 
         Cliente cliente = clienteRepository.buscarPorId(clienteId);
-        if (cliente == null) {
+        if (cliente == null)
             throw new RuntimeException("Cliente não encontrado!");
-        }
 
-        // salva a adoção
-        Adocoes adocao = new Adocoes(animal, cliente, termoAssinado);
+        if (!termoAssinado)
+            throw new RuntimeException("É necessário aceitar os termos de adoção.");
+
+        // 1. Salva a adoção principal (status PENDENTE)
+        Adocoes adocao = new Adocoes(animal, cliente, true);
         adocoesRepository.salvar(adocao);
 
-        System.out.println("Adoção registrada com sucesso!");
+        // 2. Salva os dados extras do formulário
+        SolicitacaoAdocao solicitacao = new SolicitacaoAdocao(
+                adocao, telefone, cpf, dataNascimento, profissao,
+                tipoMoradia, possuiQuintal, tevePetsAntes, outrosPets, motivoAdocao
+        );
+        solicitacaoRepository.salvar(solicitacao);
+    }
+
+    /**
+     * Admin aprova: muda status da adoção para APROVADO
+     * e marca o animal como ADOTADO.
+     */
+    public void aprovarAdocao(Long idAdocao) {
+        Adocoes adocao = adocoesRepository.buscarPorId(idAdocao);
+        if (adocao == null)
+            throw new RuntimeException("Adoção não encontrada!");
+
+        adocao.aprovar();
+        adocoesRepository.atualizar(adocao);
+        animalRepository.atualizar(adocao.getAnimal());
+    }
+
+    /**
+     * Admin recusa: animal volta a ficar DISPONIVEL.
+     */
+    public void recusarAdocao(Long idAdocao) {
+        Adocoes adocao = adocoesRepository.buscarPorId(idAdocao);
+        if (adocao == null)
+            throw new RuntimeException("Adoção não encontrada!");
+
+        adocao.recusar();
+        adocoesRepository.atualizar(adocao);
+        animalRepository.atualizar(adocao.getAnimal());
     }
 
     public Adocoes buscarPorId(Long id) {
         Adocoes adocao = adocoesRepository.buscarPorId(id);
-        if (adocao == null) {
+        if (adocao == null)
             throw new RuntimeException("Adoção não encontrada!");
-        }
         return adocao;
     }
 
@@ -54,19 +97,17 @@ public class AdocoesService {
         return adocoesRepository.listarTodos();
     }
 
-    public void atualizar(Adocoes adocao) {
-        if (adocoesRepository.buscarPorId(adocao.getIdAdocao()) == null) {
-            throw new RuntimeException("Adoção não encontrada!");
-        }
-        adocoesRepository.atualizar(adocao);
-        System.out.println("Adoção atualizada com sucesso!");
+    public List<SolicitacaoAdocao> listarSolicitacoes() {
+        return solicitacaoRepository.listarTodos();
+    }
+
+    public SolicitacaoAdocao buscarSolicitacaoPorAdocao(Long adocaoId) {
+        return solicitacaoRepository.buscarPorAdocaoId(adocaoId);
     }
 
     public void remover(Long id) {
-        if (adocoesRepository.buscarPorId(id) == null) {
+        if (adocoesRepository.buscarPorId(id) == null)
             throw new RuntimeException("Adoção não encontrada!");
-        }
         adocoesRepository.deletar(id);
-        System.out.println("Adoção removida com sucesso!");
     }
 }

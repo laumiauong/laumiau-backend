@@ -107,7 +107,6 @@ public class AnimalView extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
-
                     boolean isAdmin = (clienteLogado != null &&
                             clienteLogado.getNome() != null &&
                             clienteLogado.getNome().toLowerCase().contains("admin"));
@@ -420,12 +419,18 @@ public class AnimalView extends JFrame {
 
 
         adotar.addActionListener(e -> {
-            tela.dispose();
-            dispose();
             if (clienteLogado != null) {
+                tela.dispose();
+                dispose();
                 new AdocaoView(animalService, animal, clienteLogado).setVisible(true);
             } else {
-                new AdocaoView(animalService, animal, "Adotante Interessado").setVisible(true);
+                JOptionPane.showMessageDialog(tela,
+                        "Para adotar um pet, você precisa fazer login ou se cadastrar no sistema primeiro.",
+                        "Acesso Restrito",
+                        JOptionPane.INFORMATION_MESSAGE);
+                tela.dispose();
+                dispose();
+                new LoginView().setVisible(true);
             }
         });
 

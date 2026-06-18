@@ -66,12 +66,10 @@ public class AnimaisCadastradosView extends JFrame {
         titulo.setForeground(TEXTO);
         titulo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        // 🔹 ISSO FAZ O BANCO ATUALIZAR AO VOLTAR
         titulo.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 dispose();
-                // Cria uma nova conexão forçando a limpeza do cache antigo
                 EntityManager emNovo = JPAUtil.getEntityManager();
                 AnimalService novoService = new AnimalService(new AnimalRepository(emNovo));
                 new AnimalView(novoService, clienteLogado);
@@ -138,7 +136,6 @@ public class AnimaisCadastradosView extends JFrame {
 
         barra.add(pesquisa, BorderLayout.WEST);
 
-        // 🔹 MOSTRA O BOTÃO "NOVO CADASTRO" APENAS PARA ADMIN
         if (isAdmin) {
             JButton btnNovo = new RoundedButton("+  Novo Cadastro", LARANJA, Color.WHITE);
             btnNovo.setFont(new Font("SansSerif", Font.BOLD, 16));
@@ -433,7 +430,7 @@ public class AnimaisCadastradosView extends JFrame {
         String nomeResponsavel = textoOuPadrao(animal.getResponsavel(), "ONG Lau & Miau");
 
         JLabel txtResp = new JLabel(
-                "<html><span style='color:#999999'>Com whom está:</span><br><b>"
+                "<html><span style='color:#999999'>Com quem está:</span><br><b>"
                         + nomeResponsavel + "</b></html>"
         );
         txtResp.setFont(new Font("SansSerif", Font.PLAIN, 15));
@@ -455,10 +452,21 @@ public class AnimaisCadastradosView extends JFrame {
         adotar.setFont(new Font("SansSerif", Font.BOLD, 18));
         adotar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 58));
 
+        // CORREÇÃO FEITA AQUI: Verificando login em vez de enviar a String direto!
         adotar.addActionListener(e -> {
-            tela.dispose();
-            dispose();
-            new AdocaoView(animalService, animal, "Adotante Interessado").setVisible(true);
+            if (clienteLogado != null) {
+                tela.dispose();
+                dispose();
+                new AdocaoView(animalService, animal, clienteLogado).setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(tela,
+                        "Para adotar um pet, você precisa fazer login ou se cadastrar no sistema primeiro.",
+                        "Acesso Restrito",
+                        JOptionPane.INFORMATION_MESSAGE);
+                tela.dispose();
+                dispose();
+                new LoginView().setVisible(true);
+            }
         });
 
         direita.add(nome);
