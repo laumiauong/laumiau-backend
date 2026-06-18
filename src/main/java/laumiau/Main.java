@@ -31,12 +31,9 @@ public class Main {
 
     public static void main(String[] args) {
 
-        SwingUtilities.invokeLater(() -> {
-            new SobreNosFrame().setVisible(true);
-        });
-
         configurarBanco();
         inicializarServicos();
+
 
         SwingUtilities.invokeLater(() -> {
             new AnimalView(animalService);

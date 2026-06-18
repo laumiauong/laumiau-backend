@@ -43,7 +43,8 @@ public class NavbarPadrao extends JPanel {
         menu.add(criarItemMenu("Sobre nós", itemAtivo.equals("Sobre nós")));
         add(menu, BorderLayout.CENTER);
 
-        add(criarBotaoAdmin(), BorderLayout.EAST);
+        // Chamando o novo botão de Login no canto direito
+        add(criarBotaoLogin(), BorderLayout.EAST);
     }
 
     private JLabel criarLogo() {
@@ -133,8 +134,8 @@ public class NavbarPadrao extends JPanel {
         return pill;
     }
 
-    private JButton criarBotaoAdmin() {
-        JButton btn = new JButton("  Admin") {
+    private JButton criarBotaoLogin() {
+        JButton btn = new JButton("  Login") {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
@@ -153,7 +154,15 @@ public class NavbarPadrao extends JPanel {
         btn.setFocusPainted(false);
         btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btn.setBorder(new EmptyBorder(6, 20, 6, 20));
-        btn.addActionListener(e -> new LoginAdmin().setVisible(true));
+
+        btn.addActionListener(e -> {
+            Window pai = SwingUtilities.getWindowAncestor(NavbarPadrao.this);
+            if (pai != null) {
+                pai.dispose();
+            }
+            new LoginView().setVisible(true);
+        });
+
         return btn;
     }
 }
