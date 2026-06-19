@@ -3,93 +3,73 @@ package laumiau.service;
 import laumiau.model.Admin;
 import laumiau.model.Cliente;
 import laumiau.model.Usuario;
-import java.util.ArrayList;
+import laumiau.repository.UsuarioRepository;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UsuarioService {
 
-    private List<Usuario> usuarios = new ArrayList<>();
+    private final UsuarioRepository repository;
 
+    public UsuarioService(UsuarioRepository repository) {
+        this.repository = repository;
+    }
 
     public void cadastrar(Usuario usuario) {
-        usuarios.add(usuario);
+        repository.salvar(usuario);
     }
-
 
     public List<Usuario> listar() {
-        return usuarios;
+        return repository.listarUsuarios();
     }
-
 
     public Usuario buscarPorId(Long id) {
-        for (Usuario u : usuarios) {
-            if (u.getId().equals(id)) {
-                return u;
-            }
-        }
-        return null;
+        return repository.buscarPorId(id);
     }
 
+    public Usuario buscarPorEmail(String email) {
+        return repository.buscarPorEmail(email);
+    }
 
     public List<Usuario> buscarPorNome(String nome) {
-        List<Usuario> encontrados = new ArrayList<>();
-        for (Usuario u : usuarios) {
-            if (u.getNome().toLowerCase().contains(nome.toLowerCase())) {
-                encontrados.add(u);
-            }
-        }
-        return encontrados;
+        return repository.listarUsuarios().stream()
+                .filter(u -> u.getNome().toLowerCase().contains(nome.toLowerCase()))
+                .collect(Collectors.toList());
     }
-
 
     public List<Usuario> buscarPorTipo(Class<?> tipoClasse) {
-        List<Usuario> encontrados = new ArrayList<>();
-        for (Usuario u : usuarios) {
-            if (u.getClass().equals(tipoClasse)) {
-                encontrados.add(u);
-            }
-        }
-        return encontrados;
+        return repository.listarUsuarios().stream()
+                .filter(u -> u.getClass().equals(tipoClasse))
+                .collect(Collectors.toList());
     }
-
 
     public boolean atualizar(Long id, String novoNome, String novoEmail) {
-        Usuario u = buscarPorId(id);
-        if (u != null) {
-            u.setNome(novoNome);
-            u.setEmail(novoEmail);
-            return true;
-        }
-        return false;
-    }
+        Usuario usuario = repository.buscarPorId(id);
+        if (usuario == null) return false;
 
+        usuario.setNome(novoNome);
+        usuario.setEmail(novoEmail);
+        repository.atualizar(usuario);
+        return true;
+    }
 
     public boolean remover(Long id) {
-        Usuario u = buscarPorId(id);
-        if (u != null) {
-            usuarios.remove(u);
-            return true;
-        }
-        return false;
+        Usuario usuario = repository.buscarPorId(id);
+        if (usuario == null) return false;
+
+        repository.remover(id);
+        return true;
     }
 
-
     public void relatorioUsuarios() {
-        int total = usuarios.size();
-        int totalAdmins = 0;
-        int totalClientes = 0;
-
-        for (Usuario u : usuarios) {
-            if (u instanceof Admin) {
-                totalAdmins++;
-            } else if (u instanceof Cliente) {
-                totalClientes++;
-            }
-        }
+        List<Usuario> usuarios = repository.listarUsuarios();
+        long totalAdmins   = usuarios.stream().filter(u -> u instanceof Admin).count();
+        long totalClientes = usuarios.stream().filter(u -> u instanceof Cliente).count();
 
         System.out.println("\n=== RELATÓRIO DA ONG ===");
-        System.out.println("Total de usuários: " + total);
-        System.out.println("Total de Admins: " + totalAdmins);
+        System.out.println("Total de usuários: " + usuarios.size());
+        System.out.println("Total de Admins: "   + totalAdmins);
         System.out.println("Total de Clientes: " + totalClientes);
     }
 }

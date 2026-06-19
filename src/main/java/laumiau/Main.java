@@ -26,7 +26,7 @@ public class Main {
     private static RelatorioService relatorioService;
     private static VacinaService vacinaService;
     private static UsuarioRepository usuarioRepository;
-    private static SolicitacaoAdocaoRepository solicitacaoAdocaoRepository;
+    private static UsuarioService usuarioService;
 
     private static Usuario usuarioLogado = null;
 
@@ -34,6 +34,7 @@ public class Main {
 
         configurarBanco();
         inicializarServicos();
+
 
         SwingUtilities.invokeLater(() -> {
             new AnimalView(animalService);
@@ -67,16 +68,18 @@ public class Main {
         ClienteRepository clienteRepository = new ClienteRepository(em);
         AdocoesRepository adocoesRepository = new AdocoesRepository(em);
         usuarioRepository = new UsuarioRepository(em);
+        usuarioService = new UsuarioService(usuarioRepository);
         VacinaRepository vacinaRepository = new VacinaRepository(em);
-        solicitacaoAdocaoRepository = new SolicitacaoAdocaoRepository(em);
 
         vacinaService = new VacinaService(vacinaRepository, animalRepository);
-        animalService = new AnimalService(animalRepository, solicitacaoAdocaoRepository);
+        animalService = new AnimalService(animalRepository);
         clienteService = new ClienteService(clienteRepository, usuarioRepository);
         adminService = new AdminService(usuarioRepository);
-        adocoesService = new AdocoesService(adocoesRepository, animalRepository, clienteRepository, solicitacaoAdocaoRepository);
+        adocoesService = new AdocoesService(adocoesRepository, animalRepository, clienteRepository);
         relatorioService = new RelatorioService(em);
     }
+
+    // ==================== MENUS ====================
 
     private static boolean exibirMenuLogin() {
         System.out.println("\n========== LAUMIAU - ACESSO ==========");
@@ -118,6 +121,24 @@ public class Main {
             System.out.println("\nBem-vindo(a), Administrador " + usuario.getNome() + "!");
         } else {
             System.out.println("Erro: Credenciais inválidas ou sem permissão de administrador.");
+        }
+    }
+
+    private static void cadastrarAdmin() {
+        System.out.println("\n--- Cadastro de Administrador ---");
+        try {
+            String senhaMestra = lerTexto("Senha mestra: ");
+            if (!senhaMestra.equals("laumiau@admin2025")) {
+                System.out.println("Acesso negado: senha mestra incorreta.");
+                return;
+            }
+            String nome = lerTexto("Nome: ");
+            String email = lerTexto("Email: ");
+            String senha = lerTexto("Senha: ");
+            Admin admin = new Admin(null, nome, email, senha);
+            adminService.cadastrar(admin);
+        } catch (Exception e) {
+            System.out.println("Erro: " + e.getMessage());
         }
     }
 
@@ -176,6 +197,20 @@ public class Main {
                 break;
             default:
                 System.out.println("Opção inválida.");
+        }
+    }
+
+    private static void realizarLogin() {
+        System.out.println("\n--- LOGIN ---");
+        String email = lerTexto("Email: ");
+        String senha = lerTexto("Senha: ");
+        Usuario usuario = usuarioRepository.buscarPorEmail(email);
+        if (usuario != null && usuario.autenticar(senha)) {
+            usuarioLogado = usuario;
+            System.out.println("\nBem-vindo(a), " + usuario.getNome() + "!");
+            System.out.println("Perfil: " + usuario.getTipo().toString().toUpperCase());
+        } else {
+            System.out.println("Erro: Email ou senha inválidos.");
         }
     }
 
@@ -320,8 +355,7 @@ public class Main {
             Long animalId = lerLong("ID do animal: ");
             Long clienteId = lerLong("ID do cliente: ");
             boolean termo = lerBoolean("Termo assinado? (s/n): ");
-
-            adocoesService.registrarAdocao(animalId, clienteId, termo, "", "", "", "", "", "", "", "", "");
+            adocoesService.registrarAdocao(animalId, clienteId, termo);
         } catch (Exception e) {
             System.out.println("Erro: " + e.getMessage());
         }
@@ -332,14 +366,7 @@ public class Main {
         try {
             List<Adocoes> adocoes = adocoesService.listarTodos();
             if (adocoes.isEmpty()) { System.out.println("Nenhuma adoção registrada."); return; }
-            for (Adocoes a : adocoes) {
-                System.out.println(a.gerarResumo());
-                SolicitacaoAdocao sol = adocoesService.buscarSolicitacaoPorAdocao(a.getIdAdocao());
-                if (sol != null) {
-                    System.out.println("   [Formulário] CPF: " + sol.getCpf() + " | Motivo: " + sol.getMotivoAdocao());
-                }
-                System.out.println("---------------------------------");
-            }
+            for (Adocoes a : adocoes) { System.out.println(a.gerarResumo()); System.out.println("---------------------------------"); }
         } catch (Exception e) {
             System.out.println("Erro: " + e.getMessage());
         }
