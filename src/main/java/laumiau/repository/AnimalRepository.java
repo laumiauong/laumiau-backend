@@ -24,7 +24,7 @@ public class AnimalRepository {
         }
     }
 
-    // read busca por ID
+
     public Animal buscarPorId(Long id) {
         try {
             return em.find(Animal.class, id);
@@ -33,7 +33,7 @@ public class AnimalRepository {
         }
     }
 
-    // read listar todos
+
     public List<Animal> listarTodos() {
         try {
             return em.createQuery("FROM Animal", Animal.class).getResultList();
@@ -42,7 +42,7 @@ public class AnimalRepository {
         }
     }
 
-    // update
+
     public void atualizar(Animal animal) {
         try {
             em.getTransaction().begin();

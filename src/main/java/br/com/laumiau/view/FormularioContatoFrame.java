@@ -31,14 +31,14 @@ public class FormularioContatoFrame extends JFrame {
         BorderFactory.createLineBorder(new Color(235, 235, 235), 1),
         BorderFactory.createEmptyBorder(15, 15, 15, 15)
 ));        
-        // Título
+
         JLabel tituloLabel = new JLabel("Entre em Contato");
         tituloLabel.setFont(new Font("Arial", Font.BOLD, 28));
         tituloLabel.setForeground(new Color(255, 107, 38));
         tituloLabel.setBounds(30, 30, 300, 40);
         mainPanel.add(tituloLabel);
         
-        // Subtítulo
+
         JLabel subtituloLabel = new JLabel("Preencha o formulário e entraremos em contato!");
         subtituloLabel.setFont(new Font("Arial", Font.PLAIN, 13));
         subtituloLabel.setForeground(Color.GRAY);

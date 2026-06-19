@@ -10,7 +10,7 @@ public class ClienteService {
     private final ClienteRepository clienteRepository;
     private final UsuarioRepository usuarioRepository;
 
-    // recebe os repositórios prontos em vez do EntityManager
+
     public ClienteService(ClienteRepository clienteRepository, UsuarioRepository usuarioRepository) {
         this.clienteRepository = clienteRepository;
         this.usuarioRepository = usuarioRepository;

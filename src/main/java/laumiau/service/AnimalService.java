@@ -26,7 +26,7 @@ public class AnimalService {
         if (solicitacaoRepository == null) {
             return null;
         }
-        // CORRIGIDO: Agora usa o método certo para buscar pelo ID do animal
+
         return solicitacaoRepository.buscarPorAnimalId(animalId);
     }
 

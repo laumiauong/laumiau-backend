@@ -13,8 +13,8 @@ import laumiau.service.AnimalService;
 
 public class AdocaoView extends JFrame {
 
-    private final Animal       animalAdotando;
-    private final Cliente      clienteLogado;
+    private final Animal        animalAdotando;
+    private final Cliente       clienteLogado;
     private final AnimalService animalService;
 
     private JTextField txtNome, txtEmail, txtTelefone, txtCpf,
@@ -28,7 +28,6 @@ public class AdocaoView extends JFrame {
     private static final Color COR_LABEL       = new Color(90, 90, 90);
     private static final Color COR_PLACEHOLDER = new Color(180, 180, 180);
     private static final Color COR_READONLY    = new Color(245, 245, 245);
-
 
     private static final String PH_TELEFONE   = "(11) 99999-9999";
     private static final String PH_CPF        = "000.000.000-00";
@@ -100,84 +99,6 @@ public class AdocaoView extends JFrame {
         add(scroll, BorderLayout.CENTER);
     }
 
-
-    private JPanel criarCardDadosPessoais() {
-        JPanel card = criarCard("Dados Pessoais");
-        JPanel grid = new JPanel(new GridBagLayout());
-        grid.setBackground(COR_FUNDO_CARD);
-
-
-        txtNome  = addCampoReadOnly(grid, "Nome Completo",  clienteLogado.getNome(),  0, 0, 2);
-        txtEmail = addCampoReadOnly(grid, "E-mail",          clienteLogado.getEmail(), 0, 2, 2);
-
-
-        txtTelefone  = addCampo(grid, "Telefone/WhatsApp*",  PH_TELEFONE,  1, 0, 1);
-        txtCpf       = addCampo(grid, "CPF*",                PH_CPF,       1, 1, 1);
-        txtDataNasc  = addCampo(grid, "Data de nascimento*", PH_DATANASC,  1, 2, 1);
-        txtProfissao = addCampo(grid, "Profissão*",          PH_PROFISSAO, 2, 0, 4);
-
-        fixarColunas(grid, 4);
-        card.add(grid);
-        return empacotar(card);
-    }
-
-    private JPanel criarCardEndereco() {
-        JPanel card = criarCard("Endereço");
-        JPanel grid = new JPanel(new GridBagLayout());
-        grid.setBackground(COR_FUNDO_CARD);
-
-        Endereco end = clienteLogado.getEndereco();
-
-        if (end != null) {
-
-            txtEndereco = addCampoReadOnly(grid, "Endereço completo", end.getLogradouro(), 0, 0, 4);
-            txtCidade   = addCampoReadOnly(grid, "Cidade",             end.getCidade(),     1, 0, 2);
-            txtEstado   = addCampoReadOnly(grid, "Estado",             end.getEstado(),     1, 2, 1);
-            txtCep      = addCampoReadOnly(grid, "CEP",                end.getCep(),        1, 3, 1);
-        } else {
-
-            txtEndereco = addCampo(grid, "Endereço completo*", "Rua, número, complemento", 0, 0, 4);
-            txtCidade   = addCampo(grid, "Cidade*",             "Sua cidade",               1, 0, 2);
-            txtEstado   = addCampo(grid, "Estado*",             "Ex: SP",                   1, 2, 1);
-            txtCep      = addCampo(grid, "CEP*",                "00000-000",                1, 3, 1);
-        }
-
-        fixarColunas(grid, 4);
-        card.add(grid);
-        return empacotar(card);
-    }
-
-    private JPanel criarCardMoradia() {
-        JPanel card = criarCard("Informações sobre sua moradia");
-        JPanel grid = new JPanel(new GridBagLayout());
-        grid.setBackground(COR_FUNDO_CARD);
-
-        comboMoradia = new JComboBox<>(new String[]{"Selecione", "Casa", "Apartamento"});
-        comboQuintal = new JComboBox<>(new String[]{"Selecione", "Sim", "Não"});
-        addCombo(grid, "Tipo de moradia*",             comboMoradia, 0, 0, 4);
-        addCombo(grid, "Possui quintal/área externa?", comboQuintal, 1, 0, 4);
-
-        fixarColunas(grid, 4);
-        card.add(grid);
-        return empacotar(card);
-    }
-
-    private JPanel criarCardHistoricoPets() {
-        JPanel card = criarCard("Histórico com Pets");
-        JPanel grid = new JPanel(new GridBagLayout());
-        grid.setBackground(COR_FUNDO_CARD);
-
-        comboTevePets = new JComboBox<>(new String[]{"Selecione", "Sim", "Não"});
-        addCombo(grid,  "Você já teve pets antes?*",      comboTevePets, 0, 0, 4);
-        txtOutrosPets = addCampoTexto(grid, "Possui outros pets atualmente?*", PH_OUTROSPETS, 1, 0, 4, 3);
-        txtMotivo     = addCampoTexto(grid, "Nos conte o motivo da adoção!*",  PH_MOTIVO,     2, 0, 4, 3);
-
-        fixarColunas(grid, 4);
-        card.add(grid);
-        return empacotar(card);
-    }
-
-
     private void enviarSolicitacao() {
         String erro = validarCampos();
         if (erro != null) { mostrarErro(erro); return; }
@@ -213,10 +134,89 @@ public class AdocaoView extends JFrame {
 
             mostrarSucesso();
 
+            AnimalService novoService = new AnimalService(
+                    new AnimalRepository(JPAUtil.getEntityManager())
+            );
+            new AnimalView(novoService, clienteLogado).setVisible(true);
+            dispose();
+
         } catch (RuntimeException ex) {
             mostrarErro("Erro ao registrar adoção:\n" + ex.getMessage());
         }
     }
+
+
+    private JPanel criarCardDadosPessoais() {
+        JPanel card = criarCard("Dados Pessoais");
+        JPanel grid = new JPanel(new GridBagLayout());
+        grid.setBackground(COR_FUNDO_CARD);
+
+        txtNome  = addCampoReadOnly(grid, "Nome Completo",  clienteLogado.getNome(),  0, 0, 2);
+        txtEmail = addCampoReadOnly(grid, "E-mail",          clienteLogado.getEmail(), 0, 2, 2);
+
+        txtTelefone  = addCampo(grid, "Telefone/WhatsApp*",  PH_TELEFONE,  1, 0, 1);
+        txtCpf       = addCampo(grid, "CPF*",                PH_CPF,       1, 1, 1);
+        txtDataNasc  = addCampo(grid, "Data de nascimento*", PH_DATANASC,  1, 2, 1);
+        txtProfissao = addCampo(grid, "Profissão*",          PH_PROFISSAO, 2, 0, 4);
+
+        fixarColunas(grid, 4);
+        card.add(grid);
+        return empacotar(card);
+    }
+
+    private JPanel criarCardEndereco() {
+        JPanel card = criarCard("Endereço");
+        JPanel grid = new JPanel(new GridBagLayout());
+        grid.setBackground(COR_FUNDO_CARD);
+
+        Endereco end = clienteLogado.getEndereco();
+        if (end != null) {
+            txtEndereco = addCampoReadOnly(grid, "Endereço completo", end.getLogradouro(), 0, 0, 4);
+            txtCidade   = addCampoReadOnly(grid, "Cidade",             end.getCidade(),     1, 0, 2);
+            txtEstado   = addCampoReadOnly(grid, "Estado",             end.getEstado(),     1, 2, 1);
+            txtCep      = addCampoReadOnly(grid, "CEP",                end.getCep(),        1, 3, 1);
+        } else {
+            txtEndereco = addCampo(grid, "Endereço completo*", "Rua, número, complemento", 0, 0, 4);
+            txtCidade   = addCampo(grid, "Cidade*",             "Sua cidade",               1, 0, 2);
+            txtEstado   = addCampo(grid, "Estado*",             "Ex: SP",                   1, 2, 1);
+            txtCep      = addCampo(grid, "CEP*",                "00000-000",                1, 3, 1);
+        }
+
+        fixarColunas(grid, 4);
+        card.add(grid);
+        return empacotar(card);
+    }
+
+    private JPanel criarCardMoradia() {
+        JPanel card = criarCard("Informações sobre sua moradia");
+        JPanel grid = new JPanel(new GridBagLayout());
+        grid.setBackground(COR_FUNDO_CARD);
+
+        comboMoradia = new JComboBox<>(new String[]{"Selecione", "Casa", "Apartamento"});
+        comboQuintal = new JComboBox<>(new String[]{"Selecione", "Sim", "Não"});
+        addCombo(grid, "Tipo de moradia*",             comboMoradia, 0, 0, 4);
+        addCombo(grid, "Possui quintal/área externa?", comboQuintal, 1, 0, 4);
+
+        fixarColunas(grid, 4);
+        card.add(grid);
+        return empacotar(card);
+    }
+
+    private JPanel criarCardHistoricoPets() {
+        JPanel card = criarCard("Histórico com Pets");
+        JPanel grid = new JPanel(new GridBagLayout());
+        grid.setBackground(COR_FUNDO_CARD);
+
+        comboTevePets = new JComboBox<>(new String[]{"Selecione", "Sim", "Não"});
+        addCombo(grid,  "Você já teve pets antes?*",       comboTevePets, 0, 0, 4);
+        txtOutrosPets = addCampoTexto(grid, "Possui outros pets atualmente?*", PH_OUTROSPETS, 1, 0, 4, 3);
+        txtMotivo     = addCampoTexto(grid, "Nos conte o motivo da adoção!*",  PH_MOTIVO,     2, 0, 4, 3);
+
+        fixarColunas(grid, 4);
+        card.add(grid);
+        return empacotar(card);
+    }
+
 
     private String validarCampos() {
         if (vazio(txtTelefone,  PH_TELEFONE))  return "Preencha o campo: Telefone/WhatsApp";
@@ -224,7 +224,6 @@ public class AdocaoView extends JFrame {
         if (vazio(txtDataNasc,  PH_DATANASC))  return "Preencha o campo: Data de Nascimento";
         if (vazio(txtProfissao, PH_PROFISSAO)) return "Preencha o campo: Profissão";
 
-        // Endereço — valida só se editável (cliente sem endereço)
         if (clienteLogado.getEndereco() == null) {
             if (vazio(txtEndereco, "Rua, número, complemento")) return "Preencha o campo: Endereço";
             if (vazio(txtCidade,   "Sua cidade"))               return "Preencha o campo: Cidade";
@@ -246,11 +245,11 @@ public class AdocaoView extends JFrame {
         return v.isEmpty() || v.equals(placeholder);
     }
 
-
     private String valor(JTextField txt, String placeholder) {
         String v = txt.getText().trim();
         return (v.isEmpty() || v.equals(placeholder)) ? null : v;
     }
+
 
     private void mostrarErro(String msg) {
         JOptionPane.showMessageDialog(this, msg, "Atenção", JOptionPane.WARNING_MESSAGE);
@@ -287,9 +286,7 @@ public class AdocaoView extends JFrame {
         p.add(linha2);
 
         JOptionPane.showMessageDialog(this, p, "Adoção Solicitada!", JOptionPane.PLAIN_MESSAGE);
-        dispose();
     }
-
 
     private JTextField addCampo(JPanel grid, String label, String placeholder,
                                 int row, int col, int colspan) {
@@ -308,8 +305,6 @@ public class AdocaoView extends JFrame {
     private JTextField addCampoReadOnly(JPanel grid, String label, String valor,
                                         int row, int col, int colspan) {
         GridBagConstraints gbc = baseGbc(row, col, colspan);
-
-
         gbc.gridy = row * 2;
         grid.add(makeLbl(label + "  🔒"), gbc);
 
@@ -321,14 +316,12 @@ public class AdocaoView extends JFrame {
         txt.setForeground(new Color(100, 100, 100));
         txt.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(210, 210, 210), 1, true),
-                new EmptyBorder(6, 10, 6, 10)
-        ));
+                new EmptyBorder(6, 10, 6, 10)));
         gbc.gridy  = row * 2 + 1;
         gbc.insets = new Insets(4, 6, 12, 6);
         grid.add(txt, gbc);
         return txt;
     }
-
 
     private JTextField addCampoTexto(JPanel grid, String label, String placeholder,
                                      int row, int col, int colspan, int linhas) {
@@ -408,6 +401,7 @@ public class AdocaoView extends JFrame {
         combo.setBackground(Color.WHITE);
         combo.setBorder(BorderFactory.createLineBorder(new Color(210, 210, 210), 1));
     }
+
 
     private JPanel criarBannerPet() {
         JPanel p = new JPanel();

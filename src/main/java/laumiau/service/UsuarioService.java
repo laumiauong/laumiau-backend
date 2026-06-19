@@ -10,17 +10,17 @@ public class UsuarioService {
 
     private List<Usuario> usuarios = new ArrayList<>();
 
-    // create
+
     public void cadastrar(Usuario usuario) {
         usuarios.add(usuario);
     }
 
-    // read
+
     public List<Usuario> listar() {
         return usuarios;
     }
 
-    // buscar por id
+
     public Usuario buscarPorId(Long id) {
         for (Usuario u : usuarios) {
             if (u.getId().equals(id)) {
@@ -30,7 +30,7 @@ public class UsuarioService {
         return null;
     }
 
-    // filtro por nome
+
     public List<Usuario> buscarPorNome(String nome) {
         List<Usuario> encontrados = new ArrayList<>();
         for (Usuario u : usuarios) {
@@ -41,7 +41,7 @@ public class UsuarioService {
         return encontrados;
     }
 
-    // filtro por tipo
+
     public List<Usuario> buscarPorTipo(Class<?> tipoClasse) {
         List<Usuario> encontrados = new ArrayList<>();
         for (Usuario u : usuarios) {
@@ -52,7 +52,7 @@ public class UsuarioService {
         return encontrados;
     }
 
-    // update
+
     public boolean atualizar(Long id, String novoNome, String novoEmail) {
         Usuario u = buscarPorId(id);
         if (u != null) {
@@ -63,7 +63,7 @@ public class UsuarioService {
         return false;
     }
 
-    // delete
+
     public boolean remover(Long id) {
         Usuario u = buscarPorId(id);
         if (u != null) {
@@ -73,7 +73,7 @@ public class UsuarioService {
         return false;
     }
 
-    // relatorio
+
     public void relatorioUsuarios() {
         int total = usuarios.size();
         int totalAdmins = 0;

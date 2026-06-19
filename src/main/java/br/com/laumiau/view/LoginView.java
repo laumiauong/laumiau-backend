@@ -1,11 +1,9 @@
 package br.com.laumiau.view;
 
-import jakarta.persistence.EntityManager;
+import laumiau.controller.LoginController;
 import laumiau.infra.JPAUtil;
 import laumiau.model.Cliente;
-import laumiau.model.Usuario;
 import laumiau.repository.AnimalRepository;
-import laumiau.repository.UsuarioRepository;
 import laumiau.service.AnimalService;
 
 import javax.swing.*;
@@ -15,15 +13,15 @@ import java.net.URL;
 public class LoginView extends JFrame {
 
     private static final int CARD_LARGURA = 500;
-    private static final int CARD_ALTURA = 620;
+    private static final int CARD_ALTURA  = 620;
 
-    private JTextField txtEmail;
+    private JTextField     txtEmail;
     private JPasswordField txtSenha;
-    private JButton btnEntrar;
-    private JLabel imagemCard;
+    private JButton        btnEntrar;
+    private JLabel         imagemCard;
 
-    private EntityManager em;
-    private UsuarioRepository usuarioRepository;
+
+    private final LoginController controller = new LoginController();
 
     public LoginView() {
         setTitle("Login - LauMiau");
@@ -40,14 +38,6 @@ public class LoginView extends JFrame {
 
         carregarImagemCard();
         criarCampos();
-    }
-
-    private UsuarioRepository getUsuarioRepository() {
-        if (usuarioRepository == null) {
-            em = JPAUtil.getEntityManager();
-            usuarioRepository = new UsuarioRepository(em);
-        }
-        return usuarioRepository;
     }
 
     private void carregarImagemCard() {
@@ -89,7 +79,7 @@ public class LoginView extends JFrame {
         configurarBotao(btnCadastrar);
         add(btnCadastrar);
 
-        btnEntrar.addActionListener(e -> fazerLoginUsuario());
+        btnEntrar.addActionListener(e -> fazerLogin());
         btnCadastrar.addActionListener(e -> {
             new CadastroView().setVisible(true);
             dispose();
@@ -100,53 +90,37 @@ public class LoginView extends JFrame {
         });
 
         if (imagemCard != null) {
-            getContentPane().setComponentZOrder(imagemCard, getContentPane().getComponentCount() - 1);
+            getContentPane().setComponentZOrder(
+                    imagemCard, getContentPane().getComponentCount() - 1);
         }
         repaint();
     }
 
-    private void fazerLoginUsuario() {
+
+    private void fazerLogin() {
         String email = txtEmail.getText().trim();
         String senha = new String(txtSenha.getPassword()).trim();
 
-        if (email.isEmpty() || senha.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Preencha o e-mail e a senha.");
-            return;
-        }
+        LoginController.ResultadoLogin resultado = controller.autenticarCliente(email, senha);
 
-        try {
-            Usuario usuario = getUsuarioRepository().buscarPorEmail(email);
-
-            if (usuario == null || !usuario.autenticar(senha)) {
-                JOptionPane.showMessageDialog(this, "E-mail ou senha inválidos.");
-                return;
+        switch (resultado) {
+            case SUCESSO_CLIENTE -> {
+                Cliente clienteLogado = controller.getClienteLogado();
+                AnimalService animalService = new AnimalService(
+                        new AnimalRepository(JPAUtil.getEntityManager())
+                );
+                new AnimalView(animalService, clienteLogado).setVisible(true);
+                dispose();
             }
-
-            if (usuario.getTipo() == laumiau.model.TipoUsuario.admin) {
-                JOptionPane.showMessageDialog(this,
-                        "Administradores devem usar o botão 'Admin' para entrar no sistema.",
-                        "Acesso Restrito",
-                        JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-
-            if (!(usuario instanceof Cliente)) {
-                JOptionPane.showMessageDialog(this, "Tipo de usuário não reconhecido.");
-                return;
-            }
-
-            Cliente clienteLogado = (Cliente) usuario;
-
-            EntityManager emAnimal = JPAUtil.getEntityManager();
-            AnimalService animalService = new AnimalService(new AnimalRepository(emAnimal));
-
-
-            new AnimalView(animalService, clienteLogado).setVisible(true);
-            dispose();
-
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Erro ao fazer login: " + ex.getMessage());
+            case ADMIN_NA_TELA_ERRADA -> JOptionPane.showMessageDialog(this,
+                    "Administradores devem usar o botão 'Admin' para entrar.",
+                    "Acesso Restrito", JOptionPane.WARNING_MESSAGE);
+            case CREDENCIAIS_INVALIDAS -> JOptionPane.showMessageDialog(this,
+                    "E-mail ou senha inválidos.");
+            case USUARIO_NAO_CLIENTE -> JOptionPane.showMessageDialog(this,
+                    "Tipo de usuário não reconhecido.");
+            case ERRO -> JOptionPane.showMessageDialog(this,
+                    "Erro ao conectar. Tente novamente.");
         }
     }
 

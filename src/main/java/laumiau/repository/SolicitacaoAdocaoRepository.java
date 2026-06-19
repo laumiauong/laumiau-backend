@@ -35,7 +35,6 @@ public class SolicitacaoAdocaoRepository {
         }
     }
 
-    // NOVO MÉTODO: Busca o formulário diretamente pelo ID do pet
     public SolicitacaoAdocao buscarPorAnimalId(Long animalId) {
         try {
             return em.createQuery(

@@ -11,7 +11,7 @@ public class JoinRepository {
         this.em = em;
     }
 
-    // INNER JOIN — apenas adoções que têm animal e cliente
+
     public List<Object[]> innerJoinAdocoes() {
         try {
             return em.createNativeQuery("""
@@ -26,7 +26,7 @@ public class JoinRepository {
         }
     }
 
-    // LEFT JOIN — todos os animais, mesmo os não adotados
+
     public List<Object[]> leftJoinAnimais() {
         try {
             return em.createNativeQuery("""
@@ -39,7 +39,7 @@ public class JoinRepository {
         }
     }
 
-    // RIGHT JOIN — todas as adoções mesmo se o animal foi removido
+
     public List<Object[]> rightJoinAdocoes() {
         try {
             return em.createNativeQuery("""
@@ -52,7 +52,7 @@ public class JoinRepository {
         }
     }
 
-    // FULL JOIN — todos os animais e todas as adoções
+
     public List<Object[]> fullJoinAnimaisAdocoes() {
         try {
             return em.createNativeQuery("""
