@@ -5,15 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="09e53e87-688a-4143-8033-8ae5673e1b41" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/laumiau/controller/AdocaoController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/laumiau/controller/AnimalController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/laumiau/controller/DashboardController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/laumiau/controller/LoginController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/laumiau/controller/AnimaisCadastradosController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/laumiau/controller/CadastroAnimalController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/laumiau/controller/CadastroController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/laumiau/controller/SolicitacoesController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/AdocaoView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/AdocaoView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/CadastroView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/CadastroView.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/LoginAdmin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/LoginAdmin.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/LoginView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/LoginView.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/RelatorioAdmin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/RelatorioAdmin.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/SolicitacoesView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/laumiau/view/SolicitacoesView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/controller/AdocaoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/controller/AdocaoController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/controller/AnimalController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/controller/AnimalController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/controller/DashboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/controller/DashboardController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/laumiau/controller/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/laumiau/controller/LoginController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
