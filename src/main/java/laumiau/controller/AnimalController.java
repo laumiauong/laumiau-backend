@@ -5,7 +5,6 @@ import laumiau.service.AnimalService;
 
 import java.util.List;
 
-
 public class AnimalController {
 
     private final AnimalService animalService;
@@ -40,7 +39,6 @@ public class AnimalController {
         }
     }
 
-
     public String cadastrar(Animal animal) {
         try {
             animalService.cadastrar(animal);
@@ -50,7 +48,6 @@ public class AnimalController {
         }
     }
 
-
     public String atualizar(Animal animal) {
         try {
             animalService.atualizar(animal);
@@ -59,7 +56,6 @@ public class AnimalController {
             return e.getMessage();
         }
     }
-
 
     public String remover(Long id) {
         try {

@@ -1,8 +1,6 @@
 package br.com.laumiau.view;
 
 import laumiau.controller.LoginController;
-import laumiau.infra.JPAUtil;
-import laumiau.repository.UsuarioRepository;
 import laumiau.service.UsuarioService;
 
 import javax.swing.*;
@@ -24,13 +22,11 @@ public class LoginAdmin extends JFrame {
     private JPasswordField txtSenha;
     private JLabel         lblErro;
 
-
+    private final UsuarioService usuarioService;
     private final LoginController controller;
 
-    public LoginAdmin() {
-        UsuarioService usuarioService = new UsuarioService(
-                new UsuarioRepository(JPAUtil.getEntityManager())
-        );
+    public LoginAdmin(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
         this.controller = new LoginController(usuarioService);
 
         setTitle("LauMiau - Login Administrativo");

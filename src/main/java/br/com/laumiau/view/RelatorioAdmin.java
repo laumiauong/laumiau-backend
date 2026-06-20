@@ -34,7 +34,7 @@ public class RelatorioAdmin extends JFrame {
     private final AnimalController    animalController;
 
     public RelatorioAdmin() {
-        // Instancia os Services e injeta nas Controllers
+
         var em = JPAUtil.getEntityManager();
 
         dashboardController = new DashboardController(

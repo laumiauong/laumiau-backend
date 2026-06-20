@@ -5,6 +5,7 @@ import laumiau.infra.JPAUtil;
 import laumiau.model.Cliente;
 import laumiau.repository.AnimalRepository;
 import laumiau.service.AnimalService;
+import laumiau.service.UsuarioService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,10 +21,13 @@ public class LoginView extends JFrame {
     private JButton        btnEntrar;
     private JLabel         imagemCard;
 
+    private final UsuarioService usuarioService;
+    private final LoginController controller;
 
-    private final LoginController controller = new LoginController();
+    public LoginView(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
+        this.controller = new LoginController(usuarioService);
 
-    public LoginView() {
         setTitle("Login - LauMiau");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
@@ -81,11 +85,11 @@ public class LoginView extends JFrame {
 
         btnEntrar.addActionListener(e -> fazerLogin());
         btnCadastrar.addActionListener(e -> {
-            new CadastroView().setVisible(true);
+            new CadastroView(usuarioService).setVisible(true);
             dispose();
         });
         btnAdmin.addActionListener(e -> {
-            new LoginAdmin().setVisible(true);
+            new LoginAdmin(usuarioService);
             dispose();
         });
 
@@ -109,7 +113,7 @@ public class LoginView extends JFrame {
                 AnimalService animalService = new AnimalService(
                         new AnimalRepository(JPAUtil.getEntityManager())
                 );
-                new AnimalView(animalService, clienteLogado).setVisible(true);
+                new AnimalView(animalService, usuarioService, clienteLogado).setVisible(true);
                 dispose();
             }
             case ADMIN_NA_TELA_ERRADA -> JOptionPane.showMessageDialog(this,

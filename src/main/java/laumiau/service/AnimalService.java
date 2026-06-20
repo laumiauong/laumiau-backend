@@ -66,6 +66,11 @@ public class AnimalService {
         return repository.listarTodos();
     }
 
+
+    public List<Animal> listarDisponiveis() {
+        return repository.listarDisponiveis();
+    }
+
     public void atualizar(Animal animal) {
         if (animal.getId() == null) {
             throw new RuntimeException("Animal sem ID válido — não é possível atualizar.");

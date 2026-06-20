@@ -1,6 +1,7 @@
 package br.com.laumiau.view;
 
 import laumiau.service.AnimalService;
+import laumiau.service.UsuarioService;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -11,18 +12,22 @@ import java.awt.geom.RoundRectangle2D;
 public class NavbarPadrao extends JPanel {
 
     private final AnimalService animalService;
+    private final UsuarioService usuarioService;
     private final String itemAtivo;
 
-    public NavbarPadrao(String itemAtivo, AnimalService animalService) {
+    public NavbarPadrao(String itemAtivo, AnimalService animalService, UsuarioService usuarioService) {
         this.animalService = animalService;
+        this.usuarioService = usuarioService;
         this.itemAtivo = itemAtivo;
         init();
     }
 
+    public NavbarPadrao(String itemAtivo, AnimalService animalService) {
+        this(itemAtivo, animalService, null);
+    }
+
     public NavbarPadrao(String itemAtivo) {
-        this.animalService = null;
-        this.itemAtivo = itemAtivo;
-        init();
+        this(itemAtivo, null, null);
     }
 
     private void init() {
@@ -43,7 +48,7 @@ public class NavbarPadrao extends JPanel {
         menu.add(criarItemMenu("Sobre nós", itemAtivo.equals("Sobre nós")));
         add(menu, BorderLayout.CENTER);
 
-        // Chamando o novo botão de Login no canto direito
+
         add(criarBotaoLogin(), BorderLayout.EAST);
     }
 
@@ -97,7 +102,7 @@ public class NavbarPadrao extends JPanel {
                             case "Home" -> {
                                 if (animalService != null) {
                                     try {
-                                        new AnimalView(animalService);
+                                        new AnimalView(animalService, usuarioService);
                                         if (pai != null) pai.dispose();
                                     } catch (Exception erro) {
                                         JOptionPane.showMessageDialog(null, "Erro ao carregar a Home: " + erro.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
@@ -119,7 +124,7 @@ public class NavbarPadrao extends JPanel {
                             }
                             case "Sobre nós" -> {
                                 try {
-                                    new SobreNosFrame(animalService).setVisible(true);
+                                    new SobreNosFrame(animalService, usuarioService);
                                 } catch (Exception erro) {
                                     JOptionPane.showMessageDialog(null, "Erro ao abrir Sobre Nós: " + erro.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                                 }
@@ -155,12 +160,16 @@ public class NavbarPadrao extends JPanel {
         btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btn.setBorder(new EmptyBorder(6, 20, 6, 20));
 
+
         btn.addActionListener(e -> {
-            Window pai = SwingUtilities.getWindowAncestor(NavbarPadrao.this);
-            if (pai != null) {
-                pai.dispose();
+            UsuarioService service = this.usuarioService;
+            if (service == null) {
+                service = new UsuarioService(new laumiau.repository.UsuarioRepository(laumiau.infra.JPAUtil.getEntityManager()));
             }
-            new LoginView().setVisible(true);
+
+            Window pai = SwingUtilities.getWindowAncestor(NavbarPadrao.this);
+            if (pai != null) pai.dispose();
+            new LoginView(service).setVisible(true);
         });
 
         return btn;

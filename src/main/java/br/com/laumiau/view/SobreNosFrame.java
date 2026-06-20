@@ -1,6 +1,7 @@
 package br.com.laumiau.view;
 
 import laumiau.service.AnimalService;
+import laumiau.service.UsuarioService;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
@@ -24,14 +25,16 @@ public class SobreNosFrame extends JFrame {
 
     private JPanel mainContent;
     private final AnimalService animalService;
+    private final UsuarioService usuarioService;
 
     private static final int CARD_W = 980;
     private static final int CARD_H = 510;
     private static final int CARD_Y = 88;
 
 
-    public SobreNosFrame(AnimalService animalService) {
+    public SobreNosFrame(AnimalService animalService, UsuarioService usuarioService) {
         this.animalService = animalService;
+        this.usuarioService = usuarioService;
         initComponents();
         setSize(1200, 700);
         setLocationRelativeTo(null);
@@ -47,6 +50,7 @@ public class SobreNosFrame extends JFrame {
 
     public SobreNosFrame() {
         this.animalService = null;
+        this.usuarioService = null;
         initComponents();
         setSize(1200, 700);
         setLocationRelativeTo(null);
@@ -88,7 +92,7 @@ public class SobreNosFrame extends JFrame {
         setContentPane(backgroundPanel);
 
 
-        NavbarPadrao navbar = new NavbarPadrao("Sobre nós", animalService);
+        NavbarPadrao navbar = new NavbarPadrao("Sobre nós", animalService, usuarioService);
         navbar.setBounds(0, 0, 1200, 68);
         backgroundPanel.add(navbar);
 

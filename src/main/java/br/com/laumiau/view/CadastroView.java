@@ -1,8 +1,6 @@
 package br.com.laumiau.view;
 
 import laumiau.controller.CadastroController;
-import laumiau.infra.JPAUtil;
-import laumiau.repository.UsuarioRepository;
 import laumiau.service.UsuarioService;
 
 import javax.swing.*;
@@ -22,14 +20,11 @@ public class CadastroView extends JFrame {
     private JButton        btnEntrar;
     private JLabel         imagemCard;
 
-
+    private final UsuarioService usuarioService;
     private final CadastroController controller;
 
-    public CadastroView() {
-
-        UsuarioService usuarioService = new UsuarioService(
-                new UsuarioRepository(JPAUtil.getEntityManager())
-        );
+    public CadastroView(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
         this.controller = new CadastroController(usuarioService);
 
         setTitle("Cadastro - LauMiau");
@@ -94,7 +89,7 @@ public class CadastroView extends JFrame {
 
         btnCadastrar.addActionListener(e -> cadastrar());
         btnEntrar.addActionListener(e -> {
-            new LoginView().setVisible(true);
+            new LoginView(usuarioService).setVisible(true);
             dispose();
         });
 
@@ -118,7 +113,7 @@ public class CadastroView extends JFrame {
             JOptionPane.showMessageDialog(this, erro, "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(this, "Usuário cadastrado com sucesso!");
-            new LoginView().setVisible(true);
+            new LoginView(usuarioService).setVisible(true);
             dispose();
         }
     }

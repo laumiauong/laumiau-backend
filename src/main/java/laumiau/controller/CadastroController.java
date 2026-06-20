@@ -29,7 +29,7 @@ public class CadastroController {
                 return "Já existe um usuário cadastrado com este e-mail.";
 
             Cliente cliente = new Cliente(null, nome, email, senha);
-            usuarioService.salvar(cliente);
+            usuarioService.cadastrar(cliente);
             return null; // sucesso
 
         } catch (RuntimeException e) {

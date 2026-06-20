@@ -27,16 +27,16 @@ public class Main {
     private static VacinaService vacinaService;
     private static UsuarioRepository usuarioRepository;
     private static SolicitacaoAdocaoRepository solicitacaoAdocaoRepository;
+    private static UsuarioService usuarioService;
 
     private static Usuario usuarioLogado = null;
 
     public static void main(String[] args) {
-
         configurarBanco();
         inicializarServicos();
 
         SwingUtilities.invokeLater(() -> {
-            new AnimalView(animalService);
+            new AnimalView(animalService, usuarioService);
         });
 
         boolean executando = true;
@@ -70,6 +70,7 @@ public class Main {
         VacinaRepository vacinaRepository = new VacinaRepository(em);
         solicitacaoAdocaoRepository = new SolicitacaoAdocaoRepository(em);
 
+        usuarioService = new UsuarioService(usuarioRepository);
         vacinaService = new VacinaService(vacinaRepository, animalRepository);
         animalService = new AnimalService(animalRepository, solicitacaoAdocaoRepository);
         clienteService = new ClienteService(clienteRepository, usuarioRepository);
@@ -77,6 +78,7 @@ public class Main {
         adocoesService = new AdocoesService(adocoesRepository, animalRepository, clienteRepository, solicitacaoAdocaoRepository);
         relatorioService = new RelatorioService(em);
     }
+
 
     private static boolean exibirMenuLogin() {
         System.out.println("\n========== LAUMIAU - ACESSO ==========");

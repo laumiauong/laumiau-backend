@@ -12,7 +12,7 @@ public class AnimalRepository {
         this.em = em;
     }
 
-    // create
+
     public void salvar(Animal animal) {
         try {
             em.getTransaction().begin();
@@ -43,6 +43,18 @@ public class AnimalRepository {
     }
 
 
+
+    public List<Animal> listarDisponiveis() {
+        try {
+            return em.createQuery("SELECT a FROM Animal a WHERE a.status = :status", Animal.class)
+                    .setParameter("status", laumiau.model.StatusAnimal.DISPONIVEL)
+                    .getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao listar animais disponíveis: " + e.getMessage());
+        }
+    }
+
+
     public void atualizar(Animal animal) {
         try {
             em.getTransaction().begin();
@@ -54,7 +66,7 @@ public class AnimalRepository {
         }
     }
 
-    // delete
+
     public void deletar(Long id) {
         try {
             em.getTransaction().begin();
