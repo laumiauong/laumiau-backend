@@ -1,6 +1,8 @@
 package br.com.laumiau.view;
 
 import laumiau.controller.CadastroController;
+import laumiau.controller.LoginController;
+import laumiau.service.AnimalService;
 import laumiau.service.UsuarioService;
 
 import javax.swing.*;
@@ -21,10 +23,14 @@ public class CadastroView extends JFrame {
     private JLabel         imagemCard;
 
     private final UsuarioService usuarioService;
+    private final LoginController loginController;
+    private final AnimalService animalService;
     private final CadastroController controller;
 
-    public CadastroView(UsuarioService usuarioService) {
+    public CadastroView(UsuarioService usuarioService, LoginController loginController, AnimalService animalService) {
         this.usuarioService = usuarioService;
+        this.loginController = loginController;
+        this.animalService = animalService;
         this.controller = new CadastroController(usuarioService);
 
         setTitle("Cadastro - LauMiau");
@@ -89,7 +95,7 @@ public class CadastroView extends JFrame {
 
         btnCadastrar.addActionListener(e -> cadastrar());
         btnEntrar.addActionListener(e -> {
-            new LoginView(usuarioService).setVisible(true);
+            new LoginView(usuarioService, loginController, animalService).setVisible(true);
             dispose();
         });
 
@@ -113,7 +119,7 @@ public class CadastroView extends JFrame {
             JOptionPane.showMessageDialog(this, erro, "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(this, "Usuário cadastrado com sucesso!");
-            new LoginView(usuarioService).setVisible(true);
+            new LoginView(usuarioService, loginController, animalService).setVisible(true);
             dispose();
         }
     }

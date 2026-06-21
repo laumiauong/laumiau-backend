@@ -1,7 +1,13 @@
 package br.com.laumiau.view;
 
+import laumiau.controller.LoginController;
+import laumiau.infra.JPAUtil;
+import laumiau.repository.AnimalRepository;
+import laumiau.repository.SolicitacaoAdocaoRepository;
+import laumiau.repository.UsuarioRepository;
 import laumiau.service.AnimalService;
 import laumiau.service.UsuarioService;
+import jakarta.persistence.EntityManager;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -163,13 +169,27 @@ public class NavbarPadrao extends JPanel {
 
         btn.addActionListener(e -> {
             UsuarioService service = this.usuarioService;
+            AnimalService serviceAnimal = this.animalService;
+            EntityManager em = null;
+
+            if (service == null || serviceAnimal == null) {
+                em = JPAUtil.getEntityManager();
+            }
+
             if (service == null) {
-                service = new UsuarioService(new laumiau.repository.UsuarioRepository(laumiau.infra.JPAUtil.getEntityManager()));
+                service = new UsuarioService(new UsuarioRepository(em));
+            }
+
+            if (serviceAnimal == null) {
+                serviceAnimal = new AnimalService(
+                        new AnimalRepository(em),
+                        new SolicitacaoAdocaoRepository(em)
+                );
             }
 
             Window pai = SwingUtilities.getWindowAncestor(NavbarPadrao.this);
             if (pai != null) pai.dispose();
-            new LoginView(service).setVisible(true);
+            new LoginView(service, new LoginController(service), serviceAnimal).setVisible(true);
         });
 
         return btn;

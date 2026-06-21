@@ -1,9 +1,7 @@
 package br.com.laumiau.view;
 
 import laumiau.controller.LoginController;
-import laumiau.infra.JPAUtil;
 import laumiau.model.Cliente;
-import laumiau.repository.AnimalRepository;
 import laumiau.service.AnimalService;
 import laumiau.service.UsuarioService;
 
@@ -23,10 +21,12 @@ public class LoginView extends JFrame {
 
     private final UsuarioService usuarioService;
     private final LoginController controller;
+    private final AnimalService animalService;
 
-    public LoginView(UsuarioService usuarioService) {
+    public LoginView(UsuarioService usuarioService, LoginController controller, AnimalService animalService) {
         this.usuarioService = usuarioService;
-        this.controller = new LoginController(usuarioService);
+        this.controller = controller;
+        this.animalService = animalService;
 
         setTitle("Login - LauMiau");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -85,11 +85,11 @@ public class LoginView extends JFrame {
 
         btnEntrar.addActionListener(e -> fazerLogin());
         btnCadastrar.addActionListener(e -> {
-            new CadastroView(usuarioService).setVisible(true);
+            new CadastroView(usuarioService, controller, animalService).setVisible(true);
             dispose();
         });
         btnAdmin.addActionListener(e -> {
-            new LoginAdmin(usuarioService);
+            new LoginAdmin(usuarioService).setVisible(true);
             dispose();
         });
 
@@ -110,9 +110,6 @@ public class LoginView extends JFrame {
         switch (resultado) {
             case SUCESSO_CLIENTE -> {
                 Cliente clienteLogado = controller.getClienteLogado();
-                AnimalService animalService = new AnimalService(
-                        new AnimalRepository(JPAUtil.getEntityManager())
-                );
                 new AnimalView(animalService, usuarioService, clienteLogado).setVisible(true);
                 dispose();
             }

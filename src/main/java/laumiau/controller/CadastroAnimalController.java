@@ -98,8 +98,16 @@ public class CadastroAnimalController {
     }
 
     private Porte parsePorte(String porteSel) {
-        if (porteSel == null || porteSel.equals("Selecione...")) return null;
-        try { return Porte.valueOf(porteSel); } catch (Exception e) { return null; }
+        if (porteSel == null || porteSel.equals("Selecione...")) {
+            return null;
+        }
+
+        return switch (porteSel.trim().toUpperCase()) {
+            case "PEQUENO" -> Porte.PEQUENO;
+            case "MEDIO" -> Porte.MEDIO;
+            case "GRANDE" -> Porte.GRANDE;
+            default -> null;
+        };
     }
 
     private String limpar(String valor) {

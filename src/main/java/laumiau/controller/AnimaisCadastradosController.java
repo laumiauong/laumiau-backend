@@ -40,7 +40,13 @@ public class AnimaisCadastradosController {
 
     public String cancelarAdocao(Long animalId) {
         try {
-            adocoesService.cancelarAdocao(animalId);
+            SolicitacaoAdocao solicitacao = adocoesService.buscarSolicitacaoPorAnimal(animalId);
+
+            if (solicitacao == null || solicitacao.getAdocao() == null) {
+                return "Solicitação de adoção não encontrada.";
+            }
+
+            adocoesService.cancelarAdocao(solicitacao.getAdocao().getIdAdocao());
             return null;
         } catch (RuntimeException e) {
             return e.getMessage();
