@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import laumiau.infra.JPAUtil;
+import laumiau.controller.LoginController;
 import laumiau.model.Animal;
 import laumiau.model.Cliente;
 import laumiau.model.Sexo;
@@ -507,7 +508,11 @@ public class AnimaisCadastradosView extends JFrame {
                         JOptionPane.INFORMATION_MESSAGE);
                 tela.dispose();
                 dispose();
-                new LoginView(usuarioService).setVisible(true);
+                UsuarioService service = usuarioService;
+                if (service == null) {
+                    service = new UsuarioService(new UsuarioRepository(JPAUtil.getEntityManager()));
+                }
+                new LoginView(service, new LoginController(service), animalService).setVisible(true);
             }
         });
 

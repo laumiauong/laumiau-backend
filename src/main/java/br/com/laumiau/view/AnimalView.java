@@ -5,11 +5,14 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.RoundRectangle2D;
+import laumiau.controller.LoginController;
+import laumiau.infra.JPAUtil;
 import laumiau.model.Animal;
 import laumiau.model.Cliente;
 import laumiau.model.Porte;
 import laumiau.model.Sexo;
 import laumiau.model.StatusAnimal;
+import laumiau.repository.UsuarioRepository;
 import laumiau.service.AnimalService;
 import laumiau.service.UsuarioService;
 import java.util.List;
@@ -437,7 +440,8 @@ public class AnimalView extends JFrame {
                         JOptionPane.INFORMATION_MESSAGE);
                 tela.dispose();
                 dispose();
-                new LoginView(usuarioService).setVisible(true);
+                UsuarioService service = obterUsuarioService();
+                new LoginView(service, new LoginController(service), animalService).setVisible(true);
             }
         });
 
@@ -518,5 +522,12 @@ public class AnimalView extends JFrame {
         placeholder.setOpaque(false);
 
         return placeholder;
+    }
+
+    private UsuarioService obterUsuarioService() {
+        if (usuarioService != null) {
+            return usuarioService;
+        }
+        return new UsuarioService(new UsuarioRepository(JPAUtil.getEntityManager()));
     }
 }
