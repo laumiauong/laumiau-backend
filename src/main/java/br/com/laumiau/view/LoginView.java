@@ -1,9 +1,9 @@
 package br.com.laumiau.view;
 
-import laumiau.controller.UsuarioController;
+import laumiau.controller.LoginController;
+import laumiau.infra.JPAUtil;
 import laumiau.model.Cliente;
-import laumiau.model.TipoUsuario;
-import laumiau.model.Usuario;
+import laumiau.repository.AnimalRepository;
 import laumiau.service.AnimalService;
 import laumiau.service.UsuarioService;
 
@@ -21,12 +21,12 @@ public class LoginView extends JFrame {
     private JButton        btnEntrar;
     private JLabel         imagemCard;
 
-    private final UsuarioController usuarioController;
-    private final AnimalService     animalService;
+    private final UsuarioService usuarioService;
+    private final LoginController controller;
 
-    public LoginView(UsuarioService usuarioService, AnimalService animalService) {
-        this.usuarioController = new UsuarioController(usuarioService);
-        this.animalService     = animalService;
+    public LoginView(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
+        this.controller = new LoginController(usuarioService);
 
         setTitle("Login - LauMiau");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -83,62 +83,48 @@ public class LoginView extends JFrame {
         configurarBotao(btnCadastrar);
         add(btnCadastrar);
 
-        btnEntrar.addActionListener(e -> fazerLoginUsuario());
-
+        btnEntrar.addActionListener(e -> fazerLogin());
         btnCadastrar.addActionListener(e -> {
-            new CadastroView(usuarioController).setVisible(true);
+            new CadastroView(usuarioService).setVisible(true);
             dispose();
         });
-
         btnAdmin.addActionListener(e -> {
-            new LoginAdmin(usuarioController, animalService).setVisible(true);
+            new LoginAdmin(usuarioService);
             dispose();
         });
 
         if (imagemCard != null) {
             getContentPane().setComponentZOrder(
-                    imagemCard,
-                    getContentPane().getComponentCount() - 1
-            );
+                    imagemCard, getContentPane().getComponentCount() - 1);
         }
         repaint();
     }
 
-    private void fazerLoginUsuario() {
+
+    private void fazerLogin() {
         String email = txtEmail.getText().trim();
         String senha = new String(txtSenha.getPassword()).trim();
 
-        if (email.isEmpty() || senha.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Preencha o e-mail e a senha.");
-            return;
-        }
+        LoginController.ResultadoLogin resultado = controller.autenticarCliente(email, senha);
 
-        try {
-            Usuario usuario = usuarioController.autenticar(email, senha);
-
-            if (usuario == null) {
-                JOptionPane.showMessageDialog(this, "E-mail ou senha inválidos.");
-                return;
+        switch (resultado) {
+            case SUCESSO_CLIENTE -> {
+                Cliente clienteLogado = controller.getClienteLogado();
+                AnimalService animalService = new AnimalService(
+                        new AnimalRepository(JPAUtil.getEntityManager())
+                );
+                new AnimalView(animalService, usuarioService, clienteLogado).setVisible(true);
+                dispose();
             }
-
-            if (usuario.getTipo() == TipoUsuario.admin) {
-                JOptionPane.showMessageDialog(this,
-                        "Administradores devem usar o botão 'Admin' para entrar no sistema.",
-                        "Acesso Restrito",
-                        JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            if (!(usuario instanceof Cliente clienteLogado)) {
-                JOptionPane.showMessageDialog(this, "Tipo de usuário não reconhecido.");
-                return;
-            }
-
-            new AnimalView(animalService, clienteLogado).setVisible(true);
-            dispose();
-
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Erro ao fazer login: " + ex.getMessage());
+            case ADMIN_NA_TELA_ERRADA -> JOptionPane.showMessageDialog(this,
+                    "Administradores devem usar o botão 'Admin' para entrar.",
+                    "Acesso Restrito", JOptionPane.WARNING_MESSAGE);
+            case CREDENCIAIS_INVALIDAS -> JOptionPane.showMessageDialog(this,
+                    "E-mail ou senha inválidos.");
+            case USUARIO_NAO_CLIENTE -> JOptionPane.showMessageDialog(this,
+                    "Tipo de usuário não reconhecido.");
+            case ERRO -> JOptionPane.showMessageDialog(this,
+                    "Erro ao conectar. Tente novamente.");
         }
     }
 

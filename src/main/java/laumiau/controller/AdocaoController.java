@@ -1,10 +1,7 @@
 package laumiau.controller;
 
-import laumiau.infra.JPAUtil;
 import laumiau.model.Adocoes;
 import laumiau.model.SolicitacaoAdocao;
-import laumiau.model.StatusAnimal;
-import laumiau.repository.*;
 import laumiau.service.AdocoesService;
 
 import java.util.List;
@@ -12,13 +9,10 @@ import java.util.List;
 
 public class AdocaoController {
 
-    private AdocoesService criarService() {
-        return new AdocoesService(
-                new AdocoesRepository(JPAUtil.getEntityManager()),
-                new AnimalRepository(JPAUtil.getEntityManager()),
-                new ClienteRepository(JPAUtil.getEntityManager()),
-                new SolicitacaoAdocaoRepository(JPAUtil.getEntityManager())
-        );
+    private final AdocoesService adocoesService;
+
+    public AdocaoController(AdocoesService adocoesService) {
+        this.adocoesService = adocoesService;
     }
 
 
@@ -30,13 +24,13 @@ public class AdocaoController {
                                        String tevePetsAntes, String outrosPets,
                                        String motivoAdocao) {
         try {
-            criarService().registrarAdocao(
+            adocoesService.registrarAdocao(
                     animalId, clienteId, termoAssinado,
                     telefone, cpf, dataNascimento, profissao,
                     tipoMoradia, possuiQuintal,
                     tevePetsAntes, outrosPets, motivoAdocao
             );
-            return null; // sucesso
+            return null;
         } catch (RuntimeException e) {
             return e.getMessage();
         }
@@ -44,36 +38,17 @@ public class AdocaoController {
 
     public List<Adocoes> listarPendentes() {
         try {
-            var em = JPAUtil.getEntityManager();
-            List<Adocoes> lista = em.createQuery(
-                            "SELECT a FROM Adocoes a " +
-                                    "LEFT JOIN FETCH a.animal " +
-                                    "LEFT JOIN FETCH a.cliente " +
-                                    "WHERE a.status = laumiau.model.StatusAdocao.PENDENTE " +
-                                    "ORDER BY a.idAdocao DESC",
-                            Adocoes.class)
-                    .setMaxResults(20)
-                    .getResultList();
-            em.close();
-            return lista;
+            return adocoesService.listarPendentes();
         } catch (Exception e) {
             e.printStackTrace();
             return List.of();
         }
     }
 
+
     public List<Adocoes> listarTodas() {
         try {
-            var em = JPAUtil.getEntityManager();
-            List<Adocoes> lista = em.createQuery(
-                            "SELECT a FROM Adocoes a " +
-                                    "LEFT JOIN FETCH a.animal " +
-                                    "LEFT JOIN FETCH a.cliente " +
-                                    "ORDER BY a.idAdocao DESC",
-                            Adocoes.class)
-                    .getResultList();
-            em.close();
-            return lista;
+            return adocoesService.listarTodos();
         } catch (Exception e) {
             e.printStackTrace();
             return List.of();
@@ -83,45 +58,27 @@ public class AdocaoController {
 
     public SolicitacaoAdocao buscarDetalhesFormulario(Long adocaoId) {
         try {
-            var em = JPAUtil.getEntityManager();
-            SolicitacaoAdocao sol = new SolicitacaoAdocaoRepository(em)
-                    .buscarPorAdocaoId(adocaoId);
-            em.close();
-            return sol;
+            return adocoesService.buscarSolicitacaoPorAdocao(adocaoId);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
+
 
     public Adocoes buscarAdocao(Long adocaoId) {
         try {
-            var em = JPAUtil.getEntityManager();
-            Adocoes adocao = em.find(Adocoes.class, adocaoId);
-            em.close();
-            return adocao;
+            return adocoesService.buscarPorId(adocaoId);
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
     }
 
-
     public String aprovarAdocao(Long adocaoId) {
         try {
-            var em = JPAUtil.getEntityManager();
-            Adocoes adocao = em.find(Adocoes.class, adocaoId);
-
-            em.getTransaction().begin();
-            adocao.aprovar();
-            adocao.getAnimal().setStatus(StatusAnimal.ADOTADO);
-            em.merge(adocao.getAnimal());
-            em.merge(adocao);
-            em.getTransaction().commit();
-            em.close();
-
-            return null; // sucesso
-        } catch (Exception e) {
+            adocoesService.aprovarAdocao(adocaoId);
+            return null;
+        } catch (RuntimeException e) {
             return e.getMessage();
         }
     }
@@ -129,17 +86,9 @@ public class AdocaoController {
 
     public String recusarAdocao(Long adocaoId) {
         try {
-            var em = JPAUtil.getEntityManager();
-            Adocoes adocao = em.find(Adocoes.class, adocaoId);
-
-            em.getTransaction().begin();
-            adocao.recusar();
-            em.merge(adocao);
-            em.getTransaction().commit();
-            em.close();
-
-            return null; // sucesso
-        } catch (Exception e) {
+            adocoesService.recusarAdocao(adocaoId);
+            return null;
+        } catch (RuntimeException e) {
             return e.getMessage();
         }
     }

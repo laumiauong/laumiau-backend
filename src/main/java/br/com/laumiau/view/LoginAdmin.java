@@ -1,6 +1,7 @@
 package br.com.laumiau.view;
 
 import laumiau.controller.LoginController;
+import laumiau.service.UsuarioService;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -21,10 +22,13 @@ public class LoginAdmin extends JFrame {
     private JPasswordField txtSenha;
     private JLabel         lblErro;
 
+    private final UsuarioService usuarioService;
+    private final LoginController controller;
 
-    private final LoginController controller = new LoginController();
+    public LoginAdmin(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
+        this.controller = new LoginController(usuarioService);
 
-    public LoginAdmin() {
         setTitle("LauMiau - Login Administrativo");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(480, 620);
@@ -124,6 +128,7 @@ public class LoginAdmin extends JFrame {
         return painel;
     }
 
+
     private void fazerLogin() {
         String email = txtEmail.getText().trim();
         String senha = new String(txtSenha.getPassword()).trim();
@@ -178,7 +183,6 @@ public class LoginAdmin extends JFrame {
     private JPanel criarCampoSenhaComIcone(JPasswordField campo) {
         JPanel p = painelArredondado();
         campo.setEchoChar('•');
-
         JLabel btnToggle = new JLabel("🙈");
         btnToggle.setFont(new Font("SansSerif", Font.PLAIN, 16));
         btnToggle.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -190,7 +194,6 @@ public class LoginAdmin extends JFrame {
                 btnToggle.setText(visivel ? "👁" : "🙈");
             }
         });
-
         p.add(labelIcone("🔒"), BorderLayout.WEST);
         p.add(campo, BorderLayout.CENTER);
         p.add(btnToggle, BorderLayout.EAST);
@@ -202,10 +205,8 @@ public class LoginAdmin extends JFrame {
             @Override protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(BRANCO);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
-                g2.setColor(BORDAS_LEVES);
-                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 30, 30);
+                g2.setColor(BRANCO); g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
+                g2.setColor(BORDAS_LEVES); g2.drawRoundRect(0, 0, getWidth()-1, getHeight()-1, 30, 30);
                 g2.dispose();
             }
         };

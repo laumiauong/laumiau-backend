@@ -7,9 +7,8 @@ import laumiau.infra.JPAUtil;
 import laumiau.model.Adocoes;
 import laumiau.model.Relatorio;
 import laumiau.model.SolicitacaoAdocao;
-import laumiau.repository.AnimalRepository;
-import laumiau.repository.SolicitacaoAdocaoRepository;
-import laumiau.service.AnimalService;
+import laumiau.repository.*;
+import laumiau.service.*;
 
 import javax.swing.*;
 import javax.swing.Timer;
@@ -30,11 +29,29 @@ public class RelatorioAdmin extends JFrame {
     private static final Color BORDAS_LEVES = new Color(230, 230, 230);
 
 
-    private final DashboardController dashboardController = new DashboardController();
-    private final AdocaoController    adocaoController   = new AdocaoController();
-    private final AnimalController    animalController   = new AnimalController();
+    private final DashboardController dashboardController;
+    private final AdocaoController    adocaoController;
+    private final AnimalController    animalController;
 
     public RelatorioAdmin() {
+
+        var em = JPAUtil.getEntityManager();
+
+        dashboardController = new DashboardController(
+                new RelatorioService(em)
+        );
+        adocaoController = new AdocaoController(
+                new AdocoesService(
+                        new AdocoesRepository(JPAUtil.getEntityManager()),
+                        new AnimalRepository(JPAUtil.getEntityManager()),
+                        new ClienteRepository(JPAUtil.getEntityManager()),
+                        new SolicitacaoAdocaoRepository(JPAUtil.getEntityManager())
+                )
+        );
+        animalController = new AnimalController(
+                new AnimalService(new AnimalRepository(JPAUtil.getEntityManager()))
+        );
+
         setTitle("LauMiau - Dashboard Administrativa");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1280, 850);
@@ -75,7 +92,6 @@ public class RelatorioAdmin extends JFrame {
         gbc.gridy = 1; gbc.insets = new Insets(0, 0, 35, 0);
         mainContent.add(cardsRow, gbc);
 
-
         gbc.gridy = 2; gbc.gridwidth = 1; gbc.weightx = 0.65;
         gbc.insets = new Insets(0, 0, 0, 20);
         mainContent.add(criarPainelSolicitacoes(), gbc);
@@ -89,14 +105,12 @@ public class RelatorioAdmin extends JFrame {
         scroll.getViewport().setBackground(FUNDO);
         add(scroll, BorderLayout.CENTER);
 
-
         atualizarDados();
         new Timer(10_000, e -> atualizarDados()).start();
     }
 
 
     public void atualizarDados() {
-
         Relatorio dados = dashboardController.obterDadosDashboard();
         if (dados != null) {
             SwingUtilities.invokeLater(() -> {
@@ -107,14 +121,12 @@ public class RelatorioAdmin extends JFrame {
             });
         }
 
-
         List<Adocoes> pendentes = adocaoController.listarPendentes();
         SwingUtilities.invokeLater(() -> renderizarSolicitacoes(pendentes));
     }
 
     private void renderizarSolicitacoes(List<Adocoes> lista) {
         painelListaSolicitacoes.removeAll();
-
         if (lista.isEmpty()) {
             JLabel vazio = new JLabel("Nenhuma solicitação pendente.");
             vazio.setForeground(Color.GRAY);
@@ -147,7 +159,6 @@ public class RelatorioAdmin extends JFrame {
 
         JPanel botoes = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         botoes.setOpaque(false);
-
         JButton btnAnalisar = botaoAcao("👁  Analisar", LARANJA_BASE);
         btnAnalisar.addActionListener(e -> analisarAdocao(adocao.getIdAdocao()));
         botoes.add(btnAnalisar);
@@ -156,26 +167,24 @@ public class RelatorioAdmin extends JFrame {
         return item;
     }
 
-
     private void analisarAdocao(Long idAdocao) {
         Adocoes adocao = adocaoController.buscarAdocao(idAdocao);
         SolicitacaoAdocao sol = adocaoController.buscarDetalhesFormulario(idAdocao);
 
         if (adocao == null || sol == null) {
-            JOptionPane.showMessageDialog(this,
-                    "Dados do formulário não encontrados para esta solicitação.");
+            JOptionPane.showMessageDialog(this, "Dados do formulário não encontrados.");
             return;
         }
 
         JPanel painel = new JPanel(new GridLayout(0, 2, 10, 10));
-        painel.add(new JLabel("<html><b>Animal:</b> "       + adocao.getAnimal().getNome()  + "</html>"));
-        painel.add(new JLabel("<html><b>Adotante:</b> "     + adocao.getCliente().getNome() + "</html>"));
-        painel.add(new JLabel("<html><b>CPF:</b> "          + sol.getCpf()          + "</html>"));
-        painel.add(new JLabel("<html><b>Telefone:</b> "     + sol.getTelefone()     + "</html>"));
-        painel.add(new JLabel("<html><b>Profissão:</b> "    + sol.getProfissao()    + "</html>"));
-        painel.add(new JLabel("<html><b>Moradia:</b> "      + sol.getTipoMoradia()  + " (" + sol.getPossuiQuintal() + " quintal)</html>"));
-        painel.add(new JLabel("<html><b>Teve Pets:</b> "    + sol.getTevePetsAntes()+ "</html>"));
-        painel.add(new JLabel("<html><b>Outros Pets:</b> "  + sol.getOutrosPets()   + "</html>"));
+        painel.add(new JLabel("<html><b>Animal:</b> "      + adocao.getAnimal().getNome()  + "</html>"));
+        painel.add(new JLabel("<html><b>Adotante:</b> "    + adocao.getCliente().getNome() + "</html>"));
+        painel.add(new JLabel("<html><b>CPF:</b> "         + sol.getCpf()           + "</html>"));
+        painel.add(new JLabel("<html><b>Telefone:</b> "    + sol.getTelefone()      + "</html>"));
+        painel.add(new JLabel("<html><b>Profissão:</b> "   + sol.getProfissao()     + "</html>"));
+        painel.add(new JLabel("<html><b>Moradia:</b> "     + sol.getTipoMoradia()   + " (" + sol.getPossuiQuintal() + " quintal)</html>"));
+        painel.add(new JLabel("<html><b>Teve Pets:</b> "   + sol.getTevePetsAntes() + "</html>"));
+        painel.add(new JLabel("<html><b>Outros Pets:</b> " + sol.getOutrosPets()    + "</html>"));
 
         JLabel lblMotivo = new JLabel(
                 "<html><br><b>Motivo da Adoção:</b><br><p style='width:350px;'>" +
@@ -301,24 +310,20 @@ public class RelatorioAdmin extends JFrame {
         JPanel p = new RoundedPanel(25);
         p.setLayout(new BorderLayout());
         p.setBorder(new EmptyBorder(25, 25, 25, 25));
-
         JLabel t = new JLabel("Solicitações Pendentes");
         t.setFont(new Font("SansSerif", Font.BOLD, 18));
         p.add(t, BorderLayout.NORTH);
-
         painelListaSolicitacoes = new JPanel();
         painelListaSolicitacoes.setLayout(new BoxLayout(painelListaSolicitacoes, BoxLayout.Y_AXIS));
         painelListaSolicitacoes.setOpaque(false);
         painelListaSolicitacoes.setBorder(new EmptyBorder(20, 0, 0, 0));
         p.add(painelListaSolicitacoes, BorderLayout.CENTER);
-
         return p;
     }
 
     private JPanel criarAcoesRapidas() {
         JPanel p = new JPanel(new BorderLayout(0, 20));
         p.setOpaque(false);
-
         JLabel t = new JLabel("AÇÕES RÁPIDAS", SwingConstants.CENTER);
         t.setFont(new Font("SansSerif", Font.BOLD, 12));
         p.add(t, BorderLayout.NORTH);

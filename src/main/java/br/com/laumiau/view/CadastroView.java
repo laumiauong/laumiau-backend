@@ -1,10 +1,7 @@
 package br.com.laumiau.view;
 
-import jakarta.persistence.EntityManager;
-import laumiau.infra.JPAUtil;
-import laumiau.model.Cliente;
-import laumiau.model.Usuario;
-import laumiau.repository.UsuarioRepository;
+import laumiau.controller.CadastroController;
+import laumiau.service.UsuarioService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,24 +10,26 @@ import java.net.URL;
 public class CadastroView extends JFrame {
 
     private static final int CARD_LARGURA = 500;
-    private static final int CARD_ALTURA = 620;
+    private static final int CARD_ALTURA  = 620;
 
-    private JTextField txtNome;
-    private JTextField txtEmail;
+    private JTextField     txtNome;
+    private JTextField     txtEmail;
     private JPasswordField txtSenha;
     private JPasswordField txtConfirmarSenha;
-    private JButton btnCadastrar;
-    private JButton btnEntrar;
-    private JLabel imagemCard;
+    private JButton        btnCadastrar;
+    private JButton        btnEntrar;
+    private JLabel         imagemCard;
 
-    private EntityManager em;
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioService usuarioService;
+    private final CadastroController controller;
 
-    public CadastroView() {
+    public CadastroView(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
+        this.controller = new CadastroController(usuarioService);
+
         setTitle("Cadastro - LauMiau");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
-
 
         JPanel painelPrincipal = new JPanel(null);
         painelPrincipal.setPreferredSize(new Dimension(CARD_LARGURA, CARD_ALTURA));
@@ -44,14 +43,6 @@ public class CadastroView extends JFrame {
         criarCampos();
     }
 
-    private UsuarioRepository getUsuarioRepository() {
-        if (usuarioRepository == null) {
-            em = JPAUtil.getEntityManager();
-            usuarioRepository = new UsuarioRepository(em);
-        }
-        return usuarioRepository;
-    }
-
     private void carregarImagemCard() {
         URL url = ClassLoader.getSystemResource("teste-cadastro.png");
         if (url == null) {
@@ -61,13 +52,11 @@ public class CadastroView extends JFrame {
         ImageIcon icon = new ImageIcon(url);
         Image img = icon.getImage().getScaledInstance(CARD_LARGURA, CARD_ALTURA, Image.SCALE_SMOOTH);
         imagemCard = new JLabel(new ImageIcon(img));
-
         imagemCard.setBounds(0, 0, CARD_LARGURA, CARD_ALTURA);
         add(imagemCard);
     }
 
     private void criarCampos() {
-
         txtNome = new JTextField();
         txtNome.setBounds(110, 270, 275, 35);
         configurarCampo(txtNome);
@@ -98,65 +87,34 @@ public class CadastroView extends JFrame {
         configurarBotao(btnEntrar);
         add(btnEntrar);
 
-
-        btnCadastrar.addActionListener(e -> cadastrarUsuario());
-
+        btnCadastrar.addActionListener(e -> cadastrar());
         btnEntrar.addActionListener(e -> {
-            new LoginView().setVisible(true);
+            new LoginView(usuarioService).setVisible(true);
             dispose();
         });
 
         if (imagemCard != null) {
-            getContentPane().setComponentZOrder(imagemCard, getContentPane().getComponentCount() - 1);
+            getContentPane().setComponentZOrder(
+                    imagemCard, getContentPane().getComponentCount() - 1);
         }
         repaint();
     }
 
-    private void cadastrarUsuario() {
-        String nome = txtNome.getText().trim();
-        String email = txtEmail.getText().trim();
-        String senha = new String(txtSenha.getPassword()).trim();
-        String confirmarSenha = new String(txtConfirmarSenha.getPassword()).trim();
 
-        if (nome.isEmpty() || email.isEmpty() || senha.isEmpty() || confirmarSenha.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Preencha todos os campos.");
-            return;
-        }
+    private void cadastrar() {
+        String nome            = txtNome.getText().trim();
+        String email           = txtEmail.getText().trim();
+        String senha           = new String(txtSenha.getPassword()).trim();
+        String confirmarSenha  = new String(txtConfirmarSenha.getPassword()).trim();
 
-        if (!email.contains("@") || !email.contains(".")) {
-            JOptionPane.showMessageDialog(this, "Informe um e-mail válido.");
-            return;
-        }
+        String erro = controller.cadastrar(nome, email, senha, confirmarSenha);
 
-        if (senha.length() < 4) {
-            JOptionPane.showMessageDialog(this, "A senha deve ter pelo menos 4 caracteres.");
-            return;
-        }
-
-        if (!senha.equals(confirmarSenha)) {
-            JOptionPane.showMessageDialog(this, "As senhas não coincidem.");
-            return;
-        }
-
-        try {
-            Usuario usuarioExistente = getUsuarioRepository().buscarPorEmail(email);
-
-            if (usuarioExistente != null) {
-                JOptionPane.showMessageDialog(this, "Já existe um usuário cadastrado com este e-mail.");
-                return;
-            }
-
-            Cliente cliente = new Cliente(null, nome, email, senha);
-            getUsuarioRepository().salvar(cliente);
-
+        if (erro != null) {
+            JOptionPane.showMessageDialog(this, erro, "Atenção", JOptionPane.WARNING_MESSAGE);
+        } else {
             JOptionPane.showMessageDialog(this, "Usuário cadastrado com sucesso!");
-
-
-            new LoginView().setVisible(true);
+            new LoginView(usuarioService).setVisible(true);
             dispose();
-
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Erro ao cadastrar usuário: " + ex.getMessage());
         }
     }
 

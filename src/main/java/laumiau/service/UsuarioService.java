@@ -4,72 +4,90 @@ import laumiau.model.Admin;
 import laumiau.model.Cliente;
 import laumiau.model.Usuario;
 import laumiau.repository.UsuarioRepository;
-
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class UsuarioService {
 
-    private final UsuarioRepository repository;
+    private final UsuarioRepository usuarioRepository;
 
-    public UsuarioService(UsuarioRepository repository) {
-        this.repository = repository;
+    public UsuarioService(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
     }
 
     public void cadastrar(Usuario usuario) {
-        repository.salvar(usuario);
+        usuarioRepository.salvar(usuario);
     }
 
     public List<Usuario> listar() {
-        return repository.listarUsuarios();
+        return usuarioRepository.listarUsuarios();
     }
 
     public Usuario buscarPorId(Long id) {
-        return repository.buscarPorId(id);
+        return usuarioRepository.buscarPorId(id);
     }
 
     public Usuario buscarPorEmail(String email) {
-        return repository.buscarPorEmail(email);
+        return usuarioRepository.buscarPorEmail(email);
     }
 
     public List<Usuario> buscarPorNome(String nome) {
-        return repository.listarUsuarios().stream()
-                .filter(u -> u.getNome().toLowerCase().contains(nome.toLowerCase()))
-                .collect(Collectors.toList());
+        List<Usuario> encontrados = new ArrayList<>();
+        for (Usuario u : usuarioRepository.listarUsuarios()) {
+            if (u.getNome().toLowerCase().contains(nome.toLowerCase())) {
+                encontrados.add(u);
+            }
+        }
+        return encontrados;
     }
 
     public List<Usuario> buscarPorTipo(Class<?> tipoClasse) {
-        return repository.listarUsuarios().stream()
-                .filter(u -> u.getClass().equals(tipoClasse))
-                .collect(Collectors.toList());
+        List<Usuario> encontrados = new ArrayList<>();
+        for (Usuario u : usuarioRepository.listarUsuarios()) {
+            if (u.getClass().equals(tipoClasse)) {
+                encontrados.add(u);
+            }
+        }
+        return encontrados;
     }
 
     public boolean atualizar(Long id, String novoNome, String novoEmail) {
-        Usuario usuario = repository.buscarPorId(id);
-        if (usuario == null) return false;
-
-        usuario.setNome(novoNome);
-        usuario.setEmail(novoEmail);
-        repository.atualizar(usuario);
-        return true;
+        Usuario u = buscarPorId(id);
+        if (u != null) {
+            u.setNome(novoNome);
+            u.setEmail(novoEmail);
+            usuarioRepository.atualizar(u);
+            return true;
+        }
+        return false;
     }
 
     public boolean remover(Long id) {
-        Usuario usuario = repository.buscarPorId(id);
-        if (usuario == null) return false;
-
-        repository.remover(id);
-        return true;
+        Usuario u = buscarPorId(id);
+        if (u != null) {
+            usuarioRepository.remover(id);
+            return true;
+        }
+        return false;
     }
 
     public void relatorioUsuarios() {
-        List<Usuario> usuarios = repository.listarUsuarios();
-        long totalAdmins   = usuarios.stream().filter(u -> u instanceof Admin).count();
-        long totalClientes = usuarios.stream().filter(u -> u instanceof Cliente).count();
+        List<Usuario> usuarios = usuarioRepository.listarUsuarios();
+        int total = usuarios.size();
+        int totalAdmins = 0;
+        int totalClientes = 0;
+
+        for (Usuario u : usuarios) {
+            if (u instanceof Admin) {
+                totalAdmins++;
+            } else if (u instanceof Cliente) {
+                totalClientes++;
+            }
+        }
 
         System.out.println("\n=== RELATÓRIO DA ONG ===");
-        System.out.println("Total de usuários: " + usuarios.size());
-        System.out.println("Total de Admins: "   + totalAdmins);
+        System.out.println("Total de usuários: " + total);
+        System.out.println("Total de Admins: " + totalAdmins);
         System.out.println("Total de Clientes: " + totalClientes);
     }
 }

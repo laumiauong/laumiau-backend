@@ -11,7 +11,9 @@ import laumiau.model.StatusAnimal;
 import laumiau.model.SolicitacaoAdocao;
 import laumiau.repository.AnimalRepository;
 import laumiau.repository.SolicitacaoAdocaoRepository;
+import laumiau.repository.UsuarioRepository;
 import laumiau.service.AnimalService;
+import laumiau.service.UsuarioService;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -29,6 +31,7 @@ public class AnimaisCadastradosView extends JFrame {
     private final Color CINZA   = new Color(160, 170, 185);
 
     private AnimalService animalService;
+    private UsuarioService usuarioService;
     private Cliente clienteLogado;
     private boolean isAdmin;
 
@@ -38,11 +41,20 @@ public class AnimaisCadastradosView extends JFrame {
     private final String PLACEHOLDER = "Buscar por nome ou ID";
 
     public AnimaisCadastradosView(AnimalService animalService) {
-        this(animalService, null, false);
+        this(animalService, null, null, false);
+    }
+
+    public AnimaisCadastradosView(AnimalService animalService, UsuarioService usuarioService) {
+        this(animalService, usuarioService, null, false);
     }
 
     public AnimaisCadastradosView(AnimalService animalService, Cliente clienteLogado, boolean isAdmin) {
+        this(animalService, null, clienteLogado, isAdmin);
+    }
+
+    public AnimaisCadastradosView(AnimalService animalService, UsuarioService usuarioService, Cliente clienteLogado, boolean isAdmin) {
         this.animalService = animalService;
+        this.usuarioService = usuarioService;
         this.clienteLogado = clienteLogado;
         this.isAdmin = isAdmin;
 
@@ -74,7 +86,10 @@ public class AnimaisCadastradosView extends JFrame {
                 dispose();
                 EntityManager emNovo = JPAUtil.getEntityManager();
                 AnimalService novoService = new AnimalService(new AnimalRepository(emNovo), new SolicitacaoAdocaoRepository(emNovo));
-                new AnimalView(novoService, clienteLogado);
+                UsuarioService novoUsuarioService = usuarioService != null
+                        ? usuarioService
+                        : new UsuarioService(new UsuarioRepository(emNovo));
+                new AnimalView(novoService, novoUsuarioService, clienteLogado);
             }
         });
 
@@ -492,7 +507,7 @@ public class AnimaisCadastradosView extends JFrame {
                         JOptionPane.INFORMATION_MESSAGE);
                 tela.dispose();
                 dispose();
-                new LoginView().setVisible(true);
+                new LoginView(usuarioService).setVisible(true);
             }
         });
 

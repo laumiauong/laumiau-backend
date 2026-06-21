@@ -11,6 +11,7 @@ import laumiau.model.Porte;
 import laumiau.model.Sexo;
 import laumiau.model.StatusAnimal;
 import laumiau.service.AnimalService;
+import laumiau.service.UsuarioService;
 import java.util.List;
 
 public class AnimalView extends JFrame {
@@ -22,14 +23,20 @@ public class AnimalView extends JFrame {
     private final Color CARD_BG = Color.WHITE;
 
     private AnimalService animalService;
+    private UsuarioService usuarioService;
     private Cliente clienteLogado;
 
+
     public AnimalView(AnimalService animalService) {
-        this(animalService, null);
+        this(animalService, null, null);
+    }
+    public AnimalView(AnimalService animalService, UsuarioService usuarioService) {
+        this(animalService, usuarioService, null);
     }
 
-    public AnimalView(AnimalService animalService, Cliente clienteLogado) {
+    public AnimalView(AnimalService animalService, UsuarioService usuarioService, Cliente clienteLogado) {
         this.animalService = animalService;
+        this.usuarioService = usuarioService;
         this.clienteLogado = clienteLogado;
 
         setTitle("LAU & MIAU - Animais");
@@ -47,7 +54,7 @@ public class AnimalView extends JFrame {
     }
 
     private JPanel criarTopo() {
-        return new NavbarPadrao("Home", animalService);
+        return new NavbarPadrao("Home", animalService, usuarioService);
     }
 
     private void popularBancoSeVazio() {
@@ -430,7 +437,7 @@ public class AnimalView extends JFrame {
                         JOptionPane.INFORMATION_MESSAGE);
                 tela.dispose();
                 dispose();
-                new LoginView().setVisible(true);
+                new LoginView(usuarioService).setVisible(true);
             }
         });
 

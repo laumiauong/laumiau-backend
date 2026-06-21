@@ -137,7 +137,7 @@ public class AdocaoView extends JFrame {
             AnimalService novoService = new AnimalService(
                     new AnimalRepository(JPAUtil.getEntityManager())
             );
-            new AnimalView(novoService, clienteLogado).setVisible(true);
+            new AnimalView(animalService, null, clienteLogado);
             dispose();
 
         } catch (RuntimeException ex) {
