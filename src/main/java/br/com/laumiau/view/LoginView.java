@@ -45,9 +45,9 @@ public class LoginView extends JFrame {
     }
 
     private void carregarImagemCard() {
-        URL url = ClassLoader.getSystemResource("teste-login.png");
+        URL url = getClass().getClassLoader().getResource("teste-login.png");
         if (url == null) {
-            JOptionPane.showMessageDialog(this, "Imagem teste-login.png não encontrada.");
+            System.err.println("Aviso: Imagem teste-login.png não encontrada.");
             return;
         }
         ImageIcon icon = new ImageIcon(url);
@@ -84,12 +84,17 @@ public class LoginView extends JFrame {
         add(btnCadastrar);
 
         btnEntrar.addActionListener(e -> fazerLogin());
+
         btnCadastrar.addActionListener(e -> {
             new CadastroView(usuarioService).setVisible(true);
             dispose();
         });
+
         btnAdmin.addActionListener(e -> {
-            new LoginAdmin(usuarioService);
+            AnimalService animalService = new AnimalService(
+                    new AnimalRepository(JPAUtil.getEntityManager())
+            );
+            new LoginAdmin(usuarioService, animalService).setVisible(true);
             dispose();
         });
 
@@ -100,7 +105,6 @@ public class LoginView extends JFrame {
         repaint();
     }
 
-
     private void fazerLogin() {
         String email = txtEmail.getText().trim();
         String senha = new String(txtSenha.getPassword()).trim();
@@ -110,11 +114,7 @@ public class LoginView extends JFrame {
         switch (resultado) {
             case SUCESSO_CLIENTE -> {
                 Cliente clienteLogado = controller.getClienteLogado();
-                AnimalService animalService = new AnimalService(
-                        new AnimalRepository(JPAUtil.getEntityManager())
-                );
-                new AnimalView(animalService, usuarioService, clienteLogado).setVisible(true);
-                dispose();
+                abrirTelaPrincipal(clienteLogado);
             }
             case ADMIN_NA_TELA_ERRADA -> JOptionPane.showMessageDialog(this,
                     "Administradores devem usar o botão 'Admin' para entrar.",
@@ -126,6 +126,14 @@ public class LoginView extends JFrame {
             case ERRO -> JOptionPane.showMessageDialog(this,
                     "Erro ao conectar. Tente novamente.");
         }
+    }
+
+    private void abrirTelaPrincipal(Cliente clienteLogado) {
+        AnimalService animalService = new AnimalService(
+                new AnimalRepository(JPAUtil.getEntityManager())
+        );
+        new AnimalView(animalService, usuarioService, clienteLogado).setVisible(true);
+        dispose();
     }
 
     private void configurarCampo(JTextField campo) {

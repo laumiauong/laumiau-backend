@@ -1,6 +1,7 @@
 package br.com.laumiau.view;
 
 import laumiau.controller.LoginController;
+import laumiau.service.AnimalService;
 import laumiau.service.UsuarioService;
 
 import javax.swing.*;
@@ -22,12 +23,14 @@ public class LoginAdmin extends JFrame {
     private JPasswordField txtSenha;
     private JLabel         lblErro;
 
+    private final AnimalService  animalService;
     private final UsuarioService usuarioService;
     private final LoginController controller;
 
-    public LoginAdmin(UsuarioService usuarioService) {
+    public LoginAdmin(UsuarioService usuarioService, AnimalService animalService) {
         this.usuarioService = usuarioService;
-        this.controller = new LoginController(usuarioService);
+        this.animalService  = animalService;
+        this.controller     = new LoginController(usuarioService);
 
         setTitle("LauMiau - Login Administrativo");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -49,7 +52,6 @@ public class LoginAdmin extends JFrame {
         gbc.gridwidth = 1;
         gbc.weightx   = 1;
 
-
         JPanel iconeContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
         iconeContainer.setOpaque(false);
         JPanel iconeBola = new JPanel(new BorderLayout()) {
@@ -69,13 +71,11 @@ public class LoginAdmin extends JFrame {
         gbc.gridy = 0; gbc.insets = new Insets(0, 0, 20, 0);
         painel.add(iconeContainer, gbc);
 
-
         JLabel lblTitulo = new JLabel("Área Administrativa", SwingConstants.CENTER);
         lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 26));
         lblTitulo.setForeground(TEXTO_DARK);
         gbc.gridy = 1; gbc.insets = new Insets(0, 0, 8, 0);
         painel.add(lblTitulo, gbc);
-
 
         JLabel lblSub = new JLabel(
                 "<html><center>Entre com suas credenciais para acessar<br>o painel administrativo</center></html>",
@@ -85,23 +85,19 @@ public class LoginAdmin extends JFrame {
         gbc.gridy = 2; gbc.insets = new Insets(0, 0, 30, 0);
         painel.add(lblSub, gbc);
 
-
         txtEmail = criarCampoTexto("Usuário ou Email", false);
         gbc.gridy = 3; gbc.insets = new Insets(0, 0, 15, 0);
         painel.add(criarCampoComIcone("👤", txtEmail), gbc);
 
-
         txtSenha = (JPasswordField) criarCampoTexto("Senha", true);
         gbc.gridy = 4; gbc.insets = new Insets(0, 0, 5, 0);
         painel.add(criarCampoSenhaComIcone(txtSenha), gbc);
-
 
         lblErro = new JLabel("", SwingConstants.CENTER);
         lblErro.setForeground(new Color(239, 68, 68));
         lblErro.setFont(new Font("SansSerif", Font.PLAIN, 12));
         gbc.gridy = 5; gbc.insets = new Insets(0, 0, 10, 0);
         painel.add(lblErro, gbc);
-
 
         JButton btnEntrar = new JButton("Entrar") {
             @Override protected void paintComponent(Graphics g) {
@@ -128,7 +124,6 @@ public class LoginAdmin extends JFrame {
         return painel;
     }
 
-
     private void fazerLogin() {
         String email = txtEmail.getText().trim();
         String senha = new String(txtSenha.getPassword()).trim();
@@ -139,14 +134,13 @@ public class LoginAdmin extends JFrame {
             case SUCESSO_ADMIN -> {
                 lblErro.setText("");
                 dispose();
-                new RelatorioAdmin().setVisible(true);
+                new RelatorioAdmin(animalService, usuarioService).setVisible(true);
             }
             case CREDENCIAIS_INVALIDAS -> lblErro.setText("Email ou senha inválidos.");
             case ERRO                  -> lblErro.setText("Erro ao conectar. Tente novamente.");
             default                    -> lblErro.setText("Acesso não permitido.");
         }
     }
-
 
     private JTextField criarCampoTexto(String placeholder, boolean senha) {
         JTextField campo = senha ? new JPasswordField() : new JTextField();

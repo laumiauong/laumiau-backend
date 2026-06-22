@@ -7,7 +7,6 @@ import jakarta.persistence.*;
 @PrimaryKeyJoinColumn(name = "usuario_id")
 public class Cliente extends Usuario {
 
-    // REMOVIDO o campo Endereco duplicado — já está em Usuario
 
     public Cliente() {}
 
@@ -16,7 +15,7 @@ public class Cliente extends Usuario {
         this.setTipo(TipoUsuario.cliente);
     }
 
-    // Construtor com Endereco adicionado
+
     public Cliente(Long id, String nome, String email, String senha, Endereco endereco) {
         super(id, nome, email, senha, endereco);
         this.setTipo(TipoUsuario.cliente);

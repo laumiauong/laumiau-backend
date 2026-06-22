@@ -22,7 +22,7 @@ public class Endereco {
     @Column(nullable = false)
     private String cep;
 
-    // Lado dono do relacionamento — tem usuario_id no banco
+
     @OneToOne
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;

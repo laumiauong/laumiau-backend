@@ -44,9 +44,9 @@ public class CadastroView extends JFrame {
     }
 
     private void carregarImagemCard() {
-        URL url = ClassLoader.getSystemResource("teste-cadastro.png");
+        URL url = getClass().getClassLoader().getResource("teste-cadastro.png");
         if (url == null) {
-            JOptionPane.showMessageDialog(this, "Imagem teste-cadastro.png não encontrada.");
+            System.err.println("Aviso: Imagem teste-cadastro.png não encontrada.");
             return;
         }
         ImageIcon icon = new ImageIcon(url);
@@ -99,7 +99,6 @@ public class CadastroView extends JFrame {
         }
         repaint();
     }
-
 
     private void cadastrar() {
         String nome            = txtNome.getText().trim();

@@ -58,7 +58,7 @@ public class Animal {
 
     public Animal() {}
 
-    // Construtor sem caminhoFoto
+
     public Animal(String nome, String especie, String raca, int idade, Sexo sexo, boolean vacinado, Porte porte) {
         setNome(nome);
         setEspecie(especie);
@@ -70,7 +70,7 @@ public class Animal {
         this.porte = porte;
     }
 
-    // Construtor com caminhoFoto
+
     public Animal(String nome, String especie, String raca, int idade, Sexo sexo, boolean vacinado, Porte porte, String caminhoFoto) {
         setNome(nome);
         setEspecie(especie);
@@ -136,7 +136,7 @@ public class Animal {
 
     public boolean isVacinado() { return vacinado; }
 
-    // 👇 MÉTODO ADICIONADO AQUI PARA RESOLVER O ERRO 👇
+
     public void setVacinado(boolean vacinado) { this.vacinado = vacinado; }
 
     public void vacinar() { this.vacinado = true; }

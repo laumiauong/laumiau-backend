@@ -1,14 +1,23 @@
 package br.com.laumiau.view;
 
+import laumiau.controller.CadastroAnimalController;
+import laumiau.controller.AnimaisCadastradosController;
+import laumiau.service.AnimalService;
+import laumiau.service.AdocoesService;
+import laumiau.repository.AdocoesRepository;
+import laumiau.repository.AnimalRepository;
+import laumiau.repository.ClienteRepository;
+import laumiau.repository.SolicitacaoAdocaoRepository;
+import laumiau.infra.JPAUtil;
+import jakarta.persistence.EntityManager;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.io.File;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import laumiau.model.Animal;
-import laumiau.model.Porte;
 import laumiau.model.Sexo;
-import laumiau.service.AnimalService;
 
 public class CadastroAnimalView extends JFrame {
 
@@ -18,7 +27,6 @@ public class CadastroAnimalView extends JFrame {
     private final Color LARANJA = new Color(255, 128, 0);
 
     private JLabel icon;
-
     private JTextField campoNome;
     private JTextField campoRaca;
     private JTextField campoIdade;
@@ -36,11 +44,21 @@ public class CadastroAnimalView extends JFrame {
     private AnimalService animalService;
     private Animal animalEditando;
 
+
+    private final CadastroAnimalController controller;
+
+    public CadastroAnimalView(AnimalService animalService) {
+        this(animalService, null);
+    }
+
     public CadastroAnimalView(AnimalService animalService, Animal animalEditando) {
         this.animalService  = animalService;
         this.animalEditando = animalEditando;
 
-        setTitle("Editar Animal");
+
+        this.controller = new CadastroAnimalController(animalService);
+
+        setTitle(animalEditando == null ? "Cadastrar Animal" : "Editar Animal");
         setSize(1000, 780);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -48,19 +66,6 @@ public class CadastroAnimalView extends JFrame {
 
         add(criarTela(), BorderLayout.CENTER);
         preencherCamposEdicao();
-        setVisible(true);
-    }
-
-    public CadastroAnimalView(AnimalService animalService) {
-        this.animalService = animalService;
-
-        setTitle("Cadastrar Animal");
-        setSize(1000, 780);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLayout(new BorderLayout());
-
-        add(criarTela(), BorderLayout.CENTER);
         setVisible(true);
     }
 
@@ -113,8 +118,7 @@ public class CadastroAnimalView extends JFrame {
 
         voltar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent e) {
-                dispose();
-                new AnimaisCadastradosView(animalService).setVisible(true);
+                voltarParaLista();
             }
         });
         painelVoltar.add(voltar);
@@ -211,6 +215,7 @@ public class CadastroAnimalView extends JFrame {
         fundo.add(salvar);
         fundo.add(Box.createVerticalStrut(30));
 
+
         salvar.addActionListener(e -> salvarAnimal());
 
         JScrollPane scroll = new JScrollPane(fundo);
@@ -220,71 +225,53 @@ public class CadastroAnimalView extends JFrame {
     }
 
     private void salvarAnimal() {
+
+        String nome        = campoNome.getText();
+        String especie     = comboEspecie.getSelectedItem().toString();
+        String raca        = campoRaca.getText();
+        String idadeTxt    = campoIdade.getText();
+        String sexo        = comboSexo.getSelectedItem().toString();
+        String porteSel    = comboPorte.getSelectedItem().toString();
+        String peso        = campoPeso.getText();
+        String cor         = campoCor.getText();
+        String responsavel = campoResponsavel.getText();
+        String descricao   = campoDescricao.getText();
+        boolean vacinado   = checkVacinado.isSelected();
+
+        String erro;
+
+
+        if (animalEditando == null) {
+            erro = controller.cadastrar(nome, especie, raca, idadeTxt, sexo, porteSel, peso, cor, responsavel, descricao, vacinado, caminhoFotoSelecionada);
+        } else {
+            erro = controller.atualizar(animalEditando, nome, especie, raca, idadeTxt, sexo, porteSel, peso, cor, responsavel, descricao, vacinado, caminhoFotoSelecionada);
+        }
+
+
+        if (erro == null) {
+            JOptionPane.showMessageDialog(this, animalEditando == null ? "Animal cadastrado com sucesso!" : "Animal atualizado com sucesso!");
+            voltarParaLista();
+        } else {
+            JOptionPane.showMessageDialog(this, erro, "Atenção", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    private void voltarParaLista() {
+        dispose();
         try {
-            String nome    = campoNome.getText().trim();
-            String especie = comboEspecie.getSelectedItem().toString();
-            String raca    = campoRaca.getText().trim();
-            String idadeTxt= campoIdade.getText().trim();
-            String sexo    = comboSexo.getSelectedItem().toString();
 
-            String porteSel = comboPorte.getSelectedItem().toString();
-            String peso     = campoPeso.getText().trim();
-            String cor      = campoCor.getText().trim();
-            String respons  = campoResponsavel.getText().trim(); // Mapeado como respons
-            String desc     = campoDescricao.getText().trim();
-            boolean vacina  = checkVacinado.isSelected();
+            EntityManager em = JPAUtil.getEntityManager();
+            AdocoesService adocoesService = new AdocoesService(
+                    new AdocoesRepository(em),
+                    new AnimalRepository(em),
+                    new ClienteRepository(em),
+                    new SolicitacaoAdocaoRepository(em)
+            );
+            AnimaisCadastradosController listagemController = new AnimaisCadastradosController(animalService, adocoesService);
 
-            if (nome.isEmpty() || especie.equals("Selecione...") || raca.isEmpty() || sexo.equals("Selecione...") || idadeTxt.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Preencha os campos obrigatórios (Nome, Espécie, Raça, Idade, Sexo).");
-                return;
-            }
-
-            int idade = Integer.parseInt(idadeTxt);
-            Sexo sexoEnum = sexo.equals("Macho") ? Sexo.MACHO : Sexo.FEMEA;
-            Porte porteEnum = null;
-            if (!porteSel.equals("Selecione...")) {
-                porteEnum = Porte.valueOf(porteSel);
-            }
-
-            peso = peso.startsWith("Ex:") ? "" : peso;
-            cor = cor.startsWith("Ex:") ? "" : cor;
-            respons = respons.startsWith("Ex:") ? "" : respons;
-            desc = desc.startsWith("Ex:") ? "" : desc;
-
-            if (animalEditando == null) {
-                Animal animal = new Animal(nome, especie, raca, idade, sexoEnum, vacina, porteEnum, caminhoFotoSelecionada);
-                animal.setPeso(peso);
-                animal.setCor(cor);
-                animal.setResponsavel(respons);
-                animal.setDescricao(desc);
-
-                animalService.cadastrar(animal);
-                JOptionPane.showMessageDialog(this, "Animal cadastrado com sucesso!");
-            } else {
-                animalEditando.setNome(nome);
-                animalEditando.setEspecie(especie);
-                animalEditando.setRaca(raca);
-                animalEditando.setIdade(idade);
-                animalEditando.setSexo(sexoEnum);
-                animalEditando.setPorte(porteEnum);
-                animalEditando.setVacinado(vacina);
-                animalEditando.setPeso(peso);
-                animalEditando.setCor(cor);
-                animalEditando.setResponsavel(respons);
-                animalEditando.setDescricao(desc);
-                animalEditando.setCaminhoFoto(caminhoFotoSelecionada);
-
-                animalService.atualizar(animalEditando);
-                JOptionPane.showMessageDialog(this, "Animal atualizado com sucesso!");
-            }
-
-            dispose();
-            new AnimaisCadastradosView(animalService).setVisible(true);
-
-        } catch (NumberFormatException erro) {
-            JOptionPane.showMessageDialog(this, "Digite apenas números na idade.");
-        } catch (Exception erro) {
-            JOptionPane.showMessageDialog(this, "Erro ao salvar: " + erro.getMessage());
+            new AnimaisCadastradosView(listagemController, animalService).setVisible(true);
+        } catch (Exception e) {
+            System.err.println("Erro ao carregar a listagem de animais: " + e.getMessage());
         }
     }
 

@@ -1,17 +1,11 @@
 package br.com.laumiau.view;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
-import laumiau.infra.JPAUtil;
+import laumiau.controller.AnimaisCadastradosController;
 import laumiau.model.Animal;
 import laumiau.model.Cliente;
 import laumiau.model.Sexo;
 import laumiau.model.StatusAnimal;
 import laumiau.model.SolicitacaoAdocao;
-import laumiau.repository.AnimalRepository;
-import laumiau.repository.SolicitacaoAdocaoRepository;
-import laumiau.repository.UsuarioRepository;
 import laumiau.service.AnimalService;
 import laumiau.service.UsuarioService;
 
@@ -22,6 +16,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 public class AnimaisCadastradosView extends JFrame {
 
@@ -30,29 +25,31 @@ public class AnimaisCadastradosView extends JFrame {
     private final Color TEXTO   = new Color(15, 23, 42);
     private final Color CINZA   = new Color(160, 170, 185);
 
-    private AnimalService animalService;
-    private UsuarioService usuarioService;
-    private Cliente clienteLogado;
-    private boolean isAdmin;
+    private final AnimaisCadastradosController controller;
+    private final AnimalService animalService;
+    private final UsuarioService usuarioService;
+    private final Cliente clienteLogado;
+    private final boolean isAdmin;
 
     private JPanel grid;
     private JTextField pesquisa;
 
     private final String PLACEHOLDER = "Buscar por nome ou ID";
 
-    public AnimaisCadastradosView(AnimalService animalService) {
-        this(animalService, null, null, false);
+    public AnimaisCadastradosView(AnimaisCadastradosController controller, AnimalService animalService) {
+        this(controller, animalService, null, null, false);
     }
 
-    public AnimaisCadastradosView(AnimalService animalService, UsuarioService usuarioService) {
-        this(animalService, usuarioService, null, false);
+    public AnimaisCadastradosView(AnimaisCadastradosController controller, AnimalService animalService, UsuarioService usuarioService) {
+        this(controller, animalService, usuarioService, null, false);
     }
 
-    public AnimaisCadastradosView(AnimalService animalService, Cliente clienteLogado, boolean isAdmin) {
-        this(animalService, null, clienteLogado, isAdmin);
+    public AnimaisCadastradosView(AnimaisCadastradosController controller, AnimalService animalService, Cliente clienteLogado, boolean isAdmin) {
+        this(controller, animalService, null, clienteLogado, isAdmin);
     }
 
-    public AnimaisCadastradosView(AnimalService animalService, UsuarioService usuarioService, Cliente clienteLogado, boolean isAdmin) {
+    public AnimaisCadastradosView(AnimaisCadastradosController controller, AnimalService animalService, UsuarioService usuarioService, Cliente clienteLogado, boolean isAdmin) {
+        this.controller = controller;
         this.animalService = animalService;
         this.usuarioService = usuarioService;
         this.clienteLogado = clienteLogado;
@@ -84,12 +81,7 @@ public class AnimaisCadastradosView extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 dispose();
-                EntityManager emNovo = JPAUtil.getEntityManager();
-                AnimalService novoService = new AnimalService(new AnimalRepository(emNovo), new SolicitacaoAdocaoRepository(emNovo));
-                UsuarioService novoUsuarioService = usuarioService != null
-                        ? usuarioService
-                        : new UsuarioService(new UsuarioRepository(emNovo));
-                new AnimalView(novoService, novoUsuarioService, clienteLogado);
+                new AnimalView(animalService, usuarioService, clienteLogado);
             }
         });
 
@@ -188,7 +180,7 @@ public class AnimaisCadastradosView extends JFrame {
         String texto = filtro.equals(PLACEHOLDER) ? "" : filtro.toLowerCase().trim();
 
         try {
-            java.util.List<Animal> listaAnimais = animalService.listarTodos();
+            List<Animal> listaAnimais = controller.listarTodos();
 
             if (listaAnimais == null || listaAnimais.isEmpty()) {
                 JLabel lblAviso = new JLabel("Nenhum animal cadastrado no banco de dados.", SwingConstants.CENTER);
@@ -210,7 +202,7 @@ public class AnimaisCadastradosView extends JFrame {
                 }
             }
         } catch (Exception e) {
-            JLabel lblErro = new JLabel("Erro ao conectar com o banco: " + e.getMessage(), SwingConstants.CENTER);
+            JLabel lblErro = new JLabel("Erro ao carregar os animais.", SwingConstants.CENTER);
             lblErro.setForeground(Color.RED);
             grid.add(lblErro);
             e.printStackTrace();
@@ -268,7 +260,7 @@ public class AnimaisCadastradosView extends JFrame {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     e.consume();
-                    SolicitacaoAdocao sol = animalService.buscarSolicitacaoDoAnimal(animal.getId());
+                    SolicitacaoAdocao sol = controller.buscarFormularioDoAnimal(animal.getId());
                     if (sol != null) {
                         JOptionPane.showMessageDialog(null,
                                 "CPF: " + sol.getCpf() + "\n" +
@@ -306,40 +298,21 @@ public class AnimaisCadastradosView extends JFrame {
                             null, options, options[0]);
 
                     if (escolha == 0) {
-                        EntityManager emLocal = null;
-                        try {
-                            emLocal = JPAUtil.getEntityManager();
-                            emLocal.getTransaction().begin();
-
-                            Animal animalBd = emLocal.find(Animal.class, animal.getId());
-                            if(animalBd != null) {
-                                animalBd.setStatus(StatusAnimal.DISPONIVEL);
-                                emLocal.createQuery("DELETE FROM Adocoes a WHERE a.animal.id = :animalId")
-                                        .setParameter("animalId", animal.getId())
-                                        .executeUpdate();
-                            }
-
-                            emLocal.getTransaction().commit();
-
-
+                        String erro = controller.cancelarAdocao(animal.getId());
+                        if (erro == null) {
                             animal.setStatus(StatusAnimal.DISPONIVEL);
-
                             carregarAnimais(pesquisa.getText());
                             JOptionPane.showMessageDialog(null, "Adoção cancelada! O pet já está de volta à lista principal.");
-                        } catch (Exception erro) {
-                            if (emLocal != null && emLocal.getTransaction().isActive()) emLocal.getTransaction().rollback();
-                            JOptionPane.showMessageDialog(null, "Erro ao cancelar adoção: " + erro.getMessage());
-                        } finally {
-                            if (emLocal != null && emLocal.isOpen()) emLocal.close();
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Erro ao cancelar adoção: " + erro);
                         }
-
                     } else if (escolha == 1) {
-                        try {
-                            animalService.remover(animal.getId());
+                        String erro = controller.remover(animal.getId());
+                        if (erro == null) {
                             carregarAnimais(pesquisa.getText());
                             JOptionPane.showMessageDialog(null, "Animal excluído com sucesso!");
-                        } catch (Exception erro) {
-                            JOptionPane.showMessageDialog(null, "Não foi possível excluir. Verifique se ele possui dependências.");
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Não foi possível excluir. " + erro);
                         }
                     }
                 }
@@ -499,7 +472,7 @@ public class AnimaisCadastradosView extends JFrame {
             if (clienteLogado != null) {
                 tela.dispose();
                 dispose();
-                new AdocaoView(animalService, animal, clienteLogado).setVisible(true);
+                new AdocaoView(animalService, usuarioService, animal, clienteLogado).setVisible(true);
             } else {
                 JOptionPane.showMessageDialog(tela,
                         "Para adotar um pet, você precisa fazer login ou se cadastrar no sistema primeiro.",
@@ -583,14 +556,6 @@ public class AnimaisCadastradosView extends JFrame {
         label.setText("🐾");
         label.setFont(new Font("SansSerif", Font.PLAIN, largura >= 250 ? 56 : 46));
         label.setForeground(CINZA);
-    }
-
-    public static void main(String[] args) {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("laumiau");
-        EntityManager em = emf.createEntityManager();
-        AnimalRepository repository = new AnimalRepository(em);
-        AnimalService service = new AnimalService(repository, new SolicitacaoAdocaoRepository(em));
-        SwingUtilities.invokeLater(() -> new AnimaisCadastradosView(service));
     }
 
     static class RoundedPanel extends JPanel {

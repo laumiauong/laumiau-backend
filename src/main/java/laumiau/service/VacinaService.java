@@ -25,7 +25,6 @@ public class VacinaService {
         Vacina vacina = new Vacina(animal, nome, dataAplicacao, proximaDose);
         vacinaRepository.salvar(vacina);
 
-        // marca animal como vacinado automaticamente
         if (!animal.isVacinado()) {
             animal.vacinar();
             animalRepository.atualizar(animal);

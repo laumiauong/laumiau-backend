@@ -1,19 +1,19 @@
 package br.com.laumiau.view;
 
+import laumiau.controller.AnimaisCadastradosController;
 import laumiau.controller.SolicitacoesController;
 import laumiau.infra.JPAUtil;
 import laumiau.model.Adocoes;
 import laumiau.model.SolicitacaoAdocao;
 import laumiau.repository.*;
-import laumiau.service.AdocoesService;
-import laumiau.service.AnimalService;
-import laumiau.repository.AnimalRepository;
+import laumiau.service.*;
 
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
+import jakarta.persistence.EntityManager;
 
 public class SolicitacoesView extends JFrame {
 
@@ -26,15 +26,13 @@ public class SolicitacoesView extends JFrame {
     private JPanel gridSolicitacoes;
 
     private final SolicitacoesController controller;
+    private final AnimalService animalService;
+    private final UsuarioService usuarioService;
 
-    public SolicitacoesView() {
-        AdocoesService adocoesService = new AdocoesService(
-                new AdocoesRepository(JPAUtil.getEntityManager()),
-                new AnimalRepository(JPAUtil.getEntityManager()),
-                new ClienteRepository(JPAUtil.getEntityManager()),
-                new SolicitacaoAdocaoRepository(JPAUtil.getEntityManager())
-        );
-        this.controller = new SolicitacoesController(adocoesService);
+    public SolicitacoesView(SolicitacoesController controller, AnimalService animalService, UsuarioService usuarioService) {
+        this.controller = controller;
+        this.animalService = animalService;
+        this.usuarioService = usuarioService;
 
         setTitle("LauMiau - Formulários de Adoção");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -217,13 +215,19 @@ public class SolicitacoesView extends JFrame {
         menu.setOpaque(false);
 
         JLabel dashboard = navLink("Dashboard", () -> {
-            new RelatorioAdmin().setVisible(true);
+            new RelatorioAdmin(animalService, usuarioService).setVisible(true);
             dispose();
         });
-
         JLabel animais = navLink("Animais", () -> {
-            AnimalService s = new AnimalService(new AnimalRepository(JPAUtil.getEntityManager()));
-            new AnimaisCadastradosView(s, null, true).setVisible(true);
+            EntityManager em = JPAUtil.getEntityManager();
+            AdocoesService adocoesService = new AdocoesService(
+                    new AdocoesRepository(em),
+                    new AnimalRepository(em),
+                    new ClienteRepository(em),
+                    new SolicitacaoAdocaoRepository(em)
+            );
+            AnimaisCadastradosController listagemController = new AnimaisCadastradosController(animalService, adocoesService);
+            new AnimaisCadastradosView(listagemController, animalService, usuarioService, null, true).setVisible(true);
             dispose();
         });
 
@@ -254,8 +258,7 @@ public class SolicitacoesView extends JFrame {
         btnSair.setBorderPainted(false);
         btnSair.setFocusPainted(false);
         btnSair.addActionListener(e -> {
-            AnimalService s = new AnimalService(new AnimalRepository(JPAUtil.getEntityManager()));
-            new AnimalView(s).setVisible(true);
+            new AnimalView(animalService, usuarioService, null).setVisible(true);
             dispose();
         });
         sairContainer.add(btnSair);

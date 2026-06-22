@@ -3,19 +3,27 @@ package br.com.laumiau.view;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
-import laumiau.infra.JPAUtil;
+import laumiau.controller.AdocaoController;
 import laumiau.model.Animal;
 import laumiau.model.Cliente;
 import laumiau.model.Endereco;
-import laumiau.repository.*;
 import laumiau.service.AdocoesService;
 import laumiau.service.AnimalService;
+import laumiau.service.UsuarioService;
+import laumiau.repository.AdocoesRepository;
+import laumiau.repository.AnimalRepository;
+import laumiau.repository.ClienteRepository;
+import laumiau.repository.SolicitacaoAdocaoRepository;
+import laumiau.infra.JPAUtil;
+import jakarta.persistence.EntityManager;
 
 public class AdocaoView extends JFrame {
 
-    private final Animal        animalAdotando;
-    private final Cliente       clienteLogado;
-    private final AnimalService animalService;
+    private final Animal           animalAdotando;
+    private final Cliente          clienteLogado;
+    private final AnimalService    animalService;
+    private final UsuarioService   usuarioService;
+    private final AdocaoController controller;
 
     private JTextField txtNome, txtEmail, txtTelefone, txtCpf,
             txtDataNasc, txtProfissao, txtEndereco, txtCidade,
@@ -36,10 +44,20 @@ public class AdocaoView extends JFrame {
     private static final String PH_OUTROSPETS = "Conte sobre seus pets";
     private static final String PH_MOTIVO     = "Conte nos sua motivação para adotar";
 
-    public AdocaoView(AnimalService animalService, Animal animalAdotando, Cliente clienteLogado) {
-        this.animalService  = animalService;
-        this.animalAdotando = animalAdotando;
-        this.clienteLogado  = clienteLogado;
+    public AdocaoView(AnimalService animalService, UsuarioService usuarioService, Animal animalAdotando, Cliente clienteLogado) {
+        this.animalService   = animalService;
+        this.usuarioService  = usuarioService;
+        this.animalAdotando  = animalAdotando;
+        this.clienteLogado   = clienteLogado;
+
+        EntityManager em = JPAUtil.getEntityManager();
+        AdocoesService adocoesService = new AdocoesService(
+                new AdocoesRepository(em),
+                new AnimalRepository(em),
+                new ClienteRepository(em),
+                new SolicitacaoAdocaoRepository(em)
+        );
+        this.controller = new AdocaoController(adocoesService);
 
         setTitle("Formulário de Adoção - LauMiau");
         setSize(900, 950);
@@ -100,8 +118,11 @@ public class AdocaoView extends JFrame {
     }
 
     private void enviarSolicitacao() {
-        String erro = validarCampos();
-        if (erro != null) { mostrarErro(erro); return; }
+        String erroValidacao = validarCampos();
+        if (erroValidacao != null) {
+            mostrarErro(erroValidacao);
+            return;
+        }
 
         int opcao = JOptionPane.showConfirmDialog(this,
                 "Confirma a solicitação de adoção de " + animalAdotando.getNome() + "?\n" +
@@ -109,42 +130,29 @@ public class AdocaoView extends JFrame {
                 "Confirmar Adoção", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (opcao != JOptionPane.YES_OPTION) return;
 
-        try {
-            AdocoesService service = new AdocoesService(
-                    new AdocoesRepository(JPAUtil.getEntityManager()),
-                    new AnimalRepository(JPAUtil.getEntityManager()),
-                    new ClienteRepository(JPAUtil.getEntityManager()),
-                    new SolicitacaoAdocaoRepository(JPAUtil.getEntityManager())
-            );
+        String erroController = controller.registrarSolicitacao(
+                animalAdotando.getId(),
+                clienteLogado.getId(),
+                checkTermo.isSelected(),
+                valor(txtTelefone,  PH_TELEFONE),
+                valor(txtCpf,       PH_CPF),
+                valor(txtDataNasc,  PH_DATANASC),
+                valor(txtProfissao, PH_PROFISSAO),
+                (String) comboMoradia.getSelectedItem(),
+                (String) comboQuintal.getSelectedItem(),
+                (String) comboTevePets.getSelectedItem(),
+                valor(txtOutrosPets, PH_OUTROSPETS),
+                valor(txtMotivo,     PH_MOTIVO)
+        );
 
-            service.registrarAdocao(
-                    animalAdotando.getId(),
-                    clienteLogado.getId(),
-                    checkTermo.isSelected(),
-                    valor(txtTelefone,  PH_TELEFONE),
-                    valor(txtCpf,       PH_CPF),
-                    valor(txtDataNasc,  PH_DATANASC),
-                    valor(txtProfissao, PH_PROFISSAO),
-                    (String) comboMoradia.getSelectedItem(),
-                    (String) comboQuintal.getSelectedItem(),
-                    (String) comboTevePets.getSelectedItem(),
-                    valor(txtOutrosPets, PH_OUTROSPETS),
-                    valor(txtMotivo,     PH_MOTIVO)
-            );
-
+        if (erroController == null) {
             mostrarSucesso();
-
-            AnimalService novoService = new AnimalService(
-                    new AnimalRepository(JPAUtil.getEntityManager())
-            );
-            new AnimalView(animalService, null, clienteLogado);
             dispose();
-
-        } catch (RuntimeException ex) {
-            mostrarErro("Erro ao registrar adoção:\n" + ex.getMessage());
+            new AnimalView(animalService, usuarioService, clienteLogado).setVisible(true);
+        } else {
+            mostrarErro("Erro ao registrar adoção:\n" + erroController);
         }
     }
-
 
     private JPanel criarCardDadosPessoais() {
         JPanel card = criarCard("Dados Pessoais");
@@ -217,7 +225,6 @@ public class AdocaoView extends JFrame {
         return empacotar(card);
     }
 
-
     private String validarCampos() {
         if (vazio(txtTelefone,  PH_TELEFONE))  return "Preencha o campo: Telefone/WhatsApp";
         if (vazio(txtCpf,       PH_CPF))       return "Preencha o campo: CPF";
@@ -249,7 +256,6 @@ public class AdocaoView extends JFrame {
         String v = txt.getText().trim();
         return (v.isEmpty() || v.equals(placeholder)) ? null : v;
     }
-
 
     private void mostrarErro(String msg) {
         JOptionPane.showMessageDialog(this, msg, "Atenção", JOptionPane.WARNING_MESSAGE);
@@ -401,7 +407,6 @@ public class AdocaoView extends JFrame {
         combo.setBackground(Color.WHITE);
         combo.setBorder(BorderFactory.createLineBorder(new Color(210, 210, 210), 1));
     }
-
 
     private JPanel criarBannerPet() {
         JPanel p = new JPanel();

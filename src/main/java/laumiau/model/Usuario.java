@@ -24,8 +24,7 @@ public abstract class Usuario {
     @Column(nullable = false)
     private TipoUsuario tipo;
 
-    // Corrigido: o lado dono é Endereco (tem usuario_id no banco)
-    // então aqui usamos mappedBy
+
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
     private Endereco endereco;
 

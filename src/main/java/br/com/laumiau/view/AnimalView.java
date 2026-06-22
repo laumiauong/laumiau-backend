@@ -1,43 +1,57 @@
 package br.com.laumiau.view;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.RoundRectangle2D;
+import laumiau.controller.AnimalController;
+import laumiau.controller.AnimaisCadastradosController;
+import laumiau.infra.JPAUtil;
 import laumiau.model.Animal;
 import laumiau.model.Cliente;
 import laumiau.model.Porte;
 import laumiau.model.Sexo;
 import laumiau.model.StatusAnimal;
+import laumiau.repository.AdocoesRepository;
+import laumiau.repository.AnimalRepository;
+import laumiau.repository.ClienteRepository;
+import laumiau.repository.SolicitacaoAdocaoRepository;
+import laumiau.service.AdocoesService;
 import laumiau.service.AnimalService;
 import laumiau.service.UsuarioService;
+
+import jakarta.persistence.EntityManager;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.RoundRectangle2D;
 import java.util.List;
+import java.util.ArrayList;
 
 public class AnimalView extends JFrame {
 
     private final Color LARANJA = new Color(255, 107, 43);
-    private final Color TEXTO = new Color(15, 23, 42);
-    private final Color CINZA = new Color(160, 170, 185);
-    private final Color FUNDO = new Color(253, 247, 242);
+    private final Color TEXTO   = new Color(15, 23, 42);
+    private final Color CINZA   = new Color(160, 170, 185);
+    private final Color FUNDO   = new Color(253, 247, 242);
     private final Color CARD_BG = Color.WHITE;
 
-    private AnimalService animalService;
+    private AnimalService  animalService;
     private UsuarioService usuarioService;
-    private Cliente clienteLogado;
+    private Cliente        clienteLogado;
 
+    private final AnimalController controller;
 
     public AnimalView(AnimalService animalService) {
         this(animalService, null, null);
     }
+
     public AnimalView(AnimalService animalService, UsuarioService usuarioService) {
         this(animalService, usuarioService, null);
     }
 
     public AnimalView(AnimalService animalService, UsuarioService usuarioService, Cliente clienteLogado) {
-        this.animalService = animalService;
+        this.animalService  = animalService;
         this.usuarioService = usuarioService;
-        this.clienteLogado = clienteLogado;
+        this.clienteLogado  = clienteLogado;
+        this.controller     = new AnimalController(animalService);
 
         setTitle("LAU & MIAU - Animais");
         setSize(1280, 780);
@@ -58,37 +72,33 @@ public class AnimalView extends JFrame {
     }
 
     private void popularBancoSeVazio() {
-        try {
-            List<Animal> existentes = animalService.listarTodos();
-            List<String> nomesExistentes = new java.util.ArrayList<>();
-            if (existentes != null) {
-                for (Animal a : existentes) {
-                    nomesExistentes.add(a.getNome().toLowerCase());
-                }
+        List<Animal> existentes     = controller.listarTodos();
+        List<String> nomesExistentes = new ArrayList<>();
+
+        if (existentes != null) {
+            for (Animal a : existentes) {
+                nomesExistentes.add(a.getNome().toLowerCase());
             }
+        }
 
-            Animal[] animaisPadrao = {
-                    criarAnimal("Fofuxo",   "Gato",     "SRD", 12, Sexo.MACHO, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO1.png"),
-                    criarAnimal("Princesa",  "Gato",     "SRD",  8, Sexo.FEMEA, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO2.png"),
-                    criarAnimal("Bonitão",   "Gato",     "SRD", 24, Sexo.MACHO, false, Porte.MEDIO,   "ONG Lau & Miau", "img/imgGATO3.png"),
-                    criarAnimal("Bebe",      "Gato",     "SRD",  6, Sexo.FEMEA, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO4.png"),
-                    criarAnimal("Rabinho",   "Cachorro", "SRD", 36, Sexo.MACHO, true,  Porte.GRANDE,  "ONG Lau & Miau", "img/imgCACHORRO1.png"),
-                    criarAnimal("Charmosa",  "Gato",     "SRD", 18, Sexo.FEMEA, false, Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO6.png"),
-                    criarAnimal("Banguela",  "Cachorro", "SRD", 14, Sexo.MACHO, true,  Porte.MEDIO,   "ONG Lau & Miau", "img/imgCACHORRO2.png"),
-                    criarAnimal("Preciosa",  "Gato",     "SRD", 10, Sexo.FEMEA, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO8.png"),
-                    criarAnimal("Renê",      "Gato",     "SRD", 15, Sexo.MACHO, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO9.png"),
-                    criarAnimal("Perninha",  "Gato",     "SRD", 20, Sexo.MACHO, false, Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO10.png")
-            };
+        Animal[] animaisPadrao = {
+                criarAnimal("Fofuxo",   "Gato",     "SRD", 12, Sexo.MACHO, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO1.png"),
+                criarAnimal("Princesa",  "Gato",     "SRD",  8, Sexo.FEMEA, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO2.png"),
+                criarAnimal("Bonitão",   "Gato",     "SRD", 24, Sexo.MACHO, false, Porte.MEDIO,   "ONG Lau & Miau", "img/imgGATO3.png"),
+                criarAnimal("Bebe",      "Gato",     "SRD",  6, Sexo.FEMEA, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO4.png"),
+                criarAnimal("Rabinho",   "Cachorro", "SRD", 36, Sexo.MACHO, true,  Porte.GRANDE,  "ONG Lau & Miau", "img/imgCACHORRO1.png"),
+                criarAnimal("Charmosa",  "Gato",     "SRD", 18, Sexo.FEMEA, false, Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO6.png"),
+                criarAnimal("Banguela",  "Cachorro", "SRD", 14, Sexo.MACHO, true,  Porte.MEDIO,   "ONG Lau & Miau", "img/imgCACHORRO2.png"),
+                criarAnimal("Preciosa",  "Gato",     "SRD", 10, Sexo.FEMEA, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO8.png"),
+                criarAnimal("Renê",      "Gato",     "SRD", 15, Sexo.MACHO, true,  Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO9.png"),
+                criarAnimal("Perninha",  "Gato",     "SRD", 20, Sexo.MACHO, false, Porte.PEQUENO, "ONG Lau & Miau", "img/imgGATO10.png")
+        };
 
-            for (Animal a : animaisPadrao) {
-                if (!nomesExistentes.contains(a.getNome().toLowerCase())) {
-                    animalService.cadastrar(a);
-                    System.out.println("✅ Cadastrado: " + a.getNome());
-                }
+        for (Animal a : animaisPadrao) {
+            if (!nomesExistentes.contains(a.getNome().toLowerCase())) {
+                controller.cadastrar(a);
+                System.out.println("✅ Cadastrado automático: " + a.getNome());
             }
-
-        } catch (Exception e) {
-            System.err.println("Aviso: Não foi possível popular o banco: " + e.getMessage());
         }
     }
 
@@ -118,7 +128,16 @@ public class AnimalView extends JFrame {
                             clienteLogado.getNome() != null &&
                             clienteLogado.getNome().toLowerCase().contains("admin"));
 
-                    new AnimaisCadastradosView(animalService, clienteLogado, isAdmin);
+                    EntityManager em = JPAUtil.getEntityManager();
+                    AdocoesService adocoesService = new AdocoesService(
+                            new AdocoesRepository(em),
+                            new AnimalRepository(em),
+                            new ClienteRepository(em),
+                            new SolicitacaoAdocaoRepository(em)
+                    );
+                    AnimaisCadastradosController listagemController = new AnimaisCadastradosController(animalService, adocoesService);
+
+                    new AnimaisCadastradosView(listagemController, animalService, usuarioService, clienteLogado, isAdmin).setVisible(true);
                     dispose();
                 } catch (Exception erro) {
                     JOptionPane.showMessageDialog(null,
@@ -138,20 +157,17 @@ public class AnimalView extends JFrame {
 
         popularBancoSeVazio();
 
-        try {
-            List<Animal> animaisDoBanco = animalService.listarTodos();
-            if (animaisDoBanco != null) {
-                for (Animal animal : animaisDoBanco) {
-                    if (animal.getStatus() == StatusAnimal.DISPONIVEL) {
-                        grid.add(criarCard(animal));
-                    }
+        List<Animal> animaisDoBanco = controller.listarTodos();
+        if (animaisDoBanco != null) {
+            for (Animal animal : animaisDoBanco) {
+                if (animal.getStatus() == StatusAnimal.DISPONIVEL) {
+                    grid.add(criarCard(animal));
                 }
             }
-        } catch (Exception e) {
-            JLabel lblErro = new JLabel("Erro ao carregar animais: " + e.getMessage(), SwingConstants.CENTER);
+        } else {
+            JLabel lblErro = new JLabel("Não foi possível carregar os animais.", SwingConstants.CENTER);
             lblErro.setForeground(Color.RED);
             grid.add(lblErro);
-            e.printStackTrace();
         }
 
         conteudo.add(cabecalho, BorderLayout.NORTH);
@@ -180,12 +196,10 @@ public class AnimalView extends JFrame {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
                 for (int i = 4; i >= 1; i--) {
                     g2.setColor(new Color(0, 0, 0, 8));
                     g2.fill(new RoundRectangle2D.Float(i, i + 2, getWidth() - i * 2, getHeight() - i * 2, 20, 20));
                 }
-
                 g2.setColor(CARD_BG);
                 g2.fill(new RoundRectangle2D.Float(0, 0, getWidth() - 4, getHeight() - 4, 20, 20));
                 g2.dispose();
@@ -217,7 +231,6 @@ public class AnimalView extends JFrame {
                 g2.dispose();
                 super.paintComponent(g);
             }
-
             @Override
             protected void paintBorder(Graphics g) {}
         };
@@ -274,7 +287,7 @@ public class AnimalView extends JFrame {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setColor(corSexo);
                 int sz = 10;
-                int y = (getHeight() - sz) / 2;
+                int y  = (getHeight() - sz) / 2;
                 g2.fillOval(0, y, sz, sz);
                 g2.dispose();
             }
@@ -424,12 +437,11 @@ public class AnimalView extends JFrame {
         adotar.setFont(new Font("SansSerif", Font.BOLD, 18));
         adotar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 58));
 
-
         adotar.addActionListener(e -> {
             if (clienteLogado != null) {
                 tela.dispose();
                 dispose();
-                new AdocaoView(animalService, animal, clienteLogado).setVisible(true);
+                new AdocaoView(animalService, usuarioService, animal, clienteLogado).setVisible(true);
             } else {
                 JOptionPane.showMessageDialog(tela,
                         "Para adotar um pet, você precisa fazer login ou se cadastrar no sistema primeiro.",

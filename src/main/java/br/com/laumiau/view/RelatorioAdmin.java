@@ -1,7 +1,7 @@
 package br.com.laumiau.view;
 
 import laumiau.controller.AdocaoController;
-import laumiau.controller.AnimalController;
+import laumiau.controller.AnimaisCadastradosController;
 import laumiau.controller.DashboardController;
 import laumiau.infra.JPAUtil;
 import laumiau.model.Adocoes;
@@ -16,6 +16,7 @@ import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
+import jakarta.persistence.EntityManager;
 
 public class RelatorioAdmin extends JFrame {
 
@@ -28,28 +29,27 @@ public class RelatorioAdmin extends JFrame {
     private static final Color BRANCO       = Color.WHITE;
     private static final Color BORDAS_LEVES = new Color(230, 230, 230);
 
-
     private final DashboardController dashboardController;
     private final AdocaoController    adocaoController;
-    private final AnimalController    animalController;
 
-    public RelatorioAdmin() {
 
-        var em = JPAUtil.getEntityManager();
+    private final AnimalService       animalService;
+    private final UsuarioService      usuarioService;
 
-        dashboardController = new DashboardController(
-                new RelatorioService(em)
-        );
-        adocaoController = new AdocaoController(
+    public RelatorioAdmin(AnimalService animalService, UsuarioService usuarioService) {
+        this.animalService = animalService;
+        this.usuarioService = usuarioService;
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        this.dashboardController = new DashboardController(new RelatorioService(em));
+        this.adocaoController = new AdocaoController(
                 new AdocoesService(
-                        new AdocoesRepository(JPAUtil.getEntityManager()),
-                        new AnimalRepository(JPAUtil.getEntityManager()),
-                        new ClienteRepository(JPAUtil.getEntityManager()),
-                        new SolicitacaoAdocaoRepository(JPAUtil.getEntityManager())
+                        new AdocoesRepository(em),
+                        new AnimalRepository(em),
+                        new ClienteRepository(em),
+                        new SolicitacaoAdocaoRepository(em)
                 )
-        );
-        animalController = new AnimalController(
-                new AnimalService(new AnimalRepository(JPAUtil.getEntityManager()))
         );
 
         setTitle("LauMiau - Dashboard Administrativa");
@@ -68,7 +68,6 @@ public class RelatorioAdmin extends JFrame {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
 
-
         JPanel tPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         tPanel.setOpaque(false);
         tPanel.add(new JLabel(
@@ -77,7 +76,6 @@ public class RelatorioAdmin extends JFrame {
         gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
         gbc.insets = new Insets(0, 0, 25, 0);
         mainContent.add(tPanel, gbc);
-
 
         JPanel cardsRow = new JPanel(new GridLayout(1, 4, 20, 0));
         cardsRow.setOpaque(false);
@@ -220,7 +218,6 @@ public class RelatorioAdmin extends JFrame {
         }
     }
 
-
     private JPanel criarNavbarAdmin() {
         JPanel nav = new JPanel(new BorderLayout());
         nav.setBackground(BRANCO);
@@ -239,14 +236,18 @@ public class RelatorioAdmin extends JFrame {
         dashboard.setFont(new Font("SansSerif", Font.BOLD, 14));
 
         JLabel animais = navLink("Animais", () -> {
-            AnimalService s = new AnimalService(new AnimalRepository(JPAUtil.getEntityManager()));
-            new AnimaisCadastradosView(s, null, true).setVisible(true);
+            EntityManager em = JPAUtil.getEntityManager();
+            AdocoesService adocService = new AdocoesService(
+                    new AdocoesRepository(em), new AnimalRepository(em), new ClienteRepository(em), new SolicitacaoAdocaoRepository(em)
+            );
+            AnimaisCadastradosController ctrl = new AnimaisCadastradosController(animalService, adocService);
+            new AnimaisCadastradosView(ctrl, animalService, usuarioService, null, true).setVisible(true);
             dispose();
         });
 
+
         JLabel solicitacoes = navLink("Solicitações", () -> {
-            new SolicitacoesView().setVisible(true);
-            dispose();
+            JOptionPane.showMessageDialog(this, "Tela de solicitações em desenvolvimento.");
         });
 
         menu.add(dashboard);
@@ -272,8 +273,7 @@ public class RelatorioAdmin extends JFrame {
         btnSair.setBorderPainted(false);
         btnSair.setFocusPainted(false);
         btnSair.addActionListener(e -> {
-            AnimalService s = new AnimalService(new AnimalRepository(JPAUtil.getEntityManager()));
-            new AnimalView(s).setVisible(true);
+            new AnimalView(animalService, usuarioService, null).setVisible(true);
             dispose();
         });
         sairContainer.add(btnSair);
@@ -305,7 +305,6 @@ public class RelatorioAdmin extends JFrame {
         return logo;
     }
 
-
     private JPanel criarPainelSolicitacoes() {
         JPanel p = new RoundedPanel(25);
         p.setLayout(new BorderLayout());
@@ -333,15 +332,18 @@ public class RelatorioAdmin extends JFrame {
 
         OrangeButton btnCadastrar = new OrangeButton("➕  Cadastrar Novo Pet");
         btnCadastrar.addActionListener(e -> SwingUtilities.invokeLater(() -> {
-            AnimalService s = new AnimalService(new AnimalRepository(JPAUtil.getEntityManager()));
-            new CadastroAnimalView(s).setVisible(true);
+            new CadastroAnimalView(animalService).setVisible(true);
             dispose();
         }));
 
         OrangeButton btnGerenciar = new OrangeButton("📊  Gerenciar Animais");
         btnGerenciar.addActionListener(e -> SwingUtilities.invokeLater(() -> {
-            AnimalService s = new AnimalService(new AnimalRepository(JPAUtil.getEntityManager()));
-            new AnimaisCadastradosView(s, null, true).setVisible(true);
+            EntityManager em = JPAUtil.getEntityManager();
+            AdocoesService adocService = new AdocoesService(
+                    new AdocoesRepository(em), new AnimalRepository(em), new ClienteRepository(em), new SolicitacaoAdocaoRepository(em)
+            );
+            AnimaisCadastradosController ctrl = new AnimaisCadastradosController(animalService, adocService);
+            new AnimaisCadastradosView(ctrl, animalService, usuarioService, null, true).setVisible(true);
             dispose();
         }));
 
@@ -350,7 +352,6 @@ public class RelatorioAdmin extends JFrame {
         p.add(botoes, BorderLayout.CENTER);
         return p;
     }
-
 
     private JButton botaoAcao(String texto, Color cor) {
         JButton btn = new JButton(texto) {

@@ -14,7 +14,7 @@ public class CadastroController {
     }
 
     public String cadastrar(String nome, String email, String senha, String confirmarSenha) {
-        if (nome.isBlank() || email.isBlank() || senha.isBlank() || confirmarSenha.isBlank())
+        if (campoVazio(nome) || campoVazio(email) || campoVazio(senha) || campoVazio(confirmarSenha))
             return "Preencha todos os campos.";
         if (!email.contains("@") || !email.contains("."))
             return "Informe um e-mail válido.";
@@ -30,10 +30,13 @@ public class CadastroController {
 
             Cliente cliente = new Cliente(null, nome, email, senha);
             usuarioService.cadastrar(cliente);
-            return null; // sucesso
+            return null;
 
         } catch (RuntimeException e) {
             return "Erro ao cadastrar usuário: " + e.getMessage();
         }
+    }
+    private boolean campoVazio(String valor) {
+        return valor == null || valor.isBlank();
     }
 }

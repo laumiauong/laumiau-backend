@@ -1,7 +1,13 @@
 package br.com.laumiau.view;
 
+import laumiau.controller.AnimaisCadastradosController;
+import laumiau.infra.JPAUtil;
+import laumiau.repository.*;
+import laumiau.service.AdocoesService;
 import laumiau.service.AnimalService;
 import laumiau.service.UsuarioService;
+import jakarta.persistence.EntityManager;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -112,7 +118,16 @@ public class NavbarPadrao extends JPanel {
                             case "Animais" -> {
                                 if (animalService != null) {
                                     try {
-                                        new AnimaisCadastradosView(animalService);
+                                        EntityManager em = JPAUtil.getEntityManager();
+                                        AdocoesService adocoesService = new AdocoesService(
+                                                new AdocoesRepository(em),
+                                                new AnimalRepository(em),
+                                                new ClienteRepository(em),
+                                                new SolicitacaoAdocaoRepository(em)
+                                        );
+                                        AnimaisCadastradosController listagemController = new AnimaisCadastradosController(animalService, adocoesService);
+
+                                        new AnimaisCadastradosView(listagemController, animalService, usuarioService, null, false).setVisible(true);
                                         if (pai != null) pai.dispose();
                                     } catch (Exception erro) {
                                         JOptionPane.showMessageDialog(null, "Erro ao carregar o painel de animais: " + erro.getMessage(), "Erro de Banco de Dados", JOptionPane.ERROR_MESSAGE);
